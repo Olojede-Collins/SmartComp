@@ -10,7 +10,7 @@ describe('root package.json gate scripts', () => {
 
   it('exposes the exact CI gate script commands', () => {
     expect(pkg.scripts.lint).toBe(
-      'eslint . && node scripts/check-motion-allowlist.mjs',
+      'eslint . && node scripts/check-motion-allowlist.mjs && node scripts/check-raw-tokens.mjs',
     );
     expect(pkg.scripts.test).toBe('vitest run');
     expect(pkg.scripts.build).toBe(

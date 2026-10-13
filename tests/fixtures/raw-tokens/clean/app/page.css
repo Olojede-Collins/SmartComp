@@ -1,0 +1,22 @@
+.ok {
+  color: var(--color-fg-default);
+  padding: var(--space-5);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
+  max-width: var(--layout-containerMax);
+}
+
+.ok-media {
+  padding-inline: var(--space-6);
+}
+
+@media (min-width: 1100px) {
+  .ok-media {
+    padding-inline: var(--space-6);
+  }
+}
+
+@theme inline {
+  --text-h2: var(--font-size-21);
+  --breakpoint-lg: 1100px;
+}
