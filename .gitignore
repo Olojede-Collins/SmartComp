@@ -21,6 +21,7 @@
 !package-lock.json
 !tsconfig.json
 !next.config.*
+!postcss.config.*
 !next-env.d.ts
 !eslint.config.*
 !.prettierrc*
