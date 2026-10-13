@@ -1,0 +1,69 @@
+﻿# =============================================================================
+# ABU SmartComp — gitignore
+# Prep phase (Israel, 2026-10-13): ignore everything at root; track only
+# production skeleton paths un-ignored below. Frozen docs stay on disk but
+# untracked (only docs/TRD.md is tracked). Paths are NOT moved.
+# =============================================================================
+
+# Ignore everything at the repo root (and therefore all subdirectories)
+/*
+
+# The only tracked file until S-01 un-ignores production paths
+!.gitignore
+
+# --- Production paths (S-01 skeleton, un-ignored) ---
+!app/
+!backend/
+!scripts/
+!tests/
+!.github/
+!package.json
+!package-lock.json
+!tsconfig.json
+!next.config.*
+!next-env.d.ts
+!eslint.config.*
+!.prettierrc*
+!vitest.config.*
+!.env.template
+
+# docs: only TRD.md is tracked from docs/
+!docs/
+docs/*
+!docs/TRD.md
+
+# Secrets must stay ignored even after broad un-ignore
+.env
+.env.*
+!.env.template
+!.env.example
+!.env.example.*
+
+# Build/tooling artifacts
+node_modules/
+.next/
+out/
+dist/
+build/
+.vercel/
+coverage/
+*.tsbuildinfo
+*.log
+.DS_Store
+Thumbs.db
+*.pem
+*.key
+service-account*.json
+
+# Prep-only material (never tracked)
+tools/
+design/
+.opencode/
+.playwright-mcp/
+.agent/
+AGENTS.md
+SKILLS_MANIFEST.md
+STAGE_PROTOCOLS.md
+*.xlsx
+*.zip
+docs/design-process/
