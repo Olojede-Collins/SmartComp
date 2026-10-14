@@ -6,7 +6,7 @@
     "backend"
   ],
   "scripts": {
-    "lint": "eslint . && node scripts/check-motion-allowlist.mjs && node scripts/check-raw-tokens.mjs",
+    "lint": "eslint . && node scripts/check-motion-allowlist.mjs && node scripts/check-raw-tokens.mjs && node scripts/check-migrations.mjs",
     "test": "vitest run",
     "build": "next build && node scripts/check-css-clean.mjs && npm run build --workspace backend",
     "format": "prettier --write ."
