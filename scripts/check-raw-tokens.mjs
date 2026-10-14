@@ -2,7 +2,7 @@ import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join, relative, resolve, basename } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const DEFAULT_DIRS = ['app', 'styles'];
+const DEFAULT_DIRS = ['app', 'styles', 'components', 'tests'];
 const SKIP_DIRS = new Set([
   'node_modules',
   '.next',
@@ -18,6 +18,12 @@ const HEX_RE = /#[0-9a-fA-F]{3,8}\b/g;
 const RGB_RE = /\b(rgba?|hsla?)\(/gi;
 const PX_RE = /(\S+)\s*:\s*([^;{}]*?)(\b\d+(?:\.\d+)?px\b)([^;{}]*)/gi;
 const ARBITRARY_PX_RE = /\[[^\]\n]*\b\d+(?:\.\d+)?px\b[^\]\n]*\]/g;
+const ARBITRARY_NONPX_RE =
+  /\[[^\]\n]*\b\d+(?:\.\d+)?(?:ms|s|rem|em|ch|vh|vw|%)\b[^\]\n]*\]/g;
+const CODE_RADIUS_RE =
+  /\b(borderRadius|borderTopLeftRadius|borderTopRightRadius|borderBottomLeftRadius|borderBottomRightRadius|border-radius)\s*[:=]\s*(['"`])([^'"`\n]+)\2/g;
+const CODE_SHADOW_RE =
+  /\b(boxShadow|box-shadow)\s*[:=]\s*(['"`])([^'"`\n]+)\2/g;
 
 function stripComments(text) {
   return text
@@ -146,8 +152,42 @@ function scanCss(text, file, violations) {
 }
 
 function scanCode(text, file, violations) {
-  const src = stripComments(text);
+  let src = stripComments(text);
   let m;
+  const specialRanges = [];
+
+  CODE_RADIUS_RE.lastIndex = 0;
+  while ((m = CODE_RADIUS_RE.exec(src)) !== null) {
+    const value = m[3].trim();
+    specialRanges.push([m.index, m.index + m[0].length]);
+    if (!value.startsWith('var(') && !/^0\b/.test(value)) {
+      violations.push({
+        file,
+        line: lineOf(src, m.index),
+        rule: 'radius-literal',
+        property: m[1],
+        message: `raw border-radius "${value}" — use --radius-sm/--radius-md tokens`,
+      });
+    }
+  }
+
+  CODE_SHADOW_RE.lastIndex = 0;
+  while ((m = CODE_SHADOW_RE.exec(src)) !== null) {
+    const value = m[3].trim();
+    specialRanges.push([m.index, m.index + m[0].length]);
+    if (!value.startsWith('var(') && !/^none\b/i.test(value)) {
+      violations.push({
+        file,
+        line: lineOf(src, m.index),
+        rule: 'shadow-literal',
+        property: m[1],
+        message: `raw box-shadow "${value}" — use --shadow-card/--shadow-raised/--shadow-modal tokens`,
+      });
+    }
+  }
+
+  src = blankRanges(src, specialRanges);
+
   HEX_RE.lastIndex = 0;
   while ((m = HEX_RE.exec(src)) !== null) {
     violations.push({
@@ -157,6 +197,30 @@ function scanCode(text, file, violations) {
       message: `raw hex colour "${m[0]}" — use a token from tokens.css`,
     });
   }
+
+  RGB_RE.lastIndex = 0;
+  while ((m = RGB_RE.exec(src)) !== null) {
+    violations.push({
+      file,
+      line: lineOf(src, m.index),
+      rule: 'rgb-function',
+      message: `raw ${m[1]}() colour function — use a token from tokens.css`,
+    });
+  }
+
+  PX_RE.lastIndex = 0;
+  while ((m = PX_RE.exec(src)) !== null) {
+    const value = `${m[3]}${m[4]}`;
+    if (/^0px\b/.test(value.trim())) continue;
+    violations.push({
+      file,
+      line: lineOf(src, m.index),
+      rule: 'px-length',
+      property: m[1].trim(),
+      message: `raw px length in "${m[1].trim()}" — use a spacing/size/layout token`,
+    });
+  }
+
   ARBITRARY_PX_RE.lastIndex = 0;
   while ((m = ARBITRARY_PX_RE.exec(src)) !== null) {
     violations.push({
@@ -164,6 +228,16 @@ function scanCode(text, file, violations) {
       line: lineOf(src, m.index),
       rule: 'arbitrary-px',
       message: `raw px arbitrary value "${m[0]}" — use a token scale step`,
+    });
+  }
+
+  ARBITRARY_NONPX_RE.lastIndex = 0;
+  while ((m = ARBITRARY_NONPX_RE.exec(src)) !== null) {
+    violations.push({
+      file,
+      line: lineOf(src, m.index),
+      rule: 'arbitrary-unit',
+      message: `raw unit arbitrary value "${m[0]}" — use a token scale step`,
     });
   }
 }
@@ -179,6 +253,9 @@ function walk(dir, root, violations) {
     const full = join(dir, entry.name);
     if (entry.isDirectory()) {
       if (SKIP_DIRS.has(entry.name)) continue;
+      const relDir = relative(root, full).split('\\').join('/');
+      if (relDir === 'tests/fixtures' || relDir.startsWith('tests/fixtures/'))
+        continue;
       walk(full, root, violations);
       continue;
     }

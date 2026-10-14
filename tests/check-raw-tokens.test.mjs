@@ -30,12 +30,14 @@ describe('check-raw-tokens', () => {
     expect(props).toContain('padding');
   });
 
-  it('flags raw border-radius lengths in app CSS', () => {
+  it('flags raw border-radius lengths in app CSS and inline style TSX', () => {
     const violations = findRawTokenViolations(
       resolve(fixtureRoot, 'violations'),
     );
     const radius = violations.filter((v) => v.rule === 'radius-literal');
-    expect(radius.length).toBe(1);
+    expect(radius.length).toBe(2);
+    expect(radius.some((v) => v.file.endsWith('page.css'))).toBe(true);
+    expect(radius.some((v) => v.file.endsWith('bad.tsx'))).toBe(true);
   });
 
   it('flags raw box-shadow / rgba values in app CSS', () => {
@@ -47,7 +49,7 @@ describe('check-raw-tokens', () => {
     expect(rules).toContain('rgb-function');
   });
 
-  it('flags hex colours and px arbitrary values in TSX', () => {
+  it('flags hex colours, px arbitrary values and unit arbitraries in TSX', () => {
     const violations = findRawTokenViolations(
       resolve(fixtureRoot, 'violations'),
     );
@@ -59,12 +61,29 @@ describe('check-raw-tokens', () => {
     expect(tsxPx.length).toBeGreaterThanOrEqual(1);
   });
 
+  it('flags non-px arbitrary values (duration, rem, ms, ch) in code', () => {
+    const violations = findRawTokenViolations(
+      resolve(fixtureRoot, 'violations'),
+    );
+    const unit = violations.filter(
+      (v) => v.rule === 'arbitrary-unit' && v.file.endsWith('.tsx'),
+    );
+    expect(unit.length).toBeGreaterThanOrEqual(1);
+  });
+
+  it('flags at least 10 violations on the violations fixture', () => {
+    const violations = findRawTokenViolations(
+      resolve(fixtureRoot, 'violations'),
+    );
+    expect(violations.length).toBeGreaterThanOrEqual(10);
+  });
+
   it('reports zero violations on the clean fixture', () => {
     const violations = findRawTokenViolations(resolve(fixtureRoot, 'clean'));
     expect(violations).toEqual([]);
   });
 
-  it('reports zero violations on the repository app and styles trees', () => {
+  it('reports zero violations on the repository source trees', () => {
     const violations = findRawTokenViolations(repoRoot);
     expect(violations).toEqual([]);
   });

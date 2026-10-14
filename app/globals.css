@@ -1,5 +1,13 @@
-@import 'tailwindcss';
+/* Scope Tailwind's source scan to app/ only — the default cwd-wide scan
+   pulls design prose, docs, fixtures and node_modules strings into built CSS
+   (C2-M2-02). `inline('p-5')` force-emits the p-5 utility so the contract's
+   CI chain check (p-5 === 24px) always has a compiled rule to assert
+   (C2-M2-01); app markup does not use p-5 directly. */
+@import 'tailwindcss' source(none);
 @import './tokens.css';
+
+@source '../app';
+@source inline('p-5');
 
 :root {
   --font-family-sans: var(--font-plex-sans), system-ui, sans-serif;

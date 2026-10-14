@@ -14,7 +14,7 @@ describe('root package.json gate scripts', () => {
     );
     expect(pkg.scripts.test).toBe('vitest run');
     expect(pkg.scripts.build).toBe(
-      'next build && npm run build --workspace backend',
+      'next build && node scripts/check-css-clean.mjs && npm run build --workspace backend',
     );
     expect(pkg.scripts.format).toBe('prettier --write .');
   });

@@ -23,7 +23,7 @@ Docker containerization applies to the **Render backend only**. The frontend dep
 
 ### 1.3 Language & versions
 
-Backend runtime must be **Node.js** (mandated: `sharp` is a native Node module — I16/D3). Implementation language: **TypeScript** (app + backend; OR-6, pinned at implementation kickoff 2026-10-13). Version pins (real installs at first commit): Next.js **16.4.0**, Node.js LTS **24** (local/CI v24.11.1; Docker base `node:24.11.1-alpine`), Express **5.3.0**, TypeScript **6.0.3** (latest within typescript-eslint@8.71.2 peer range `<6.1.0`; TS 7.0.2 exists but is ecosystem peer-capped — revisit when typescript-eslint ships support), ESLint **10.12.0**, Prettier **3.9.10**, Vitest **5.0.4**, Tailwind CSS 4.3.3, `@tailwindcss/postcss 4.3.3`. Container image digest pinning deferred (flagged in S-01 handoff, HB-06).
+Backend runtime must be **Node.js** (mandated: `sharp` is a native Node module — I16/D3). Implementation language: **TypeScript** (app + backend; OR-6, pinned at implementation kickoff 2026-10-13). Version pins (real installs at first commit): Next.js **16.4.0**, Node.js LTS **24** (local/CI v24.11.1; Docker base `node:24.11.1-alpine`), Express **5.3.0**, TypeScript **6.0.3** (latest within typescript-eslint@8.71.2 peer range `<6.1.0`; TS 7.0.2 exists but is ecosystem peer-capped — revisit when typescript-eslint ships support), ESLint **10.12.0**, Prettier **3.9.10**, Vitest **5.0.4**, Tailwind CSS **4.3.3**, @tailwindcss/postcss **4.3.3**. Container image digest pinning deferred (flagged in S-01 handoff, HB-06).
 
 ### 1.4 Local-dev vs prod parity
 
