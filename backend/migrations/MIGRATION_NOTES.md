@@ -61,11 +61,13 @@ WHERE table_name = 'audit_log'
 
 ## 3. Apply checklist
 
-- [ ] `0001_condition_enum.up.sql`
-- [ ] `0002_admins.up.sql`
-- [ ] `0003_equipment.up.sql`
-- [ ] `0004_admin_invites.up.sql`
-- [ ] `0005_audit_log.up.sql`
-- [ ] `0006_indexes.up.sql`
-- [ ] `0007_rls.up.sql`
-- [ ] Probes P1–P5 run and green
+- [x] `0001_condition_enum.up.sql`
+- [x] `0002_admins.up.sql`
+- [x] `0003_equipment.up.sql`
+- [x] `0004_admin_invites.up.sql`
+- [x] `0005_audit_log.up.sql`
+- [x] `0006_indexes.up.sql`
+- [x] `0007_rls.up.sql`
+- [x] Probes P1–P5 run and green
+
+Applied 2026-10-14 via `supabase db push` (CLI 2.120.0, project ref uahhetoxdcuikbxleqvw); probes P1–P5 green the same day. Evidence: `.agent/teamwork/S-01/agents/worker_w3/probes_live_results.json` (gitignored session artifact).
