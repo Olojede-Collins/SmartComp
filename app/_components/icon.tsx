@@ -244,13 +244,13 @@ export interface IconProps extends Omit<
 }
 
 export function Icon({ name, size = 20, className, ...rest }: IconProps) {
-  const sizeClass = size === 16 ? 'size-4' : 'size-5';
+  const sizeClass = size === 16 ? 'size-[var(--icon-size-small)]' : 'size-[var(--icon-size-default)]';
   return (
     <svg
       viewBox="0 0 20 20"
       aria-hidden="true"
       focusable="false"
-      className={[sizeClass, className].filter(Boolean).join(' ')}
+      className={cn(sizeClass, className)}
       {...rest}
     >
       {PATHS[name]}
