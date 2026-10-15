@@ -9,8 +9,10 @@ import * as React from 'react';
  * Navigation is never disabled; no icon, no pill background.
  */
 
-export interface RailNavLinkProps
-  extends Omit<React.AnchorHTMLAttributes<HTMLAnchorElement>, 'className' | 'variant'> {
+export interface RailNavLinkProps extends Omit<
+  React.AnchorHTMLAttributes<HTMLAnchorElement>,
+  'className' | 'variant'
+> {
   href: string;
   current?: boolean;
   /** `action` (Sign out, admin rail) — same visual treatment; link or button per TRD. */

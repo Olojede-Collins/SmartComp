@@ -31,8 +31,7 @@ afterEach(() => {
 describe('findMotionViolations', () => {
   it('flags a non-allowlisted CSS transition property', () => {
     const dir = fixture({
-      'app/globals.css':
-        '.card { transition: background-color 200ms ease; }\n',
+      'app/globals.css': '.card { transition: background-color 200ms ease; }\n',
     });
     const violations = findMotionViolations(dir);
     expect(violations).toHaveLength(1);

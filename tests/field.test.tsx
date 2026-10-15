@@ -57,7 +57,11 @@ describe('C-010 Field', () => {
     render(
       <Field label="Item name" help="As it appears on the asset tag.">
         {({ id, describedBy }) => (
-          <Input id={id} aria-describedby={describedBy} aria-label="Item name" />
+          <Input
+            id={id}
+            aria-describedby={describedBy}
+            aria-label="Item name"
+          />
         )}
       </Field>,
     );
@@ -69,7 +73,10 @@ describe('C-010 Field', () => {
 
   it('renders the error row with I-02, role=alert, and wires describedBy + aria-invalid', () => {
     render(
-      <Field label="Condition" error="That condition is not on the list. 409 condition-enum-invalid.">
+      <Field
+        label="Condition"
+        error="That condition is not on the list. 409 condition-enum-invalid."
+      >
         {({ id, describedBy, invalid }) => (
           <Input
             id={id}
@@ -94,7 +101,11 @@ describe('C-010 Field', () => {
 
   it('joins help and error in describedBy when both exist (error takes priority)', () => {
     render(
-      <Field label="Condition" help="Pick one of the four recorded states." error="Not on the list.">
+      <Field
+        label="Condition"
+        help="Pick one of the four recorded states."
+        error="Not on the list."
+      >
         {({ id, describedBy, invalid }) => (
           <Input
             id={id}
@@ -119,7 +130,13 @@ describe('C-010 Field', () => {
       <Field label="Item name">
         {({ invalid }) => {
           spy(invalid);
-          return <Input id="x" aria-label="Item name" aria-invalid={invalid || undefined} />;
+          return (
+            <Input
+              id="x"
+              aria-label="Item name"
+              aria-invalid={invalid || undefined}
+            />
+          );
         }}
       </Field>,
     );

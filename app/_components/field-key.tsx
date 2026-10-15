@@ -7,15 +7,20 @@ import * as React from 'react';
  * Not an eyebrow/section kicker (Direction B bans those).
  */
 
-export interface FieldKeyProps
-  extends Omit<React.HTMLAttributes<HTMLSpanElement>, 'className'> {
+export interface FieldKeyProps extends Omit<
+  React.HTMLAttributes<HTMLSpanElement>,
+  'className'
+> {
   className?: string;
 }
 
 export function FieldKey({ className, children, ...rest }: FieldKeyProps) {
   return (
     <span
-      className={['block text-xs font-medium tracking-caps text-fg-muted', className]
+      className={[
+        'block text-xs font-medium tracking-caps text-fg-muted',
+        className,
+      ]
         .filter(Boolean)
         .join(' ')}
       {...rest}

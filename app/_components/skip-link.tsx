@@ -7,13 +7,20 @@ import * as React from 'react';
  * First focusable element in the DOM; targets #main (the page main landmark id).
  */
 
-export interface SkipLinkProps
-  extends Omit<React.AnchorHTMLAttributes<HTMLAnchorElement>, 'className' | 'href'> {
+export interface SkipLinkProps extends Omit<
+  React.AnchorHTMLAttributes<HTMLAnchorElement>,
+  'className' | 'href'
+> {
   href?: string;
   className?: string;
 }
 
-export function SkipLink({ href = '#main', className, children, ...rest }: SkipLinkProps) {
+export function SkipLink({
+  href = '#main',
+  className,
+  children,
+  ...rest
+}: SkipLinkProps) {
   return (
     <a
       href={href}

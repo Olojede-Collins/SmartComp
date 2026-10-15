@@ -28,11 +28,15 @@ describe('C-011 ConditionChip', () => {
     expect(chip.className).toContain('bg-status-faulty');
     expect(chip.className).toContain('text-fg-status-faulty');
     expect(screen.getByText('Faulty')).toBeTruthy();
-    expect(container.querySelector('path')!.getAttribute('d')).toContain('M10 3.6');
+    expect(container.querySelector('path')!.getAttribute('d')).toContain(
+      'M10 3.6',
+    );
   });
 
   it('Under Maintenance: chip--maintenance + I-03 spanner', () => {
-    const { container } = render(<ConditionChip condition="Under Maintenance" />);
+    const { container } = render(
+      <ConditionChip condition="Under Maintenance" />,
+    );
     const chip = container.querySelector('.chip')!;
     expect(chip.className).toContain('chip--maintenance');
     expect(chip.className).toContain('bg-status-maintenance');
@@ -54,7 +58,9 @@ describe('C-011 ConditionChip', () => {
       <ConditionChip condition={'Needs repair' as never} />,
     );
     const chip = container.querySelector('.chip')!;
-    expect(chip.className).not.toMatch(/chip--(working|faulty|maintenance|decommissioned)/);
+    expect(chip.className).not.toMatch(
+      /chip--(working|faulty|maintenance|decommissioned)/,
+    );
     expect(chip.className).toContain('bg-surface');
     expect(chip.className).toContain('border-rule');
     expect(chip.className).toContain('text-fg-default');

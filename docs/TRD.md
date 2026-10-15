@@ -8,14 +8,14 @@
 
 ### 1.1 Confirmed stack (envelope D4; ceilings I6–I10)
 
-| Layer | Choice | Binding ceiling / constraint |
-|---|---|---|
-| Frontend + admin UI | Next.js on **Vercel Hobby** | Functions ≤ 300 s; proxied external request timeout 120 s; ISR supported; **no Docker** (I8) |
-| Backend API | **Node.js in Docker on Render free** | 0.1 CPU / **512 MB RAM**, 750 instance-hours/mo, idle spin-down after 15 min, ~1 min restart, **no persistent disks, no one-off jobs, no SSH**; Docker builds supported on free (I6) |
-| Database + Auth | **Supabase** (Postgres, Auth, RLS) | argon2id (Supabase default); free tier pauses after 7 days inactivity → daily heartbeat (I9) |
-| Image storage | **Cloudflare R2**, public bucket, S3-compatible | 10M Class B reads/mo free, zero egress (I10) |
-| Email | **Gmail REST API over HTTPS (Option A)** | SMTP ports 25/465/587 blocked on Render (live since 26 Sep 2025) — SMTP is NOT an option (I7) |
-| Scheduler | **GitHub Actions** daily cron | Heartbeat + optional ISR nudge (I9) |
+| Layer               | Choice                                          | Binding ceiling / constraint                                                                                                                                                         |
+| ------------------- | ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Frontend + admin UI | Next.js on **Vercel Hobby**                     | Functions ≤ 300 s; proxied external request timeout 120 s; ISR supported; **no Docker** (I8)                                                                                         |
+| Backend API         | **Node.js in Docker on Render free**            | 0.1 CPU / **512 MB RAM**, 750 instance-hours/mo, idle spin-down after 15 min, ~1 min restart, **no persistent disks, no one-off jobs, no SSH**; Docker builds supported on free (I6) |
+| Database + Auth     | **Supabase** (Postgres, Auth, RLS)              | argon2id (Supabase default); free tier pauses after 7 days inactivity → daily heartbeat (I9)                                                                                         |
+| Image storage       | **Cloudflare R2**, public bucket, S3-compatible | 10M Class B reads/mo free, zero egress (I10)                                                                                                                                         |
+| Email               | **Gmail REST API over HTTPS (Option A)**        | SMTP ports 25/465/587 blocked on Render (live since 26 Sep 2025) — SMTP is NOT an option (I7)                                                                                        |
+| Scheduler           | **GitHub Actions** daily cron                   | Heartbeat + optional ISR nudge (I9)                                                                                                                                                  |
 
 ### 1.2 Docker scope correction (I13/C4)
 
@@ -31,14 +31,14 @@ Minimum parity requirement: the backend runs from the same Docker image locally 
 
 ## 2. Core Architecture
 
-| Component | Runs on | Talks to | Protocol / auth |
-|---|---|---|---|
-| Public pages (ISR-cached) | Vercel | Supabase (inventory reads) | HTTPS (PostgREST) with anon role; RLS public `SELECT` only |
-| Admin UI | Vercel | Render backend API | HTTPS, Supabase session JWT (server-side-verified on Render) |
-| Revalidation webhook endpoint | Vercel | — (inbound from Render) | HTTPS POST, shared-secret validated (T6) |
-| Backend API | Render (Docker, Node.js) | Supabase (Postgres + Auth admin ops), R2, Gmail REST, Vercel revalidate endpoint | Service-role / user-JWT as per §3.5; presigned S3 for R2 writes; HTTPS everywhere (T8) |
-| Scheduler | GitHub Actions | Render `/healthz` | HTTPS GET, daily cron |
-| Bootstrap import | Google Sheets Apps Script → Drive → local | R2 (later, via enhancement run) | One-time; agent-assisted local enhancement (I16) |
+| Component                     | Runs on                                   | Talks to                                                                         | Protocol / auth                                                                        |
+| ----------------------------- | ----------------------------------------- | -------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| Public pages (ISR-cached)     | Vercel                                    | Supabase (inventory reads)                                                       | HTTPS (PostgREST) with anon role; RLS public `SELECT` only                             |
+| Admin UI                      | Vercel                                    | Render backend API                                                               | HTTPS, Supabase session JWT (server-side-verified on Render)                           |
+| Revalidation webhook endpoint | Vercel                                    | — (inbound from Render)                                                          | HTTPS POST, shared-secret validated (T6)                                               |
+| Backend API                   | Render (Docker, Node.js)                  | Supabase (Postgres + Auth admin ops), R2, Gmail REST, Vercel revalidate endpoint | Service-role / user-JWT as per §3.5; presigned S3 for R2 writes; HTTPS everywhere (T8) |
+| Scheduler                     | GitHub Actions                            | Render `/healthz`                                                                | HTTPS GET, daily cron                                                                  |
+| Bootstrap import              | Google Sheets Apps Script → Drive → local | R2 (later, via enhancement run)                                                  | One-time; agent-assisted local enhancement (I16)                                       |
 
 Key structural rules:
 
@@ -50,15 +50,15 @@ Key structural rules:
 
 ### 3.1 Ownership & retention
 
-| Entity | Storage | Owner | Retention rule |
-|---|---|---|---|
-| `equipment` | Supabase Postgres | Render backend (writes); anon public (reads) | Kept for project lifetime; removal only via explicit admin delete |
-| `admins` | Supabase Postgres (+ `auth.users`) | Render backend (invite/accept/remove flows) | Kept while the auth account exists; removal via admin action (FR-8.2) |
-| `admin_invites` | Supabase Postgres | Render backend | Pending until accepted; accepted/expired rows retained for audit continuity (lifetime TBD → OR-7, Security doc) |
-| `audit_log` | Supabase Postgres | Render backend (inserts) | Append-only, kept for project lifetime (COREN defensibility, D8/C2) |
-| Gallery images | Cloudflare R2 (public bucket) | Render backend (writes/deletes) | Kept while referenced by an `equipment.image_keys[]` entry; orphan cleanup on item delete is best-effort with logged failures |
-| Auth credentials | Supabase Auth | Supabase | Managed by platform (argon2id) |
-| Legacy Google Sheet | Google Drive/Sheets | User | **Retired after v1 import** — Supabase is the sole source of truth post-import (D3) |
+| Entity              | Storage                            | Owner                                        | Retention rule                                                                                                                |
+| ------------------- | ---------------------------------- | -------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| `equipment`         | Supabase Postgres                  | Render backend (writes); anon public (reads) | Kept for project lifetime; removal only via explicit admin delete                                                             |
+| `admins`            | Supabase Postgres (+ `auth.users`) | Render backend (invite/accept/remove flows)  | Kept while the auth account exists; removal via admin action (FR-8.2)                                                         |
+| `admin_invites`     | Supabase Postgres                  | Render backend                               | Pending until accepted; accepted/expired rows retained for audit continuity (lifetime TBD → OR-7, Security doc)               |
+| `audit_log`         | Supabase Postgres                  | Render backend (inserts)                     | Append-only, kept for project lifetime (COREN defensibility, D8/C2)                                                           |
+| Gallery images      | Cloudflare R2 (public bucket)      | Render backend (writes/deletes)              | Kept while referenced by an `equipment.image_keys[]` entry; orphan cleanup on item delete is best-effort with logged failures |
+| Auth credentials    | Supabase Auth                      | Supabase                                     | Managed by platform (argon2id)                                                                                                |
+| Legacy Google Sheet | Google Drive/Sheets                | User                                         | **Retired after v1 import** — Supabase is the sole source of truth post-import (D3)                                           |
 
 ### 3.2 Schema (Postgres, Supabase)
 
@@ -66,61 +66,61 @@ Key structural rules:
 
 **`equipment`** (full D3 field set; C5/C2/I14):
 
-| Column | Type | Constraints |
-|---|---|---|
-| `id` | `uuid` | PK, default `gen_random_uuid()` |
-| `name` | `text` | NOT NULL |
-| `core_functionality` | `text` | |
-| `other_functionality` | `text` | |
-| `condition` | `condition_enum` | NOT NULL |
-| `quantity` | `integer` | NOT NULL, default `1`, CHECK (`quantity >= 0`) |
-| `image_keys` | `text[]` | NOT NULL, default `'{}'` — R2 object keys, ordered gallery |
-| `created_at` | `timestamptz` | NOT NULL, default `now()` |
-| `updated_at` | `timestamptz` | NOT NULL — set by backend on every mutation |
-| `updated_by` | `uuid` | FK → `admins(id)` — acting admin, set on every mutation |
+| Column                | Type             | Constraints                                                |
+| --------------------- | ---------------- | ---------------------------------------------------------- |
+| `id`                  | `uuid`           | PK, default `gen_random_uuid()`                            |
+| `name`                | `text`           | NOT NULL                                                   |
+| `core_functionality`  | `text`           |                                                            |
+| `other_functionality` | `text`           |                                                            |
+| `condition`           | `condition_enum` | NOT NULL                                                   |
+| `quantity`            | `integer`        | NOT NULL, default `1`, CHECK (`quantity >= 0`)             |
+| `image_keys`          | `text[]`         | NOT NULL, default `'{}'` — R2 object keys, ordered gallery |
+| `created_at`          | `timestamptz`    | NOT NULL, default `now()`                                  |
+| `updated_at`          | `timestamptz`    | NOT NULL — set by backend on every mutation                |
+| `updated_by`          | `uuid`           | FK → `admins(id)` — acting admin, set on every mutation    |
 
 **`admins`:**
 
-| Column | Type | Constraints |
-|---|---|---|
-| `id` | `uuid` | PK, FK → `auth.users(id)` |
-| `name` | `text` | |
-| `email` | `text` | NOT NULL, UNIQUE |
+| Column       | Type          | Constraints               |
+| ------------ | ------------- | ------------------------- |
+| `id`         | `uuid`        | PK, FK → `auth.users(id)` |
+| `name`       | `text`        |                           |
+| `email`      | `text`        | NOT NULL, UNIQUE          |
 | `created_at` | `timestamptz` | NOT NULL, default `now()` |
 
 Flat equality: no role column with multiple values — adminship is signalled by Supabase Auth `app_metadata.role = 'admin'` (single value). D4-stack, D1 flat model.
 
 **`admin_invites`** (needed for the FR-7 acceptance flow; TRD design decision):
 
-| Column | Type | Constraints |
-|---|---|---|
-| `id` | `uuid` | PK, default `gen_random_uuid()` |
-| `email` | `text` | NOT NULL, UNIQUE while pending (`accepted_at IS NULL`) |
-| `token_hash` | `text` | NOT NULL — SHA-256 of the emailed single-use token; plaintext never stored |
-| `invited_by` | `uuid` | FK → `admins(id)` |
-| `created_at` | `timestamptz` | NOT NULL, default `now()` |
-| `accepted_at` | `timestamptz` | NULL until acceptance |
+| Column        | Type          | Constraints                                                                |
+| ------------- | ------------- | -------------------------------------------------------------------------- |
+| `id`          | `uuid`        | PK, default `gen_random_uuid()`                                            |
+| `email`       | `text`        | NOT NULL, UNIQUE while pending (`accepted_at IS NULL`)                     |
+| `token_hash`  | `text`        | NOT NULL — SHA-256 of the emailed single-use token; plaintext never stored |
+| `invited_by`  | `uuid`        | FK → `admins(id)`                                                          |
+| `created_at`  | `timestamptz` | NOT NULL, default `now()`                                                  |
+| `accepted_at` | `timestamptz` | NULL until acceptance                                                      |
 
 **`audit_log`** (admin-invite grants per task contract; C2 "audit-logged"):
 
-| Column | Type | Constraints |
-|---|---|---|
-| `id` | `uuid` | PK, default `gen_random_uuid()` |
-| `actor_admin_id` | `uuid` | FK → `admins(id)` (the inviting/removing admin) |
-| `action` | `text` | e.g. `'admin.invite'`, `'admin.accept'`, `'admin.remove'` |
-| `target` | `text` | invitee/admin email |
-| `created_at` | `timestamptz` | NOT NULL, default `now()` |
+| Column           | Type          | Constraints                                               |
+| ---------------- | ------------- | --------------------------------------------------------- |
+| `id`             | `uuid`        | PK, default `gen_random_uuid()`                           |
+| `actor_admin_id` | `uuid`        | FK → `admins(id)` (the inviting/removing admin)           |
+| `action`         | `text`        | e.g. `'admin.invite'`, `'admin.accept'`, `'admin.remove'` |
+| `target`         | `text`        | invitee/admin email                                       |
+| `created_at`     | `timestamptz` | NOT NULL, default `now()`                                 |
 
 **Indexes:** `equipment(updated_at DESC)` (export ordering); `equipment` PK; `admins(email)` unique; `admin_invites(email)` partial unique on pending; `audit_log(created_at)`. (15-item ceiling — I1 — makes deeper indexing unnecessary.)
 
 ### 3.3 RLS policies (every table; D6)
 
-| Table | `anon` (public) | Authenticated (admin claim) | Service role (Render only) |
-|---|---|---|---|
-| `equipment` | `SELECT` only | `SELECT`, `INSERT`, `UPDATE`, `DELETE` | full (invite-accept edge cases) |
-| `admins` | none | `SELECT`, `DELETE` | `INSERT`, `UPDATE` (acceptance provisions row + metadata) |
-| `admin_invites` | none | `SELECT` | `INSERT`, `UPDATE` |
-| `audit_log` | none | `SELECT`, `INSERT` | `INSERT` |
+| Table           | `anon` (public) | Authenticated (admin claim)            | Service role (Render only)                                |
+| --------------- | --------------- | -------------------------------------- | --------------------------------------------------------- |
+| `equipment`     | `SELECT` only   | `SELECT`, `INSERT`, `UPDATE`, `DELETE` | full (invite-accept edge cases)                           |
+| `admins`        | none            | `SELECT`, `DELETE`                     | `INSERT`, `UPDATE` (acceptance provisions row + metadata) |
+| `admin_invites` | none            | `SELECT`                               | `INSERT`, `UPDATE`                                        |
+| `audit_log`     | none            | `SELECT`, `INSERT`                     | `INSERT`                                                  |
 
 Admin claim check in policies: `(auth.jwt() -> 'app_metadata' ->> 'role') = 'admin'`. `audit_log` is append-only: `UPDATE`/`DELETE` privileges are revoked from all roles including `authenticated` (defensibility, D8). **No public write surface anywhere** (D6). All queries parameterised via PostgREST/prepared statements only (T3).
 
@@ -138,52 +138,52 @@ Base: Render backend HTTPS base URL (hostname assigned at deploy). All admin end
 
 Common auth failures for every admin endpoint: **401** missing/invalid/expired JWT; **403** valid session without `app_metadata.role = 'admin'`.
 
-| Method + path | Purpose | Request body | Success | Error branches |
-|---|---|---|---|---|
-| `GET /api/admin/items` | List all items (≤15) | — | 200: item array | 401/403 |
-| `POST /api/admin/items` | Create item | `{name, core_functionality?, other_functionality?, condition, quantity?, image_keys?}` | 201: item | 401/403; **409** `condition-enum-invalid`; **409** `inventory-ceiling` when count = 15 (I1) |
-| `GET /api/admin/items/:id` | Read one | — | 200: item | 401/403; 404 |
-| `PATCH /api/admin/items/:id` | Update fields / condition | any subset of create body | 200: item | 401/403; 404; **409** `condition-enum-invalid` (PRD FR-2.5) |
-| `DELETE /api/admin/items/:id` | Delete item (+ best-effort R2 cleanup) | — | 204 | 401/403; 404 |
-| `POST /api/admin/items/:id/images` | Upload image (multipart) | file part | 201: updated `image_keys` | 401/403; 404; **413** `image-too-large` (names byte counts vs cap); **415** `mime-rejected` (magic-byte sniff, T4); **502** `r2-write-failed` |
-| `DELETE /api/admin/items/:id/images/:key` | Remove gallery image | — | 204 | 401/403; 404 |
-| `GET /api/admin/admins` | List admins | — | 200 | 401/403 |
-| `POST /api/admin/admins/invites` | Invite admin by email | `{email}` | 201 | 401/403; **409** `already-admin` / `invite-pending`; **502** `gmail-send-failed` (FR-7.5) |
-| `POST /api/admin/invites/accept` | Complete acceptance (called after Supabase Auth signup handshake) | `{token}` | 200: `{status:'active'}` | **404** `unknown-token`; **409** `already-accepted` |
-| `DELETE /api/admin/admins/:id` | Remove admin | — | 204 | 401/403; 404; **409** `last-admin` with clear message (FR-8.3, D1) |
-| `GET /api/admin/export/pdf` | COREN export (PDF) | — | 200: PDF stream | 401/403; **500** `export-generation-failed` |
-| `GET /api/admin/export/csv` | COREN export (CSV) | — | 200: CSV stream | 401/403; **500** `export-generation-failed` |
-| `GET /healthz` | Heartbeat target (§9) | — | 200: `{ok:true}` + trivial Supabase round-trip | 503 if Supabase round-trip fails |
+| Method + path                             | Purpose                                                           | Request body                                                                           | Success                                        | Error branches                                                                                                                                |
+| ----------------------------------------- | ----------------------------------------------------------------- | -------------------------------------------------------------------------------------- | ---------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| `GET /api/admin/items`                    | List all items (≤15)                                              | —                                                                                      | 200: item array                                | 401/403                                                                                                                                       |
+| `POST /api/admin/items`                   | Create item                                                       | `{name, core_functionality?, other_functionality?, condition, quantity?, image_keys?}` | 201: item                                      | 401/403; **409** `condition-enum-invalid`; **409** `inventory-ceiling` when count = 15 (I1)                                                   |
+| `GET /api/admin/items/:id`                | Read one                                                          | —                                                                                      | 200: item                                      | 401/403; 404                                                                                                                                  |
+| `PATCH /api/admin/items/:id`              | Update fields / condition                                         | any subset of create body                                                              | 200: item                                      | 401/403; 404; **409** `condition-enum-invalid` (PRD FR-2.5)                                                                                   |
+| `DELETE /api/admin/items/:id`             | Delete item (+ best-effort R2 cleanup)                            | —                                                                                      | 204                                            | 401/403; 404                                                                                                                                  |
+| `POST /api/admin/items/:id/images`        | Upload image (multipart)                                          | file part                                                                              | 201: updated `image_keys`                      | 401/403; 404; **413** `image-too-large` (names byte counts vs cap); **415** `mime-rejected` (magic-byte sniff, T4); **502** `r2-write-failed` |
+| `DELETE /api/admin/items/:id/images/:key` | Remove gallery image                                              | —                                                                                      | 204                                            | 401/403; 404                                                                                                                                  |
+| `GET /api/admin/admins`                   | List admins                                                       | —                                                                                      | 200                                            | 401/403                                                                                                                                       |
+| `POST /api/admin/admins/invites`          | Invite admin by email                                             | `{email}`                                                                              | 201                                            | 401/403; **409** `already-admin` / `invite-pending`; **502** `gmail-send-failed` (FR-7.5)                                                     |
+| `POST /api/admin/invites/accept`          | Complete acceptance (called after Supabase Auth signup handshake) | `{token}`                                                                              | 200: `{status:'active'}`                       | **404** `unknown-token`; **409** `already-accepted`                                                                                           |
+| `DELETE /api/admin/admins/:id`            | Remove admin                                                      | —                                                                                      | 204                                            | 401/403; 404; **409** `last-admin` with clear message (FR-8.3, D1)                                                                            |
+| `GET /api/admin/export/pdf`               | COREN export (PDF)                                                | —                                                                                      | 200: PDF stream                                | 401/403; **500** `export-generation-failed`                                                                                                   |
+| `GET /api/admin/export/csv`               | COREN export (CSV)                                                | —                                                                                      | 200: CSV stream                                | 401/403; **500** `export-generation-failed`                                                                                                   |
+| `GET /healthz`                            | Heartbeat target (§9)                                             | —                                                                                      | 200: `{ok:true}` + trivial Supabase round-trip | 503 if Supabase round-trip fails                                                                                                              |
 
 Export columns: floor = name, condition, quantity, `updated_at`, `updated_by` (PRD FR-9.2); full set TBD — OR-1.
 
 **Vercel-side endpoints:**
 
-| Method + path | Purpose | Auth | Error branches |
-|---|---|---|---|
+| Method + path          | Purpose                                 | Auth                                                     | Error branches                                                                                                                                                     |
+| ---------------------- | --------------------------------------- | -------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `POST /api/revalidate` | Invalidate ISR paths after a write (T6) | Shared secret in a request header; validated server-side | **401** invalid secret; **500** `revalidate-secret-missing` when the secret env var is unset (contract-mandated 500 branch); 200 `{revalidated:true, paths:[...]}` |
 
 Public routes (closed by Design Phase, D-019 — full map: `design/01-research/ia.md`): `/` (landing, carousel), `/room` (room view), `/item/[id]` (item detail), `/privacy`, `/admin/login`, `/admin`, `/admin/items/new`, `/admin/items/[id]`, `/admin/admins`, `/admin/invite/accept`. **No public write endpoint exists** on either platform (D6).
 
 ## 5. Integration Points & Failure Branches
 
-| # | System | Direction / purpose | On failure |
-|---|---|---|---|
-| 1 | Supabase Postgres | ISR pages read inventory at render/revalidate time (anon `SELECT`); backend reads/writes | Public: serve last-known-good cache (T1); no error page while cache exists. Admin write: 503 `db-unavailable`, named message; no partial writes (single transaction) |
-| 2 | Supabase Auth | Session issuance/verification | Invalid sessions → 401/403 per §4; login unavailable → Supabase-side error surfaced by the auth UI |
-| 3 | Cloudflare R2 | Image reads (public bucket); writes/deletes (presigned URLs from Render — T5) | Read failure → gallery placeholder (PRD FR-1.5). Write failure → 502 `r2-write-failed`; item row unaffected |
-| 4 | Vercel `/api/revalidate` (inbound) | Render notifies cache invalidation after every write | Non-2xx is logged by Render. **No retry loop is required for correctness**: the 60 s time-based ISR fallback (I5/T1) converges content regardless. Vercel's 120 s proxied external-request timeout (I8) comfortably covers a single revalidate call |
-| 5 | Gmail REST API | Send admin-invite emails (§8) | 4xx/5xx → 502 `gmail-send-failed`; invite row not marked sent; admin may retry (FR-7.5) |
-| 6 | GitHub Actions | Daily heartbeat (§9) | Missed runs → Supabase may pause after 7 days (I9); recovery is manual (dashboard activity / Supabase resume). Alerting on cron failure → `docs/CICD.md` §2 (GitHub's default workflow-failure email is the confirmed baseline); anything beyond it: **TBD — [blocking: user decision, HB-07; trigger: before v1 launch or explicitly declined]** |
-| 7 | Google Sheets + Apps Script | One-time bootstrap import (manifest item 10) | Import failure → re-run script; no runtime dependency exists post-import (Sheet retired, D3) |
-| 8 | Render cold start | Admin UI calls after ≥15 min idle | ~1 min spin-up accepted (I11); admin UI shows a waiting state and retries until 200; visitors unaffected (not in their path) |
+| #   | System                             | Direction / purpose                                                                      | On failure                                                                                                                                                                                                                                                                                                                                        |
+| --- | ---------------------------------- | ---------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | Supabase Postgres                  | ISR pages read inventory at render/revalidate time (anon `SELECT`); backend reads/writes | Public: serve last-known-good cache (T1); no error page while cache exists. Admin write: 503 `db-unavailable`, named message; no partial writes (single transaction)                                                                                                                                                                              |
+| 2   | Supabase Auth                      | Session issuance/verification                                                            | Invalid sessions → 401/403 per §4; login unavailable → Supabase-side error surfaced by the auth UI                                                                                                                                                                                                                                                |
+| 3   | Cloudflare R2                      | Image reads (public bucket); writes/deletes (presigned URLs from Render — T5)            | Read failure → gallery placeholder (PRD FR-1.5). Write failure → 502 `r2-write-failed`; item row unaffected                                                                                                                                                                                                                                       |
+| 4   | Vercel `/api/revalidate` (inbound) | Render notifies cache invalidation after every write                                     | Non-2xx is logged by Render. **No retry loop is required for correctness**: the 60 s time-based ISR fallback (I5/T1) converges content regardless. Vercel's 120 s proxied external-request timeout (I8) comfortably covers a single revalidate call                                                                                               |
+| 5   | Gmail REST API                     | Send admin-invite emails (§8)                                                            | 4xx/5xx → 502 `gmail-send-failed`; invite row not marked sent; admin may retry (FR-7.5)                                                                                                                                                                                                                                                           |
+| 6   | GitHub Actions                     | Daily heartbeat (§9)                                                                     | Missed runs → Supabase may pause after 7 days (I9); recovery is manual (dashboard activity / Supabase resume). Alerting on cron failure → `docs/CICD.md` §2 (GitHub's default workflow-failure email is the confirmed baseline); anything beyond it: **TBD — [blocking: user decision, HB-07; trigger: before v1 launch or explicitly declined]** |
+| 7   | Google Sheets + Apps Script        | One-time bootstrap import (manifest item 10)                                             | Import failure → re-run script; no runtime dependency exists post-import (Sheet retired, D3)                                                                                                                                                                                                                                                      |
+| 8   | Render cold start                  | Admin UI calls after ≥15 min idle                                                        | ~1 min spin-up accepted (I11); admin UI shows a waiting state and retries until 200; visitors unaffected (not in their path)                                                                                                                                                                                                                      |
 
 ## 6. Read/Write Path & Content Freshness (Option C hybrid — D3, I5)
 
 Numbered write-to-visitor flow:
 
 1. Admin saves a change in the admin UI (Vercel-hosted) → HTTPS request to Render backend with the admin's Supabase session JWT.
-2. Render verifies the JWT server-side (T2), authorises via the admin claim, validates payload (e.g. condition enum → 409), and writes to Supabase Postgres in one transaction, setting `updated_at`/`updated_by` (I14). *(Item-image writes additionally run the §7 pipeline before the row's `image_keys` update.)*
+2. Render verifies the JWT server-side (T2), authorises via the admin claim, validates payload (e.g. condition enum → 409), and writes to Supabase Postgres in one transaction, setting `updated_at`/`updated_by` (I14). _(Item-image writes additionally run the §7 pipeline before the row's `image_keys` update.)_
 3. Render responds 2xx to the admin UI.
 4. Render **pushes** `POST https://<vercel>/api/revalidate` with the shared secret (T6) for the affected paths.
 5. Vercel validates the secret (401 invalid / 500 missing env var), then marks those ISR paths stale.
@@ -226,15 +226,15 @@ GitHub Actions runs a **daily cron** (exact schedule time set in the workflow fi
 
 ## 10. Secrets Inventory (T7 — env vars only; never in client bundles, never in the repo)
 
-| Secret | Stored on | Read by | Notes |
-|---|---|---|---|
-| `SUPABASE_URL` | Vercel + Render | ISR page renders; backend | Non-secret identifier |
-| `SUPABASE_ANON_KEY` | Vercel | ISR public reads | Publishable by design (anon, RLS-scoped) |
-| `SUPABASE_SERVICE_ROLE_KEY` | **Render only** | Invite acceptance / admin provisioning (§8) | Bypasses RLS; must never reach Vercel or the client |
-| `SUPABASE_JWT_SECRET` (or JWKS fetch config) | Render | Server-side session verification (T2) | |
-| `R2_ACCOUNT_ID` / `R2_ACCESS_KEY_ID` / `R2_SECRET_ACCESS_KEY` | **Render only** | Presigned write URLs, image deletes (T5) | Public **reads** need no key (public bucket) |
-| `REVALIDATE_SECRET` | Vercel + Render | Webhook validation (Vercel); webhook signing (Render) | T6; missing on Vercel → 500 branch (§4) |
-| `GMAIL_*` (client id/secret/refresh-token **or** app password, per OR-4) | **Render only** | Gmail REST client (§8) | Mode TBD (OR-4) |
+| Secret                                                                   | Stored on       | Read by                                               | Notes                                               |
+| ------------------------------------------------------------------------ | --------------- | ----------------------------------------------------- | --------------------------------------------------- |
+| `SUPABASE_URL`                                                           | Vercel + Render | ISR page renders; backend                             | Non-secret identifier                               |
+| `SUPABASE_ANON_KEY`                                                      | Vercel          | ISR public reads                                      | Publishable by design (anon, RLS-scoped)            |
+| `SUPABASE_SERVICE_ROLE_KEY`                                              | **Render only** | Invite acceptance / admin provisioning (§8)           | Bypasses RLS; must never reach Vercel or the client |
+| `SUPABASE_JWT_SECRET` (or JWKS fetch config)                             | Render          | Server-side session verification (T2)                 |                                                     |
+| `R2_ACCOUNT_ID` / `R2_ACCESS_KEY_ID` / `R2_SECRET_ACCESS_KEY`            | **Render only** | Presigned write URLs, image deletes (T5)              | Public **reads** need no key (public bucket)        |
+| `REVALIDATE_SECRET`                                                      | Vercel + Render | Webhook validation (Vercel); webhook signing (Render) | T6; missing on Vercel → 500 branch (§4)             |
+| `GMAIL_*` (client id/secret/refresh-token **or** app password, per OR-4) | **Render only** | Gmail REST client (§8)                                | Mode TBD (OR-4)                                     |
 
 Transport everywhere is TLS 1.2+ (T8; all five platforms default HTTPS). Full secret-handling controls: `docs/SECURITY.md` (later batch).
 
@@ -265,19 +265,19 @@ Transport everywhere is TLS 1.2+ (T8; all five platforms default HTTPS). Full se
 
 **Closure note (2026-10-13):** OR-2 and OR-8 were closed by the Major Design Phase and are marked **Closed** below (evidence: `docs/EXECUTION_HANDBOOK.md` §9 closed table). OR-1 and OR-3…OR-7 are carried forward unchanged.
 
-| # | PRD open risk | TRD resolution | Status |
-|---|---|---|---|
-| OR-1 | Export column set | Floor fixed (§4 export rows; name, condition, quantity, `updated_at`, `updated_by`). Full set: **TBD — [blocking: user/department COREN confirmation]**; owner: user; trigger: before export implementation | Carried forward |
-| OR-2 | Final route map | Closed by Design Phase: the 10 fixed public/admin routes are listed in §4 (D-019; `design/01-research/ia.md`) | **Closed** (2026-10-13) |
-| OR-3 | Room-view semantics vs missing `room` field | v1 implementation treats the room view as the **whole single Smart Class collection** (no `room` column in the D3 field set). If the user confirms multiple rooms/locations exist, a `room` column + route change is a schema-affecting scope change: **TBD — [blocking: user confirmation]**; trigger: before schema freeze (§3.2) | Carried forward |
-| OR-4 | Gmail credential mode | Either mode works over HTTPS (§8); choice: **TBD — [blocking: user decision]**; trigger: before invite implementation | Carried forward |
-| OR-5 | Rendition set / post-clamp oversize behaviour | Pipeline contract fixed (§7); rendition granularity and rejection-vs-further-compression: **TBD — [blocking: implementation spike against I4]** | Carried forward |
-| OR-6 | Version pins + local-dev parity | §1.3/§1.4 constraints fixed (Node backend, env-var config, same Docker image); exact pins: **TBD — [blocking: implementation kickoff]** | Carried forward |
-| OR-7 | Invite-link lifetime | Single-use enforced via `token_hash` (§8); time-bounded expiry: **TBD — [blocking: `docs/SECURITY.md`]**; trigger: before v1 launch | Carried forward to Security doc |
-| OR-8 | Carousel cadence | Closed by Design Phase: 6000 ms auto-advance + reduced-motion kill (§11; `design/03-foundations/motion.md`, C-016) | **Closed** (2026-10-13) |
+| #    | PRD open risk                                 | TRD resolution                                                                                                                                                                                                                                                                                                                      | Status                          |
+| ---- | --------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------- |
+| OR-1 | Export column set                             | Floor fixed (§4 export rows; name, condition, quantity, `updated_at`, `updated_by`). Full set: **TBD — [blocking: user/department COREN confirmation]**; owner: user; trigger: before export implementation                                                                                                                         | Carried forward                 |
+| OR-2 | Final route map                               | Closed by Design Phase: the 10 fixed public/admin routes are listed in §4 (D-019; `design/01-research/ia.md`)                                                                                                                                                                                                                       | **Closed** (2026-10-13)         |
+| OR-3 | Room-view semantics vs missing `room` field   | v1 implementation treats the room view as the **whole single Smart Class collection** (no `room` column in the D3 field set). If the user confirms multiple rooms/locations exist, a `room` column + route change is a schema-affecting scope change: **TBD — [blocking: user confirmation]**; trigger: before schema freeze (§3.2) | Carried forward                 |
+| OR-4 | Gmail credential mode                         | Either mode works over HTTPS (§8); choice: **TBD — [blocking: user decision]**; trigger: before invite implementation                                                                                                                                                                                                               | Carried forward                 |
+| OR-5 | Rendition set / post-clamp oversize behaviour | Pipeline contract fixed (§7); rendition granularity and rejection-vs-further-compression: **TBD — [blocking: implementation spike against I4]**                                                                                                                                                                                     | Carried forward                 |
+| OR-6 | Version pins + local-dev parity               | §1.3/§1.4 constraints fixed (Node backend, env-var config, same Docker image); exact pins: **TBD — [blocking: implementation kickoff]**                                                                                                                                                                                             | Carried forward                 |
+| OR-7 | Invite-link lifetime                          | Single-use enforced via `token_hash` (§8); time-bounded expiry: **TBD — [blocking: `docs/SECURITY.md`]**; trigger: before v1 launch                                                                                                                                                                                                 | Carried forward to Security doc |
+| OR-8 | Carousel cadence                              | Closed by Design Phase: 6000 ms auto-advance + reduced-motion kill (§11; `design/03-foundations/motion.md`, C-016)                                                                                                                                                                                                                  | **Closed** (2026-10-13)         |
 
 ---
 
-**Conditional sections (schema-trd):** *Domain-Specific Pipeline* — **triggered**, rendered as §7 (images are a core input modality). *RAG Ingestion & Retrieval*, *Agentic Tooling* — **not triggered** (D5: no AI, no models, no agentic loops). *External Registry / Directory Integration* — **not triggered** (the Google Sheet is a one-time import source, retired after v1; no ongoing authoritative external dataset).
+**Conditional sections (schema-trd):** _Domain-Specific Pipeline_ — **triggered**, rendered as §7 (images are a core input modality). _RAG Ingestion & Retrieval_, _Agentic Tooling_ — **not triggered** (D5: no AI, no models, no agentic loops). _External Registry / Directory Integration_ — **not triggered** (the Google Sheet is a one-time import source, retired after v1; no ongoing authoritative external dataset).
 
 **Source-of-truth statement (contract-mandated):** Supabase Postgres is the source of truth for all inventory data post-import. The Google Sheet is retired once the v1 import completes (D3).

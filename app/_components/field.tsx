@@ -27,18 +27,33 @@ export interface FieldProps {
   className?: string;
 }
 
-export function Field({ label, required, help, error, children, className }: FieldProps) {
+export function Field({
+  label,
+  required,
+  help,
+  error,
+  children,
+  className,
+}: FieldProps) {
   const uid = React.useId();
   const id = `${uid}-control`;
   const helpId = `${uid}-help`;
   const errorId = `${uid}-error`;
   const invalid = Boolean(error);
 
-  const describedParts = [help ? helpId : null, invalid ? errorId : null].filter(Boolean);
-  const describedBy = describedParts.length > 0 ? describedParts.join(' ') : undefined;
+  const describedParts = [
+    help ? helpId : null,
+    invalid ? errorId : null,
+  ].filter(Boolean);
+  const describedBy =
+    describedParts.length > 0 ? describedParts.join(' ') : undefined;
 
   return (
-    <div className={['field flex flex-col gap-2', className].filter(Boolean).join(' ')}>
+    <div
+      className={['field flex flex-col gap-2', className]
+        .filter(Boolean)
+        .join(' ')}
+    >
       <div className="flex flex-wrap items-baseline gap-2">
         <label htmlFor={id} className="text-base font-medium text-fg-default">
           {label}

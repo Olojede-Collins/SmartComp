@@ -43,14 +43,14 @@ applying `0007_rls.up.sql`.
 
 ## Contents
 
-| Version | Name | Purpose |
-| ------- | ---- | ------- |
-| 0001 | condition_enum | `condition_enum` type (D1; PRD FR-2.1) |
-| 0002 | admins | Admin accounts linked to `auth.users` |
-| 0003 | equipment | Core inventory table (D3; C5/C2/I14) |
-| 0004 | admin_invites | Single-use invite tokens (FR-7) |
-| 0005 | audit_log | Append-only audit trail (C2) |
-| 0006 | indexes | `equipment.updated_at DESC`, `audit_log.created_at` |
-| 0007 | rls | RLS enable + 7 policies + anon/append-only revokes (§3.3) |
+| Version | Name           | Purpose                                                   |
+| ------- | -------------- | --------------------------------------------------------- |
+| 0001    | condition_enum | `condition_enum` type (D1; PRD FR-2.1)                    |
+| 0002    | admins         | Admin accounts linked to `auth.users`                     |
+| 0003    | equipment      | Core inventory table (D3; C5/C2/I14)                      |
+| 0004    | admin_invites  | Single-use invite tokens (FR-7)                           |
+| 0005    | audit_log      | Append-only audit trail (C2)                              |
+| 0006    | indexes        | `equipment.updated_at DESC`, `audit_log.created_at`       |
+| 0007    | rls            | RLS enable + 7 policies + anon/append-only revokes (§3.3) |
 
 TBD register, open observations, and post-apply probes: **MIGRATION_NOTES.md**.

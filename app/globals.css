@@ -106,7 +106,9 @@
   --color-border-status-working: var(--color-border-status-working);
   --color-border-status-faulty: var(--color-border-status-faulty);
   --color-border-status-maintenance: var(--color-border-status-maintenance);
-  --color-border-status-decommissioned: var(--color-border-status-decommissioned);
+  --color-border-status-decommissioned: var(
+    --color-border-status-decommissioned
+  );
 
   --font-sans: var(--font-family-sans);
   --font-mono: var(--font-family-mono);

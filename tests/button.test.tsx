@@ -14,11 +14,11 @@ describe('C-005/006/007 Button', () => {
   it('primary (default) variant carries the primary class stack', () => {
     render(<Button>Save item</Button>);
     const btn = screen.getByRole('button', { name: 'Save item' });
-    expect(btn.className).toContain('bg-action');
+    expect(btn.className).toContain('bg-bg-action');
     expect(btn.className).toContain('text-fg-on-action');
     expect(btn.className).toContain('min-h-12'); // 48px
-    expect(btn.className).toContain('px-5');     // space-5
-    expect(btn.className).toContain('py-4');     // space-4
+    expect(btn.className).toContain('px-5'); // space-5
+    expect(btn.className).toContain('py-4'); // space-4
     expect(btn.className).toContain('rounded-md');
     expect(btn.className).toContain('border');
     expect(btn.className).toContain('font-semibold');
@@ -45,7 +45,7 @@ describe('C-005/006/007 Button', () => {
     render(<Button disabled>Save item</Button>);
     const btn = screen.getByRole('button', { name: 'Save item' });
     expect(btn.hasAttribute('disabled')).toBe(true);
-    expect(btn.className).toContain('bg-disabled');
+    expect(btn.className).toContain('bg-bg-disabled');
     expect(btn.className).toContain('text-fg-disabled');
     expect(btn.className).toContain('border-disabled');
     expect(btn.className).toContain('shadow-none');
@@ -75,7 +75,7 @@ describe('C-005/006/007 Button', () => {
   it('danger variant pairs bg-danger / fg-on-danger with faulty hover', () => {
     render(<Button variant="danger">Delete item</Button>);
     const btn = screen.getByRole('button', { name: 'Delete item' });
-    expect(btn.className).toContain('bg-danger');
+    expect(btn.className).toContain('bg-bg-danger');
     expect(btn.className).toContain('text-fg-on-danger');
     expect(btn.className).toContain('hover:bg-accent-faulty-600');
   });
@@ -95,7 +95,11 @@ describe('C-005/006/007 Button', () => {
   });
 
   it('spreads extra props (type, aria-label) onto the native button', () => {
-    render(<Button type="submit" aria-label="Delete Monitors">Delete</Button>);
+    render(
+      <Button type="submit" aria-label="Delete Monitors">
+        Delete
+      </Button>,
+    );
     const btn = screen.getByRole('button', { name: 'Delete Monitors' });
     expect(btn.getAttribute('type')).toBe('submit');
   });

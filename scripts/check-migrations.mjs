@@ -28,12 +28,7 @@ export function checkMigrations(rootDir) {
     .sort();
 
   if (sqlFiles.length === 0) {
-    push(
-      violations,
-      dir,
-      'empty',
-      `no migration .sql files found in ${dir}`,
-    );
+    push(violations, dir, 'empty', `no migration .sql files found in ${dir}`);
     return violations;
   }
 

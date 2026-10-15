@@ -20,10 +20,14 @@ describe('C-027 Icon', () => {
 
   it('applies size-5 (20px) by default and size-4 (16px) when size=16', () => {
     const big = render(<Icon name="circle-solid" />);
-    expect(big.container.querySelector('svg')!.className.baseVal).toContain('size-5');
+    expect(big.container.querySelector('svg')!.className.baseVal).toContain(
+      'size-5',
+    );
     big.unmount();
     const small = render(<Icon name="circle-solid" size={16} />);
-    expect(small.container.querySelector('svg')!.className.baseVal).toContain('size-4');
+    expect(small.container.querySelector('svg')!.className.baseVal).toContain(
+      'size-4',
+    );
   });
 
   it('renders the circle-solid path with fill=currentColor (I-01 is the only filled mark)', () => {
@@ -47,9 +51,18 @@ describe('C-027 Icon', () => {
 
   it('exposes all twelve names in the typed map', () => {
     const names = [
-      'circle-solid', 'triangle-alert', 'spanner', 'minus-circle',
-      'plus', 'chevron-left', 'chevron-right', 'image-off',
-      'download', 'trash', 'alert-banner', 'empty-register',
+      'circle-solid',
+      'triangle-alert',
+      'spanner',
+      'minus-circle',
+      'plus',
+      'chevron-left',
+      'chevron-right',
+      'image-off',
+      'download',
+      'trash',
+      'alert-banner',
+      'empty-register',
     ] as const;
     for (const name of names) {
       const { container, unmount } = render(<Icon name={name} />);

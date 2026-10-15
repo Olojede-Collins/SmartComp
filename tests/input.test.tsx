@@ -68,7 +68,15 @@ describe('C-008 Input', () => {
   });
 
   it('spreads type, name, autoComplete and controlled props', () => {
-    render(<Input aria-label="Email" type="email" name="email" autoComplete="email" defaultValue="a@b.c" />);
+    render(
+      <Input
+        aria-label="Email"
+        type="email"
+        name="email"
+        autoComplete="email"
+        defaultValue="a@b.c"
+      />,
+    );
     const input = screen.getByLabelText('Email');
     expect(input.getAttribute('type')).toBe('email');
     expect(input.getAttribute('name')).toBe('email');
