@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { cn } from '@/lib/utils';
 
 /**
  * C-027 · Icon set (I-01 … I-12).
