@@ -14,7 +14,10 @@ function getAllFiles(dir, fileList = []) {
         getAllFiles(filePath, fileList);
       }
     } else {
-      fileList.push(filePath);
+      const ext = path.extname(file);
+      if (['.css', '.tsx', '.ts'].includes(ext)) {
+        fileList.push(filePath);
+      }
     }
   });
   return fileList;
