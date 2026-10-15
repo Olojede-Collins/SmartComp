@@ -1,13 +1,18 @@
 import * as fs from 'fs';
 import * as path from 'path';
 
+const EXCLUDED_DIRS = new Set(['node_modules', '.git', '.agent', '.opencode', 'dist']);
+
 function getAllFiles(dir, fileList = []) {
   if (!fs.existsSync(dir)) return fileList;
+  if (EXCLUDED_DIRS.has(path.basename(dir))) return fileList;
   const files = fs.readdirSync(dir);
   files.forEach(file => {
     const filePath = path.join(dir, file);
     if (fs.statSync(filePath).isDirectory()) {
-      getAllFiles(filePath, fileList);
+      if (!EXCLUDED_DIRS.has(file)) {
+        getAllFiles(filePath, fileList);
+      }
     } else {
       fileList.push(filePath);
     }
