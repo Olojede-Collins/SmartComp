@@ -11,13 +11,12 @@ describe('C-003 RailNavLink', () => {
     const link = screen.getByRole('link', { name: 'Items' });
     expect(link.tagName).toBe('A');
     expect(link.getAttribute('href')).toBe('/items');
-    expect(link.className).toContain('text-sm');
+    expect(link.className).toContain('text-body-small');
     expect(link.className).toContain('text-fg-on-rail-muted');
     expect(link.className).toContain('border-b-3');
     expect(link.className).toContain('border-transparent');
     expect(link.className).toContain('min-h-11');
     expect(link.className).toContain('px-1');
-    // text-decoration:none ships (preview line 73); no pill bg
     expect(link.className).toContain('no-underline');
     expect(link.className).not.toMatch(/rounded/);
     expect(container.querySelector('svg')).toBeNull();
@@ -57,7 +56,6 @@ describe('C-003 RailNavLink', () => {
       'focus-visible:outline-border-focus-on-rail',
     );
     expect(link.className).toContain('focus-visible:outline-3');
-    // never the default focus token (must not end at border-focus without -on-rail)
     expect(link.className).not.toMatch(
       /focus-visible:outline-border-focus(?!\-on\-rail)/,
     );

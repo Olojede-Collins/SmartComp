@@ -29,10 +29,10 @@ describe('C-009 Select', () => {
     const sel = screen.getByLabelText('Condition');
     expect(sel.className).toContain('appearance-none');
     expect(sel.className).toContain('min-h-11');
-    expect(sel.className).toContain('border-strong');
-    expect(sel.className).toContain('bg-surface');
+    expect(sel.className).toContain('border-border-strong');
+    expect(sel.className).toContain('bg-bg-surface');
     expect(sel.className).toContain('pl-4');
-    expect(sel.className).toContain('pr-7'); // space-7 clears the chevron
+    expect(sel.className).toContain('pr-7');
   });
 
   it('renders all four options in FR-2.1 order', () => {
@@ -64,8 +64,7 @@ describe('C-009 Select', () => {
     expect(chev.getAttribute('class')).toContain('text-fg-muted');
     expect(chev.getAttribute('class')).toContain('absolute');
     expect(chev.getAttribute('class')).toContain('right-4');
-    expect(chev.getAttribute('class')).toContain('size-4'); // 16px
-    // Shipped select chevron path (down-chevron, 5â†’10â†’15)
+    expect(chev.getAttribute('class')).toContain('size-4');
     const path = chev.querySelector('path')!;
     expect(path.getAttribute('d')).toBe('M5 8l5 5 5-5');
   });
@@ -81,9 +80,9 @@ describe('C-009 Select', () => {
     render(<Select aria-label="Condition" disabled />);
     const sel = screen.getByLabelText('Condition');
     expect(sel.hasAttribute('disabled')).toBe(true);
-    expect(sel.className).toContain('disabled:bg-disabled');
+    expect(sel.className).toContain('disabled:bg-bg-disabled');
     expect(sel.className).toContain('disabled:text-fg-disabled');
-    expect(sel.className).toContain('disabled:border-disabled');
+    expect(sel.className).toContain('disabled:border-border-disabled');
   });
 
   it('focus-visible uses the token outline ring', () => {

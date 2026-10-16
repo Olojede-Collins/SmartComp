@@ -205,13 +205,16 @@
   --duration-fast: var(--motion-duration-fast);
   --duration-base: var(--motion-duration-base);
   --duration-slow: var(--motion-duration-slow);
+  --transition-duration-fast: var(--motion-duration-fast);
+  --transition-duration-base: var(--motion-duration-base);
+  --transition-duration-slow: var(--motion-duration-slow);
   --ease-standard: var(--motion-easing-standard);
 
-  --z-base: var(--zIndex-base);
-  --z-sticky: var(--zIndex-sticky);
-  --z-rail: var(--zIndex-rail);
-  --z-overlay: var(--zIndex-overlay);
-  --z-modal: var(--zIndex-modal);
+  --z-index-base: var(--zIndex-base);
+  --z-index-sticky: var(--zIndex-sticky);
+  --z-index-rail: var(--zIndex-rail);
+  --z-index-overlay: var(--zIndex-overlay);
+  --z-index-modal: var(--zIndex-modal);
 }
 
 :root {

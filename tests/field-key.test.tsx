@@ -9,9 +9,9 @@ describe('C-024 FieldKey', () => {
     const key = screen.getByText('RECORD');
     expect(key.tagName).toBe('SPAN');
     expect(key.className).toContain('block');
-    expect(key.className).toContain('text-xs'); // micro (11px base with tracking)
+    expect(key.className).toContain('text-xs');
     expect(key.className).toContain('font-medium');
-    expect(key.className).toContain('tracking-caps'); // 0.14em
+    expect(key.className).toContain('tracking-caps');
     expect(key.className).toContain('text-fg-muted');
   });
 

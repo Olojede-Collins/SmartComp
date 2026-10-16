@@ -8,15 +8,18 @@ describe('C-011 ConditionChip', () => {
     const { container } = render(<ConditionChip condition="Working" />);
     const chip = container.querySelector('.chip')!;
     expect(chip.className).toContain('chip--working');
-    expect(chip.className).toContain('bg-status-working');
-    expect(chip.className).toContain('border-status-working');
+    expect(chip.className).toContain('bg-bg-status-working');
+    expect(chip.className).toContain('border-border-status-working');
     expect(chip.className).toContain('text-fg-status-working');
-    expect(chip.className).toContain('min-h-6'); // 32px
+    expect(chip.className).toContain('min-h-6');
     expect(chip.className).toContain('rounded-sm');
+    expect(chip.className).toContain('text-micro');
+    expect(chip.className).toContain('tracking-micro');
+    expect(chip.className).not.toContain('text-xs');
     expect(screen.getByText('Working')).toBeTruthy();
     const svg = container.querySelector('svg')!;
     expect(svg.getAttribute('viewBox')).toBe('0 0 20 20');
-    expect(svg.className.baseVal).toContain('size-5'); // 20px shipped
+    expect(svg.className.baseVal).toContain('size-5');
     expect(svg.getAttribute('aria-hidden')).toBe('true');
     expect(container.querySelector('circle')!.getAttribute('r')).toBe('4.25');
   });
@@ -25,7 +28,8 @@ describe('C-011 ConditionChip', () => {
     const { container } = render(<ConditionChip condition="Faulty" />);
     const chip = container.querySelector('.chip')!;
     expect(chip.className).toContain('chip--faulty');
-    expect(chip.className).toContain('bg-status-faulty');
+    expect(chip.className).toContain('bg-bg-status-faulty');
+    expect(chip.className).toContain('border-border-status-faulty');
     expect(chip.className).toContain('text-fg-status-faulty');
     expect(screen.getByText('Faulty')).toBeTruthy();
     expect(container.querySelector('path')!.getAttribute('d')).toContain(
@@ -39,7 +43,9 @@ describe('C-011 ConditionChip', () => {
     );
     const chip = container.querySelector('.chip')!;
     expect(chip.className).toContain('chip--maintenance');
-    expect(chip.className).toContain('bg-status-maintenance');
+    expect(chip.className).toContain('bg-bg-status-maintenance');
+    expect(chip.className).toContain('border-border-status-maintenance');
+    expect(chip.className).toContain('text-fg-status-maintenance');
     expect(screen.getByText('Under Maintenance')).toBeTruthy();
     expect(container.querySelector('svg')).toBeTruthy();
   });
@@ -48,7 +54,9 @@ describe('C-011 ConditionChip', () => {
     const { container } = render(<ConditionChip condition="Decommissioned" />);
     const chip = container.querySelector('.chip')!;
     expect(chip.className).toContain('chip--decommissioned');
-    expect(chip.className).toContain('bg-status-decommissioned');
+    expect(chip.className).toContain('bg-bg-status-decommissioned');
+    expect(chip.className).toContain('border-border-status-decommissioned');
+    expect(chip.className).toContain('text-fg-status-decommissioned');
     expect(screen.getByText('Decommissioned')).toBeTruthy();
     expect(container.querySelector('circle')).toBeTruthy();
   });
@@ -61,8 +69,8 @@ describe('C-011 ConditionChip', () => {
     expect(chip.className).not.toMatch(
       /chip--(working|faulty|maintenance|decommissioned)/,
     );
-    expect(chip.className).toContain('bg-surface');
-    expect(chip.className).toContain('border-rule');
+    expect(chip.className).toContain('bg-bg-surface');
+    expect(chip.className).toContain('border-border-rule');
     expect(chip.className).toContain('text-fg-default');
     expect(screen.getByText('Needs repair')).toBeTruthy();
   });

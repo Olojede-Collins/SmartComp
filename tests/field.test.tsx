@@ -37,10 +37,9 @@ describe('C-010 Field', () => {
     );
     const marker = screen.getByText('(required)');
     expect(marker.tagName).toBe('SPAN');
-    expect(marker.className).toContain('text-xs'); // micro
+    expect(marker.className).toContain('text-micro');
     expect(marker.className).toContain('tracking-caps');
     expect(marker.className).toContain('text-fg-muted');
-    // No CSS uppercase on the marker itself â€” the word is authored in source.
     expect(marker.className).not.toMatch(/uppercase/i);
   });
 
@@ -67,6 +66,8 @@ describe('C-010 Field', () => {
     );
     const help = screen.getByText('As it appears on the asset tag.');
     expect(help.tagName).toBe('P');
+    expect(help.className).toContain('text-caption');
+    expect(help.className).toContain('text-fg-muted');
     const input = screen.getByLabelText('Item name');
     expect(input.getAttribute('aria-describedby')).toContain(help.id);
   });
@@ -89,11 +90,12 @@ describe('C-010 Field', () => {
     );
     const err = screen.getByRole('alert');
     expect(err.tagName).toBe('P');
+    expect(err.className).toContain('text-caption');
     expect(err.className).toContain('text-fg-status-faulty');
     expect(err.textContent).toContain('409 condition-enum-invalid');
     const ico = err.querySelector('svg')!;
     expect(ico.getAttribute('viewBox')).toBe('0 0 20 20');
-    expect(ico.className.baseVal).toContain('size-4'); // 16px
+    expect(ico.className.baseVal).toContain('size-4');
     const input = screen.getByLabelText('Condition');
     expect(input.getAttribute('aria-invalid')).toBe('true');
     expect(input.getAttribute('aria-describedby')).toContain(err.id);
@@ -141,5 +143,34 @@ describe('C-010 Field', () => {
       </Field>,
     );
     expect(spy).toHaveBeenCalledWith(false);
+  });
+
+  it('disabled mutes the label and is passed through to children (SP-6)', () => {
+    const spy = vi.fn();
+    render(
+      <Field label="Item name" disabled>
+        {({ id, disabled }) => {
+          spy(disabled);
+          return <Input id={id} aria-label="Item name" disabled={disabled} />;
+        }}
+      </Field>,
+    );
+    const label = screen.getByText('Item name');
+    expect(label.className).toContain('text-fg-muted');
+    expect(label.className).not.toContain('text-fg-default');
+    expect(spy).toHaveBeenCalledWith(true);
+    const input = screen.getByLabelText('Item name');
+    expect(input.hasAttribute('disabled')).toBe(true);
+  });
+
+  it('label keeps fg-default when not disabled', () => {
+    render(
+      <Field label="Item name">
+        {({ id }) => <Input id={id} aria-label="Item name" />}
+      </Field>,
+    );
+    const label = screen.getByText('Item name');
+    expect(label.className).toContain('text-fg-default');
+    expect(label.className).not.toContain('text-fg-muted');
   });
 });

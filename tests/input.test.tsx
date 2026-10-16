@@ -9,13 +9,13 @@ describe('C-008 Input', () => {
     const input = screen.getByLabelText('Item name');
     expect(input.tagName).toBe('INPUT');
     expect(input.className).toContain('w-full');
-    expect(input.className).toContain('min-h-11'); // 44px
+    expect(input.className).toContain('min-h-11');
     expect(input.className).toContain('px-4');
     expect(input.className).toContain('py-3');
-    expect(input.className).toContain('bg-surface');
+    expect(input.className).toContain('bg-bg-surface');
     expect(input.className).toContain('text-fg-default');
     expect(input.className).toContain('border');
-    expect(input.className).toContain('border-strong');
+    expect(input.className).toContain('border-border-strong');
     expect(input.className).toContain('rounded-md');
   });
 
@@ -44,9 +44,9 @@ describe('C-008 Input', () => {
     render(<Input aria-label="Item name" disabled />);
     const input = screen.getByLabelText('Item name');
     expect(input.hasAttribute('disabled')).toBe(true);
-    expect(input.className).toContain('disabled:bg-disabled');
+    expect(input.className).toContain('disabled:bg-bg-disabled');
     expect(input.className).toContain('disabled:text-fg-disabled');
-    expect(input.className).toContain('disabled:border-disabled');
+    expect(input.className).toContain('disabled:border-border-disabled');
     expect(input.className).not.toMatch(/opacity/i);
   });
 
@@ -55,16 +55,16 @@ describe('C-008 Input', () => {
     const input = screen.getByLabelText('Record');
     expect(input.hasAttribute('readonly')).toBe(true);
     expect(input.hasAttribute('disabled')).toBe(false);
-    expect(input.className).toContain('read-only:bg-disabled');
+    expect(input.className).toContain('read-only:bg-bg-disabled');
     expect(input.className).toContain('read-only:text-fg-disabled');
-    expect(input.className).toContain('read-only:border-disabled');
+    expect(input.className).toContain('read-only:border-border-disabled');
   });
 
   it('number variant adds inputmode=numeric and the 10em cap', () => {
     render(<Input aria-label="Quantity" variant="number" />);
     const input = screen.getByLabelText('Quantity');
     expect(input.getAttribute('inputmode')).toBe('numeric');
-    expect(input.className).toContain('max-w-40'); // 160px = 10em
+    expect(input.className).toContain('max-w-40');
   });
 
   it('spreads type, name, autoComplete and controlled props', () => {
@@ -83,6 +83,16 @@ describe('C-008 Input', () => {
     expect(input.getAttribute('autocomplete')).toBe('email');
     expect((input as HTMLInputElement).value).toBe('a@b.c');
   });
+
+  it('password variant keeps type=password and does not echo the value', () => {
+    render(
+      <Input aria-label="Password" variant="password" defaultValue="s3cret" />,
+    );
+    const input = screen.getByLabelText('Password') as HTMLInputElement;
+    expect(input.getAttribute('type')).toBe('password');
+    expect(input.value).toBe('s3cret');
+    expect(screen.queryByText('s3cret')).toBeNull();
+  });
 });
 
 describe('C-008 Textarea', () => {
@@ -90,7 +100,7 @@ describe('C-008 Textarea', () => {
     render(<Textarea aria-label="Description" />);
     const ta = screen.getByLabelText('Description');
     expect(ta.tagName).toBe('TEXTAREA');
-    expect(ta.className).toContain('min-h-32'); // 128px = 8em
+    expect(ta.className).toContain('min-h-32');
     expect(ta.className).toContain('resize-y');
     expect(ta.className).toContain('w-full');
     expect(ta.className).toContain('px-4');
@@ -108,8 +118,8 @@ describe('C-008 Textarea', () => {
     render(<Textarea aria-label="Description" disabled />);
     const ta = screen.getByLabelText('Description');
     expect(ta.hasAttribute('disabled')).toBe(true);
-    expect(ta.className).toContain('disabled:bg-disabled');
+    expect(ta.className).toContain('disabled:bg-bg-disabled');
     expect(ta.className).toContain('disabled:text-fg-disabled');
-    expect(ta.className).toContain('disabled:border-disabled');
+    expect(ta.className).toContain('disabled:border-border-disabled');
   });
 });

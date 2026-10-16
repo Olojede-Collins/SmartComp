@@ -3,7 +3,7 @@ import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '../../lib/utils';
 
 const inputVariants = cva(
-  'w-full min-h-11 px-4 py-3 rounded-md border border-strong bg-surface text-fg-default font-sans text-base placeholder:text-fg-placeholder-text aria-invalid:border-border-error disabled:bg-disabled disabled:text-fg-disabled disabled:border-disabled disabled:cursor-not-allowed read-only:bg-disabled read-only:text-fg-disabled read-only:border-disabled focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-border-focus',
+  'w-full min-h-11 px-4 py-3 rounded-md border border-border-strong bg-bg-surface text-fg-default font-sans text-base placeholder:text-fg-placeholder-text aria-invalid:border-border-error disabled:bg-bg-disabled disabled:text-fg-disabled disabled:border-border-disabled disabled:cursor-not-allowed read-only:bg-bg-disabled read-only:text-fg-disabled read-only:border-border-disabled focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-border-focus',
   {
     variants: {
       variant: {
@@ -60,7 +60,7 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
       <textarea
         ref={ref}
         className={cn(
-          'w-full min-h-11 px-4 py-3 rounded-md border border-strong bg-surface text-fg-default font-sans text-base placeholder:text-fg-placeholder-text aria-invalid:border-border-error disabled:bg-disabled disabled:text-fg-disabled disabled:border-disabled disabled:cursor-not-allowed read-only:bg-disabled read-only:text-fg-disabled read-only:border-disabled focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-border-focus min-h-32 resize-y',
+          'w-full min-h-11 px-4 py-3 rounded-md border border-border-strong bg-bg-surface text-fg-default font-sans text-base placeholder:text-fg-placeholder-text aria-invalid:border-border-error disabled:bg-bg-disabled disabled:text-fg-disabled disabled:border-border-disabled disabled:cursor-not-allowed read-only:bg-bg-disabled read-only:text-fg-disabled read-only:border-border-disabled focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-border-focus min-h-32 resize-y',
           className,
         )}
         {...props}

@@ -1,12 +1,5 @@
 import * as React from 'react';
 
-/**
- * Skip link (frozen `.skip` pattern from every P4 preview).
- * Offscreen at top:-64px (calc(space-4 * -4)); :focus — not :focus-visible — snaps it to
- * top-4 so keyboard tab reveals it. Surface card with border-strong and radius-md.
- * First focusable element in the DOM; targets #main (the page main landmark id).
- */
-
 export interface SkipLinkProps extends Omit<
   React.AnchorHTMLAttributes<HTMLAnchorElement>,
   'className' | 'href'
@@ -26,7 +19,7 @@ export function SkipLink({
       href={href}
       className={[
         'absolute left-4 -top-16 z-overlay',
-        'bg-surface text-fg-default border border-border-strong rounded-md py-3 px-4',
+        'bg-bg-surface text-fg-default border border-border-strong rounded-md py-3 px-4',
         'focus:top-4',
         className,
       ]

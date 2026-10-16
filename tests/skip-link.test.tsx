@@ -17,7 +17,7 @@ describe('SkipLink', () => {
     const link = screen.getByRole('link', { name: 'Skip to main content' });
     expect(link.className).toContain('absolute');
     expect(link.className).toContain('left-4');
-    expect(link.className).toContain('-top-16'); // calc(space-4 * -4) = -64px
+    expect(link.className).toContain('-top-16');
     expect(link.className).toContain('focus:top-4');
     expect(link.className).toContain('z-overlay');
   });
@@ -25,7 +25,7 @@ describe('SkipLink', () => {
   it('carries the surface card treatment (bg-surface, border-strong, rounded-md, space-3/4 pad)', () => {
     render(<SkipLink />);
     const link = screen.getByRole('link', { name: 'Skip to main content' });
-    expect(link.className).toContain('bg-surface');
+    expect(link.className).toContain('bg-bg-surface');
     expect(link.className).toContain('text-fg-default');
     expect(link.className).toContain('border');
     expect(link.className).toContain('border-border-strong');

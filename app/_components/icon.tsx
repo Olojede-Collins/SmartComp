@@ -1,13 +1,6 @@
 import * as React from 'react';
 import { cn } from '@/lib/utils';
 
-/**
- * C-027 · Icon set (I-01 … I-12).
- * 20×20 viewBox, 18×18 live area, stroke 1.75 round caps/joins, fill none except I-01.
- * Decorative by default (aria-hidden + focusable=false). Sizes: 20px (size-5) or 16px (size-4) only.
- * Colour via currentColor only — no fill utilities, no hex (Zero Token Drift).
- */
-
 export type IconName =
   | 'circle-solid'
   | 'triangle-alert'
@@ -22,12 +15,6 @@ export type IconName =
   | 'alert-banner'
   | 'empty-register';
 
-/**
- * Path data. Shipped-preview paths are verbatim from the frozen 05-screens preview.html
- * markup (I-01, I-02, I-05…I-09, I-11, I-12). I-03/I-04/I-10 are hand-drawn to the
- * iconography.md drawing descriptions (open spanner at 45°; circle with a horizontal
- * bar; squared lid + body) on the same 20×20 canvas, stroke 1.75, round.
- */
 const STROKE = {
   fill: 'none',
   stroke: 'currentColor',
@@ -37,9 +24,7 @@ const STROKE = {
 } as const;
 
 const PATHS: Record<IconName, React.ReactNode> = {
-  // I-01 — solid dot (only filled mark)
   'circle-solid': <circle cx="10" cy="10" r="4.25" fill="currentColor" />,
-  // I-02 — verbatim from S-005 field-error / banners
   'triangle-alert': (
     <>
       <path
@@ -64,7 +49,6 @@ const PATHS: Record<IconName, React.ReactNode> = {
       />
     </>
   ),
-  // I-03 — open spanner at 45° (hand-drawn per iconography.md; unpopulated in the 7 rows)
   spanner: (
     <>
       <path
@@ -73,7 +57,6 @@ const PATHS: Record<IconName, React.ReactNode> = {
       />
     </>
   ),
-  // I-04 — circle with a horizontal bar (hand-drawn per iconography.md; unpopulated in the 7 rows)
   'minus-circle': (
     <>
       <circle
@@ -92,7 +75,6 @@ const PATHS: Record<IconName, React.ReactNode> = {
       />
     </>
   ),
-  // I-05 — verbatim from S-004 "Add item"
   plus: (
     <path
       d="M10 4.2v11.6M4.2 10h11.6"
@@ -101,7 +83,6 @@ const PATHS: Record<IconName, React.ReactNode> = {
       strokeLinecap="round"
     />
   ),
-  // I-06 — verbatim from S-001 carousel-prev
   'chevron-left': (
     <path
       d="M12.2 4.4 6.6 10l5.6 5.6"
@@ -112,7 +93,6 @@ const PATHS: Record<IconName, React.ReactNode> = {
       strokeLinejoin="round"
     />
   ),
-  // I-07 — verbatim from S-001 carousel-next
   'chevron-right': (
     <path
       d="M7.8 4.4 13.4 10l-5.6 5.6"
@@ -123,7 +103,6 @@ const PATHS: Record<IconName, React.ReactNode> = {
       strokeLinejoin="round"
     />
   ),
-  // I-08 — verbatim from S-001/002 image-failed placeholders
   'image-off': (
     <>
       <rect
@@ -152,7 +131,6 @@ const PATHS: Record<IconName, React.ReactNode> = {
       />
     </>
   ),
-  // I-09 — verbatim from S-004 "Export"
   download: (
     <>
       <path
@@ -178,7 +156,6 @@ const PATHS: Record<IconName, React.ReactNode> = {
       />
     </>
   ),
-  // I-10 — squared lid + body (hand-drawn per iconography.md; Delete actions are text-only in shipped previews)
   trash: (
     <>
       <path d="M4.2 5.8h11.6" {...STROKE} />
@@ -190,7 +167,6 @@ const PATHS: Record<IconName, React.ReactNode> = {
       <path d="M8.6 8.8v5M11.4 8.8v5" {...STROKE} />
     </>
   ),
-  // I-11 — verbatim from S-004/S-005 caution banners
   'alert-banner': (
     <>
       <circle
@@ -215,7 +191,6 @@ const PATHS: Record<IconName, React.ReactNode> = {
       />
     </>
   ),
-  // I-12 — verbatim from S-001/S-004 empty-state icons
   'empty-register': (
     <>
       <path
@@ -240,7 +215,6 @@ export interface IconProps extends Omit<
   'name' | 'children'
 > {
   name: IconName;
-  /** 20 (default, chrome) or 16 (chips / data-strip). No third size. */
   size?: 20 | 16;
 }
 
