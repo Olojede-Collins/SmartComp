@@ -14,6 +14,7 @@
 # --- Production paths (S-01 skeleton, un-ignored) ---
 !app/
 !backend/
+!lib/
 !scripts/
 !tests/
 !.github/
@@ -25,13 +26,15 @@
 !next-env.d.ts
 !eslint.config.*
 !.prettierrc*
+!.prettierignore
 !vitest.config.*
 !.env.template
 
-# docs: only TRD.md is tracked from docs/
+# docs: TRD.md plus the frozen-doc errata are tracked from docs/
 !docs/
 docs/*
 !docs/TRD.md
+!docs/DESIGN_ERRATA.md
 
 # Secrets must stay ignored even after broad un-ignore
 .env
