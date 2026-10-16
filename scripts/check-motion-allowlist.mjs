@@ -1,7 +1,14 @@
 import * as fs from 'fs';
 import * as path from 'path';
 
-const EXCLUDED_DIRS = new Set(['node_modules', '.git', '.agent', '.opencode', 'dist', '.next']);
+const EXCLUDED_DIRS = new Set([
+  'node_modules',
+  '.git',
+  '.agent',
+  '.opencode',
+  'dist',
+  '.next',
+]);
 
 const ALLOWED_MOTION_PROPS = new Set(['transform', 'opacity', 'none']);
 
@@ -34,13 +41,14 @@ const TRANSITION_DECL_RE = /transition(?:-property)?\s*:\s*([^;}]+)/g;
 const KEYFRAMES_OPEN_RE = /@keyframes\s+[\w-]+\s*\{/g;
 const KEYFRAME_PROP_RE = /(?<![\w-])([a-z][a-z0-9-]*)\s*:/g;
 const STYLE_OBJECT_RE = /style\s*=\s*\{\{/g;
-const INLINE_TRANSITION_RE = /\btransition(?:Property)?\s*:\s*(['"`])([\s\S]*?)\1/g;
+const INLINE_TRANSITION_RE =
+  /\btransition(?:Property)?\s*:\s*(['"`])([\s\S]*?)\1/g;
 
 function getAllFiles(dir, fileList = []) {
   if (!dir || !fs.existsSync(dir)) return fileList;
   if (EXCLUDED_DIRS.has(path.basename(dir))) return fileList;
   const files = fs.readdirSync(dir);
-  files.forEach(file => {
+  files.forEach((file) => {
     const filePath = path.join(dir, file);
     if (fs.statSync(filePath).isDirectory()) {
       if (!EXCLUDED_DIRS.has(file)) {
@@ -57,7 +65,9 @@ function getAllFiles(dir, fileList = []) {
 }
 
 function stripCssComments(content) {
-  return content.replace(/\/\*[\s\S]*?\*\//g, match => ' '.repeat(match.length));
+  return content.replace(/\/\*[\s\S]*?\*\//g, (match) =>
+    ' '.repeat(match.length),
+  );
 }
 
 function isAllowedTransitionToken(token) {
@@ -116,7 +126,7 @@ function collectKeyframeProps(content) {
     }
     const block = content.slice(
       KEYFRAMES_OPEN_RE.lastIndex,
-      depth === 0 ? i - 1 : content.length
+      depth === 0 ? i - 1 : content.length,
     );
     KEYFRAME_PROP_RE.lastIndex = 0;
     let propMatch;
@@ -170,15 +180,21 @@ export function findMotionViolations(dir) {
     if (file.endsWith('.css')) {
       for (const token of collectCssTransitionTokens(content)) {
         if (!isAllowedTransitionToken(token)) {
-          violations.push({ message: `Non-allowlisted transition: ${token} in ${file}` });
+          violations.push({
+            message: `Non-allowlisted transition: ${token} in ${file}`,
+          });
         }
       }
     }
 
-    const keyframeSource = file.endsWith('.css') ? stripCssComments(content) : content;
+    const keyframeSource = file.endsWith('.css')
+      ? stripCssComments(content)
+      : content;
     for (const prop of collectKeyframeProps(keyframeSource)) {
       if (!ALLOWED_MOTION_PROPS.has(prop)) {
-        violations.push({ message: `Non-allowlisted property in keyframe: ${prop} in ${file}` });
+        violations.push({
+          message: `Non-allowlisted property in keyframe: ${prop} in ${file}`,
+        });
       }
     }
 
@@ -186,7 +202,9 @@ export function findMotionViolations(dir) {
       for (const value of collectInlineTransitionValues(content)) {
         for (const token of tokenizeTransitionValue(value)) {
           if (!isAllowedTransitionToken(token)) {
-            violations.push({ message: `Non-allowlisted transition: ${token} in ${file}` });
+            violations.push({
+              message: `Non-allowlisted transition: ${token} in ${file}`,
+            });
           }
         }
       }
@@ -200,7 +218,7 @@ if (process.argv[1] && process.argv[1].endsWith('check-motion-allowlist.mjs')) {
   const dir = process.argv[2];
   const violations = findMotionViolations(dir);
   if (violations.length > 0) {
-    violations.forEach(v => console.log(v.message));
+    violations.forEach((v) => console.log(v.message));
     process.exit(1);
   }
 }

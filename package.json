@@ -6,7 +6,7 @@
     "backend"
   ],
   "scripts": {
-    "lint": "eslint . && node scripts/check-motion-allowlist.mjs && node scripts/check-raw-tokens.mjs && node scripts/check-migrations.mjs",
+    "lint": "prettier --check . && eslint . && node scripts/check-motion-allowlist.mjs . && node scripts/check-raw-tokens.mjs . && node scripts/check-migrations.mjs",
     "test": "vitest run",
     "build": "next build && node scripts/check-css-clean.mjs && npm run build --workspace backend",
     "format": "prettier --write ."
@@ -14,7 +14,6 @@
   "dependencies": {
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
-    "lucide-react": "^1.57.0",
     "next": "^16.4.0",
     "react": "^19.3.0",
     "react-dom": "^19.3.0",
