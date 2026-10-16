@@ -245,7 +245,7 @@ export interface IconProps extends Omit<
 }
 
 export function Icon({ name, size = 20, className, ...rest }: IconProps) {
-  const sizeClass = size === 16 ? 'size-[var(--icon-size-small)]' : 'size-[var(--icon-size-default)]';
+  const sizeClass = size === 16 ? 'size-4' : 'size-5';
   return (
     <svg
       viewBox="0 0 20 20"
