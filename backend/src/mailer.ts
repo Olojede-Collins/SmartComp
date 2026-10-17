@@ -29,7 +29,7 @@ export async function sendInviteEmail({
   }
 
   const baseUrl = getFrontendBaseUrl();
-  const acceptUrl = `${baseUrl}/admin/invite/accept?token=${encodeURIComponent(token)}`;
+  const acceptUrl = `${baseUrl}/admin/invite/accept?token=${encodeURIComponent(token)}&email=${encodeURIComponent(to)}`;
 
   const subject = 'Invitation to join the ABU Smart Class Lab Team';
   const text = `Ahmadu Bello University, Zaria

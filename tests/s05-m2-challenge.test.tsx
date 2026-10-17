@@ -1149,7 +1149,10 @@ describe('S-05 Challenger Suite — M2 Pre-Agreed Seams', () => {
         'http://localhost:3001/api/admin/invites/accept',
         expect.objectContaining({
           method: 'POST',
-          body: JSON.stringify({ token: 'exact-8-token' }),
+          body: JSON.stringify({
+            token: 'exact-8-token',
+            password: '12345678',
+          }),
         }),
       );
     });

@@ -1,4 +1,4 @@
-﻿// @vitest-environment jsdom
+// @vitest-environment jsdom
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { Input, Textarea } from '../app/_components/input';
@@ -92,6 +92,21 @@ describe('C-008 Input', () => {
     expect(input.getAttribute('type')).toBe('password');
     expect(input.value).toBe('s3cret');
     expect(screen.queryByText('s3cret')).toBeNull();
+  });
+
+  it('toggles password visibility between password and text when eye button is clicked', async () => {
+    const { fireEvent } = await import('@testing-library/react');
+    render(
+      <Input aria-label="Password" type="password" defaultValue="s3cret" />,
+    );
+    const input = screen.getByLabelText('Password') as HTMLInputElement;
+    expect(input.getAttribute('type')).toBe('password');
+    const toggleBtn = screen.getByRole('button', { name: 'Show value' });
+    fireEvent.click(toggleBtn);
+    expect(input.getAttribute('type')).toBe('text');
+    expect(screen.getByRole('button', { name: 'Hide value' })).toBeTruthy();
+    fireEvent.click(screen.getByRole('button', { name: 'Hide value' }));
+    expect(input.getAttribute('type')).toBe('password');
   });
 });
 

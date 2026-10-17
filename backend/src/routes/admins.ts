@@ -6,10 +6,45 @@ import { sendInviteEmail } from '../mailer.js';
 
 export const adminsRouter = Router();
 
+adminsRouter.get(
+  ['/invites/verify', '/admins/invites/verify'],
+  async (req, res) => {
+    const token = typeof req.query.token === 'string' ? req.query.token : '';
+    if (!token) {
+      res.status(404).json({
+        error: 'unknown-token',
+        message: 'Invite token is invalid or expired',
+      });
+      return;
+    }
+
+    const tokenHash = crypto.createHash('sha256').update(token).digest('hex');
+    const invite = await db.getInviteByTokenHash(tokenHash);
+
+    if (!invite) {
+      res.status(404).json({
+        error: 'unknown-token',
+        message: 'Invite token is invalid or expired',
+      });
+      return;
+    }
+
+    if (invite.accepted_at !== null) {
+      res.status(409).json({
+        error: 'already-accepted',
+        message: 'Invite token has already been accepted',
+      });
+      return;
+    }
+
+    res.status(200).json({ email: invite.email });
+  },
+);
+
 adminsRouter.post(
   ['/invites/accept', '/admins/invites/accept'],
   async (req, res) => {
-    const { token, name } = req.body || {};
+    const { token, name, password } = req.body || {};
     if (!token || typeof token !== 'string') {
       res.status(404).json({
         error: 'unknown-token',
@@ -38,7 +73,7 @@ adminsRouter.post(
     }
 
     try {
-      await db.acceptInvite(tokenHash, name);
+      await db.acceptInvite(tokenHash, name, password);
       res.status(200).json({ status: 'active' });
     } catch (err: unknown) {
       const errorObj = err as { message?: string };
@@ -49,9 +84,11 @@ adminsRouter.post(
         });
         return;
       }
+      const msg = err instanceof Error ? err.message : String(err);
+      console.error('Failed to accept invite:', msg);
       res.status(503).json({
         error: 'db-unavailable',
-        message: 'Database unavailable',
+        message: msg || 'Database unavailable',
       });
     }
   },
@@ -133,7 +170,7 @@ adminsRouter.post('/admins/invites', async (req, res) => {
       process.env.NEXT_PUBLIC_SITE_URL ||
       'https://smartcomp.vercel.app';
     const cleanBaseUrl = baseUrl.replace(/\/+$/, '');
-    const acceptUrl = `${cleanBaseUrl}/admin/invite/accept?token=${encodeURIComponent(token)}`;
+    const acceptUrl = `${cleanBaseUrl}/admin/invite/accept?token=${encodeURIComponent(token)}&email=${encodeURIComponent(email)}`;
 
     res.status(201).json({
       id: invite.id,

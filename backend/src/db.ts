@@ -577,6 +577,7 @@ export class DatabaseClient {
   async acceptInvite(
     tokenHash: string,
     name?: string,
+    password?: string,
   ): Promise<AdminRecord | null> {
     if (!this.healthy) {
       throw new Error('Database unreachable');
@@ -590,7 +591,87 @@ export class DatabaseClient {
       if (invite.accepted_at !== null) {
         throw new Error('already-accepted');
       }
+
+      let authUserId: string | null = null;
+      try {
+        const listUsersRes = await globalThis.fetch(
+          `${sb.url}/auth/v1/admin/users`,
+          {
+            headers: {
+              apikey: sb.key,
+              Authorization: `Bearer ${sb.key}`,
+            },
+          },
+        );
+        if (listUsersRes.ok) {
+          const listData = (await listUsersRes.json()) as {
+            users?: Array<{ id: string; email?: string }>;
+          };
+          const existing = listData.users?.find(
+            (u) => u.email?.toLowerCase() === invite.email.toLowerCase(),
+          );
+          if (existing) {
+            authUserId = existing.id;
+          }
+        }
+      } catch (e) {
+        console.error('Error querying auth.users:', e);
+      }
+
+      if (authUserId) {
+        if (password) {
+          await globalThis.fetch(
+            `${sb.url}/auth/v1/admin/users/${authUserId}`,
+            {
+              method: 'PUT',
+              headers: {
+                apikey: sb.key,
+                Authorization: `Bearer ${sb.key}`,
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                password,
+                email_confirm: true,
+                app_metadata: { role: 'admin' },
+              }),
+            },
+          );
+        }
+      } else {
+        const createAuthRes = await globalThis.fetch(
+          `${sb.url}/auth/v1/admin/users`,
+          {
+            method: 'POST',
+            headers: {
+              apikey: sb.key,
+              Authorization: `Bearer ${sb.key}`,
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              email: invite.email,
+              password: password || crypto.randomBytes(16).toString('hex'),
+              email_confirm: true,
+              app_metadata: { role: 'admin' },
+              user_metadata: { name: name ?? null },
+            }),
+          },
+        );
+        if (createAuthRes.ok) {
+          const createdAuth = (await createAuthRes.json()) as { id: string };
+          authUserId = createdAuth.id;
+        } else {
+          const errText = await createAuthRes.text().catch(() => '');
+          console.error(
+            'Failed to create auth user:',
+            createAuthRes.status,
+            errText,
+          );
+        }
+      }
+
+      const adminId = authUserId || crypto.randomUUID();
       const now = new Date().toISOString();
+
       await globalThis.fetch(
         `${sb.url}/rest/v1/admin_invites?id=eq.${encodeURIComponent(invite.id)}`,
         {
@@ -603,7 +684,31 @@ export class DatabaseClient {
           body: JSON.stringify({ accepted_at: now }),
         },
       );
-      const adminId = crypto.randomUUID();
+
+      const existingAdminRes = await globalThis.fetch(
+        `${sb.url}/rest/v1/admins?email=ilike.${encodeURIComponent(invite.email)}&select=*`,
+        {
+          headers: {
+            apikey: sb.key,
+            Authorization: `Bearer ${sb.key}`,
+            Accept: 'application/json',
+          },
+        },
+      );
+      if (existingAdminRes.ok) {
+        const existingAdmins = (await existingAdminRes.json()) as AdminRecord[];
+        if (existingAdmins.length > 0) {
+          await this.recordAuditLog(
+            sb,
+            existingAdmins[0].id,
+            'admin.accept',
+            invite.email,
+            now,
+          );
+          return { ...existingAdmins[0] };
+        }
+      }
+
       const adminRes = await globalThis.fetch(`${sb.url}/rest/v1/admins`, {
         method: 'POST',
         headers: {
@@ -620,7 +725,8 @@ export class DatabaseClient {
         }),
       });
       if (!adminRes.ok) {
-        throw new Error(`PostgREST error: ${adminRes.status}`);
+        const errText = await adminRes.text().catch(() => '');
+        throw new Error(`PostgREST error: ${adminRes.status} ${errText}`);
       }
       const admins = (await adminRes.json()) as AdminRecord[];
       await this.recordAuditLog(sb, adminId, 'admin.accept', invite.email, now);

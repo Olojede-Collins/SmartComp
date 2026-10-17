@@ -71,7 +71,7 @@ function AcceptInviteForm() {
     setErrorCode(null);
 
     try {
-      await acceptInvite(token);
+      await acceptInvite(token, undefined, password);
       router.push('/admin/login?invite=accepted');
     } catch (err: unknown) {
       if (err instanceof ApiError) {

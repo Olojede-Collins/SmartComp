@@ -192,6 +192,32 @@ export async function signInWithPassword(
   return data;
 }
 
+export async function signUpWithPassword(
+  email: string,
+  password: string,
+): Promise<void> {
+  if (process.env.NODE_ENV === 'test') {
+    return;
+  }
+  const { supabaseUrl, supabaseAnonKey } = getAdminAuthConfig();
+  if (!supabaseUrl || !supabaseAnonKey) {
+    return;
+  }
+  const cleanUrl = supabaseUrl.replace(/\/+$/, '');
+  const endpoint = `${cleanUrl}/auth/v1/signup`;
+  await globalThis
+    .fetch(endpoint, {
+      method: 'POST',
+      headers: {
+        apikey: supabaseAnonKey,
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+      },
+      body: JSON.stringify({ email, password }),
+    })
+    .catch(() => {});
+}
+
 export function signOut(): void {
   setSessionForTesting(null);
 }

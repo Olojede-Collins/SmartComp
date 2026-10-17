@@ -190,15 +190,29 @@ export async function deleteAdmin(
   return request<void>(`/api/admin/admins/${id}`, 'DELETE', undefined, options);
 }
 
+export async function getInviteDetails(
+  token: string,
+  options?: RequestOptions,
+): Promise<{ email: string }> {
+  return request<{ email: string }>(
+    `/api/admin/invites/verify?token=${encodeURIComponent(token)}`,
+    'GET',
+    undefined,
+    options,
+    false,
+  );
+}
+
 export async function acceptInvite(
   token: string,
   name?: string,
+  password?: string,
   options?: RequestOptions,
 ): Promise<{ status: string }> {
   return request<{ status: string }>(
     '/api/admin/invites/accept',
     'POST',
-    { token, name },
+    { token, name, password },
     options,
     false,
   );
