@@ -84,22 +84,87 @@ export class DatabaseClient {
     this.auditLogs = data?.auditLogs ? [...data.auditLogs] : [];
   }
 
+  private getSupabase(): { url: string; key: string } | null {
+    const supabaseUrl = process.env.SUPABASE_URL;
+    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+    if (supabaseUrl && serviceRoleKey && process.env.NODE_ENV !== 'test') {
+      return {
+        url: supabaseUrl.replace(/\/+$/, ''),
+        key: serviceRoleKey,
+      };
+    }
+    return null;
+  }
+
+  private async getValidAdminId(
+    sb: { url: string; key: string },
+    adminId: string,
+  ): Promise<string | null> {
+    if (
+      !/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
+        adminId,
+      )
+    ) {
+      return null;
+    }
+    try {
+      const res = await globalThis.fetch(
+        `${sb.url}/rest/v1/admins?id=eq.${encodeURIComponent(adminId)}&select=id&limit=1`,
+        {
+          headers: {
+            apikey: sb.key,
+            Authorization: `Bearer ${sb.key}`,
+            Accept: 'application/json',
+          },
+        },
+      );
+      if (!res.ok) return null;
+      const data = (await res.json()) as { id: string }[];
+      return data.length > 0 ? data[0].id : null;
+    } catch {
+      return null;
+    }
+  }
+
+  private async recordAuditLog(
+    sb: { url: string; key: string },
+    actorAdminId: string | null,
+    action: string,
+    target: string,
+    createdAt: string,
+  ): Promise<void> {
+    try {
+      await globalThis.fetch(`${sb.url}/rest/v1/audit_log`, {
+        method: 'POST',
+        headers: {
+          apikey: sb.key,
+          Authorization: `Bearer ${sb.key}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          actor_admin_id: actorAdminId,
+          action,
+          target,
+          created_at: createdAt,
+        }),
+      });
+    } catch {}
+  }
+
   async checkHealth(): Promise<boolean> {
     if (!this.healthy) {
       return false;
     }
-    const supabaseUrl = process.env.SUPABASE_URL;
-    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-    if (supabaseUrl && serviceRoleKey && process.env.NODE_ENV !== 'test') {
+    const sb = this.getSupabase();
+    if (sb) {
       try {
-        const cleanUrl = supabaseUrl.replace(/\/+$/, '');
         const res = await globalThis.fetch(
-          `${cleanUrl}/rest/v1/equipment?select=id&limit=1`,
+          `${sb.url}/rest/v1/equipment?select=id&limit=1`,
           {
             method: 'GET',
             headers: {
-              apikey: serviceRoleKey,
-              Authorization: `Bearer ${serviceRoleKey}`,
+              apikey: sb.key,
+              Authorization: `Bearer ${sb.key}`,
               Accept: 'application/json',
             },
           },
@@ -116,17 +181,15 @@ export class DatabaseClient {
     if (!this.healthy) {
       throw new Error('Database unreachable');
     }
-    const supabaseUrl = process.env.SUPABASE_URL;
-    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-    if (supabaseUrl && serviceRoleKey && process.env.NODE_ENV !== 'test') {
-      const cleanUrl = supabaseUrl.replace(/\/+$/, '');
+    const sb = this.getSupabase();
+    if (sb) {
       const res = await globalThis.fetch(
-        `${cleanUrl}/rest/v1/equipment?select=*&order=updated_at.desc&limit=15`,
+        `${sb.url}/rest/v1/equipment?select=*&order=updated_at.desc&limit=15`,
         {
           method: 'GET',
           headers: {
-            apikey: serviceRoleKey,
-            Authorization: `Bearer ${serviceRoleKey}`,
+            apikey: sb.key,
+            Authorization: `Bearer ${sb.key}`,
             Accept: 'application/json',
           },
         },
@@ -145,6 +208,25 @@ export class DatabaseClient {
   async getEquipmentById(id: string): Promise<EquipmentRecord | null> {
     if (!this.healthy) {
       throw new Error('Database unreachable');
+    }
+    const sb = this.getSupabase();
+    if (sb) {
+      const res = await globalThis.fetch(
+        `${sb.url}/rest/v1/equipment?id=eq.${encodeURIComponent(id)}&select=*`,
+        {
+          method: 'GET',
+          headers: {
+            apikey: sb.key,
+            Authorization: `Bearer ${sb.key}`,
+            Accept: 'application/json',
+          },
+        },
+      );
+      if (!res.ok) {
+        throw new Error(`PostgREST error: ${res.status}`);
+      }
+      const data = (await res.json()) as EquipmentRecord[];
+      return data.length > 0 ? { ...data[0] } : null;
     }
     const item = this.equipment.find((i) => i.id === id);
     return item ? { ...item } : null;
@@ -165,6 +247,35 @@ export class DatabaseClient {
       throw new Error('Database unreachable');
     }
     const now = new Date().toISOString();
+    const sb = this.getSupabase();
+    if (sb) {
+      const validAdminId = await this.getValidAdminId(sb, adminId);
+      const res = await globalThis.fetch(`${sb.url}/rest/v1/equipment`, {
+        method: 'POST',
+        headers: {
+          apikey: sb.key,
+          Authorization: `Bearer ${sb.key}`,
+          'Content-Type': 'application/json',
+          Prefer: 'return=representation',
+        },
+        body: JSON.stringify({
+          name: data.name,
+          core_functionality: data.core_functionality ?? null,
+          other_functionality: data.other_functionality ?? null,
+          condition: data.condition,
+          quantity: data.quantity ?? 1,
+          image_keys: data.image_keys ? [...data.image_keys] : [],
+          created_at: now,
+          updated_at: now,
+          updated_by: validAdminId,
+        }),
+      });
+      if (!res.ok) {
+        throw new Error(`PostgREST error: ${res.status}`);
+      }
+      const created = (await res.json()) as EquipmentRecord[];
+      return { ...created[0] };
+    }
     const item: EquipmentRecord = {
       id: crypto.randomUUID(),
       name: data.name,
@@ -189,12 +300,41 @@ export class DatabaseClient {
     if (!this.healthy) {
       throw new Error('Database unreachable');
     }
+    const now = new Date().toISOString();
+    const sb = this.getSupabase();
+    if (sb) {
+      const validAdminId = await this.getValidAdminId(sb, adminId);
+      const patchBody: Record<string, unknown> = {
+        ...updates,
+        updated_at: now,
+      };
+      if (validAdminId) {
+        patchBody.updated_by = validAdminId;
+      }
+      const res = await globalThis.fetch(
+        `${sb.url}/rest/v1/equipment?id=eq.${encodeURIComponent(id)}`,
+        {
+          method: 'PATCH',
+          headers: {
+            apikey: sb.key,
+            Authorization: `Bearer ${sb.key}`,
+            'Content-Type': 'application/json',
+            Prefer: 'return=representation',
+          },
+          body: JSON.stringify(patchBody),
+        },
+      );
+      if (!res.ok) {
+        throw new Error(`PostgREST error: ${res.status}`);
+      }
+      const data = (await res.json()) as EquipmentRecord[];
+      return data.length > 0 ? { ...data[0] } : null;
+    }
     const index = this.equipment.findIndex((i) => i.id === id);
     if (index === -1) {
       return null;
     }
     const current = this.equipment[index];
-    const now = new Date().toISOString();
     const updated: EquipmentRecord = {
       ...current,
       ...updates,
@@ -209,6 +349,25 @@ export class DatabaseClient {
     if (!this.healthy) {
       throw new Error('Database unreachable');
     }
+    const sb = this.getSupabase();
+    if (sb) {
+      const res = await globalThis.fetch(
+        `${sb.url}/rest/v1/equipment?id=eq.${encodeURIComponent(id)}`,
+        {
+          method: 'DELETE',
+          headers: {
+            apikey: sb.key,
+            Authorization: `Bearer ${sb.key}`,
+            Prefer: 'return=representation',
+          },
+        },
+      );
+      if (!res.ok) {
+        throw new Error(`PostgREST error: ${res.status}`);
+      }
+      const data = (await res.json()) as EquipmentRecord[];
+      return data.length > 0;
+    }
     const index = this.equipment.findIndex((i) => i.id === id);
     if (index === -1) {
       return false;
@@ -221,15 +380,64 @@ export class DatabaseClient {
     if (!this.healthy) {
       throw new Error('Database unreachable');
     }
+    const sb = this.getSupabase();
+    if (sb) {
+      const res = await globalThis.fetch(
+        `${sb.url}/rest/v1/admins?select=*&order=created_at.asc`,
+        {
+          headers: {
+            apikey: sb.key,
+            Authorization: `Bearer ${sb.key}`,
+            Accept: 'application/json',
+          },
+        },
+      );
+      if (!res.ok) {
+        throw new Error(`PostgREST error: ${res.status}`);
+      }
+      return (await res.json()) as AdminRecord[];
+    }
     return [...this.admins];
   }
 
   async getAdminById(id: string): Promise<AdminRecord | null> {
+    const sb = this.getSupabase();
+    if (sb) {
+      const res = await globalThis.fetch(
+        `${sb.url}/rest/v1/admins?id=eq.${encodeURIComponent(id)}&select=*`,
+        {
+          headers: {
+            apikey: sb.key,
+            Authorization: `Bearer ${sb.key}`,
+            Accept: 'application/json',
+          },
+        },
+      );
+      if (!res.ok) return null;
+      const data = (await res.json()) as AdminRecord[];
+      return data.length > 0 ? { ...data[0] } : null;
+    }
     const admin = this.admins.find((a) => a.id === id);
     return admin ? { ...admin } : null;
   }
 
   async getAdminByEmail(email: string): Promise<AdminRecord | null> {
+    const sb = this.getSupabase();
+    if (sb) {
+      const res = await globalThis.fetch(
+        `${sb.url}/rest/v1/admins?email=ilike.${encodeURIComponent(email)}&select=*`,
+        {
+          headers: {
+            apikey: sb.key,
+            Authorization: `Bearer ${sb.key}`,
+            Accept: 'application/json',
+          },
+        },
+      );
+      if (!res.ok) return null;
+      const data = (await res.json()) as AdminRecord[];
+      return data.length > 0 ? { ...data[0] } : null;
+    }
     const admin = this.admins.find(
       (a) => a.email.toLowerCase() === email.toLowerCase(),
     );
@@ -239,6 +447,22 @@ export class DatabaseClient {
   async getPendingInviteByEmail(
     email: string,
   ): Promise<AdminInviteRecord | null> {
+    const sb = this.getSupabase();
+    if (sb) {
+      const res = await globalThis.fetch(
+        `${sb.url}/rest/v1/admin_invites?email=ilike.${encodeURIComponent(email)}&accepted_at=is.null&select=*`,
+        {
+          headers: {
+            apikey: sb.key,
+            Authorization: `Bearer ${sb.key}`,
+            Accept: 'application/json',
+          },
+        },
+      );
+      if (!res.ok) return null;
+      const data = (await res.json()) as AdminInviteRecord[];
+      return data.length > 0 ? { ...data[0] } : null;
+    }
     const invite = this.invites.find(
       (i) =>
         i.email.toLowerCase() === email.toLowerCase() && i.accepted_at === null,
@@ -249,6 +473,22 @@ export class DatabaseClient {
   async getInviteByTokenHash(
     tokenHash: string,
   ): Promise<AdminInviteRecord | null> {
+    const sb = this.getSupabase();
+    if (sb) {
+      const res = await globalThis.fetch(
+        `${sb.url}/rest/v1/admin_invites?token_hash=eq.${encodeURIComponent(tokenHash)}&select=*`,
+        {
+          headers: {
+            apikey: sb.key,
+            Authorization: `Bearer ${sb.key}`,
+            Accept: 'application/json',
+          },
+        },
+      );
+      if (!res.ok) return null;
+      const data = (await res.json()) as AdminInviteRecord[];
+      return data.length > 0 ? { ...data[0] } : null;
+    }
     const invite = this.invites.find((i) => i.token_hash === tokenHash);
     return invite ? { ...invite } : null;
   }
@@ -263,6 +503,32 @@ export class DatabaseClient {
     const token = crypto.randomBytes(32).toString('hex');
     const tokenHash = crypto.createHash('sha256').update(token).digest('hex');
     const now = new Date().toISOString();
+    const sb = this.getSupabase();
+    if (sb) {
+      const validInvitedBy = await this.getValidAdminId(sb, invitedBy);
+      const res = await globalThis.fetch(`${sb.url}/rest/v1/admin_invites`, {
+        method: 'POST',
+        headers: {
+          apikey: sb.key,
+          Authorization: `Bearer ${sb.key}`,
+          'Content-Type': 'application/json',
+          Prefer: 'return=representation',
+        },
+        body: JSON.stringify({
+          email,
+          token_hash: tokenHash,
+          invited_by: validInvitedBy,
+          created_at: now,
+          accepted_at: null,
+        }),
+      });
+      if (!res.ok) {
+        throw new Error(`PostgREST error: ${res.status}`);
+      }
+      const created = (await res.json()) as AdminInviteRecord[];
+      await this.recordAuditLog(sb, validInvitedBy, 'admin.invite', email, now);
+      return { invite: { ...created[0] }, token };
+    }
     const invite: AdminInviteRecord = {
       id: crypto.randomUUID(),
       email,
@@ -288,6 +554,51 @@ export class DatabaseClient {
   ): Promise<AdminRecord | null> {
     if (!this.healthy) {
       throw new Error('Database unreachable');
+    }
+    const sb = this.getSupabase();
+    if (sb) {
+      const invite = await this.getInviteByTokenHash(tokenHash);
+      if (!invite) {
+        return null;
+      }
+      if (invite.accepted_at !== null) {
+        throw new Error('already-accepted');
+      }
+      const now = new Date().toISOString();
+      await globalThis.fetch(
+        `${sb.url}/rest/v1/admin_invites?id=eq.${encodeURIComponent(invite.id)}`,
+        {
+          method: 'PATCH',
+          headers: {
+            apikey: sb.key,
+            Authorization: `Bearer ${sb.key}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ accepted_at: now }),
+        },
+      );
+      const adminId = crypto.randomUUID();
+      const adminRes = await globalThis.fetch(`${sb.url}/rest/v1/admins`, {
+        method: 'POST',
+        headers: {
+          apikey: sb.key,
+          Authorization: `Bearer ${sb.key}`,
+          'Content-Type': 'application/json',
+          Prefer: 'return=representation',
+        },
+        body: JSON.stringify({
+          id: adminId,
+          name: name ?? null,
+          email: invite.email,
+          created_at: now,
+        }),
+      });
+      if (!adminRes.ok) {
+        throw new Error(`PostgREST error: ${adminRes.status}`);
+      }
+      const admins = (await adminRes.json()) as AdminRecord[];
+      await this.recordAuditLog(sb, adminId, 'admin.accept', invite.email, now);
+      return { ...admins[0] };
     }
     const inviteIndex = this.invites.findIndex(
       (i) => i.token_hash === tokenHash,
@@ -326,6 +637,40 @@ export class DatabaseClient {
     if (!this.healthy) {
       throw new Error('Database unreachable');
     }
+    const sb = this.getSupabase();
+    if (sb) {
+      const admins = await this.getAdmins();
+      const admin = admins.find((a) => a.id === id);
+      if (!admin) {
+        return { success: false, notFound: true };
+      }
+      if (admins.length <= 1) {
+        return { success: false, lastAdmin: true };
+      }
+      const res = await globalThis.fetch(
+        `${sb.url}/rest/v1/admins?id=eq.${encodeURIComponent(id)}`,
+        {
+          method: 'DELETE',
+          headers: {
+            apikey: sb.key,
+            Authorization: `Bearer ${sb.key}`,
+          },
+        },
+      );
+      if (!res.ok) {
+        throw new Error(`PostgREST error: ${res.status}`);
+      }
+      const validActor = await this.getValidAdminId(sb, actorAdminId);
+      const now = new Date().toISOString();
+      await this.recordAuditLog(
+        sb,
+        validActor,
+        'admin.remove',
+        admin.email,
+        now,
+      );
+      return { success: true };
+    }
     const adminIndex = this.admins.findIndex((a) => a.id === id);
     if (adminIndex === -1) {
       return { success: false, notFound: true };
@@ -346,6 +691,24 @@ export class DatabaseClient {
   }
 
   async getAuditLogs(): Promise<AuditLogRecord[]> {
+    const sb = this.getSupabase();
+    if (sb) {
+      try {
+        const res = await globalThis.fetch(
+          `${sb.url}/rest/v1/audit_log?select=*&order=created_at.desc`,
+          {
+            headers: {
+              apikey: sb.key,
+              Authorization: `Bearer ${sb.key}`,
+              Accept: 'application/json',
+            },
+          },
+        );
+        if (res.ok) {
+          return (await res.json()) as AuditLogRecord[];
+        }
+      } catch {}
+    }
     return [...this.auditLogs];
   }
 }
