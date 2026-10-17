@@ -32,11 +32,46 @@ export function createToken(
   return `${headerB64}.${payloadB64}.${signature}`;
 }
 
-export function authMiddleware(
+interface JwkKey {
+  kid?: string;
+  kty: string;
+  crv?: string;
+  x?: string;
+  y?: string;
+  alg?: string;
+}
+
+let cachedJwks: { keys: JwkKey[] } | null = null;
+let lastJwksFetch = 0;
+
+export async function getJwksKeys(): Promise<JwkKey[]> {
+  const now = Date.now();
+  if (cachedJwks && now - lastJwksFetch < 3600000) {
+    return cachedJwks.keys;
+  }
+  const supabaseUrl =
+    process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL;
+  if (!supabaseUrl) return cachedJwks?.keys || [];
+  try {
+    const cleanUrl = supabaseUrl.replace(/\/+$/, '');
+    const res = await globalThis.fetch(
+      `${cleanUrl}/auth/v1/.well-known/jwks.json`,
+    );
+    if (res.ok) {
+      const data = (await res.json()) as { keys: JwkKey[] };
+      cachedJwks = data;
+      lastJwksFetch = now;
+      return data.keys || [];
+    }
+  } catch {}
+  return cachedJwks?.keys || [];
+}
+
+export async function authMiddleware(
   req: Request,
   res: Response,
   next: NextFunction,
-): void {
+): Promise<void> {
   const authHeader = req.headers.authorization;
   if (!authHeader || typeof authHeader !== 'string') {
     res.status(401).json({
@@ -66,31 +101,74 @@ export function authMiddleware(
   }
 
   const [headerB64, payloadB64, signatureB64] = parts;
-  const secret =
-    process.env.SUPABASE_JWT_SECRET ||
-    (process.env.NODE_ENV === 'production' ? '' : 'test-jwt-secret');
-
-  if (!secret) {
-    res.status(500).json({
-      error: 'server-configuration-error',
-      message: 'Server authentication secret is not configured',
-    });
-    return;
-  }
 
   try {
-    const expectedSig = crypto
-      .createHmac('sha256', secret)
-      .update(`${headerB64}.${payloadB64}`)
-      .digest('base64url');
+    let header: { alg?: string; kid?: string } = {};
+    try {
+      header = JSON.parse(Buffer.from(headerB64, 'base64url').toString('utf8'));
+    } catch {
+      res.status(401).json({
+        error: 'invalid-token',
+        message: 'Invalid token format',
+      });
+      return;
+    }
 
-    const expectedBuf = Buffer.from(expectedSig);
-    const actualBuf = Buffer.from(signatureB64);
+    let isValid = false;
 
-    if (
-      expectedBuf.length !== actualBuf.length ||
-      !crypto.timingSafeEqual(expectedBuf, actualBuf)
-    ) {
+    if (header.alg === 'ES256') {
+      const keys = await getJwksKeys();
+      const matchingKey =
+        (header.kid ? keys.find((k) => k.kid === header.kid) : null) ||
+        keys.find((k) => k.alg === 'ES256') ||
+        keys[0];
+
+      if (matchingKey) {
+        try {
+          const pubKey = crypto.createPublicKey({
+            key: matchingKey as unknown as crypto.JsonWebKey,
+            format: 'jwk',
+          });
+          isValid = crypto.verify(
+            'sha256',
+            Buffer.from(`${headerB64}.${payloadB64}`),
+            { key: pubKey, dsaEncoding: 'ieee-p1363' },
+            Buffer.from(signatureB64, 'base64url'),
+          );
+        } catch {
+          isValid = false;
+        }
+      }
+    } else {
+      const secret =
+        process.env.SUPABASE_JWT_SECRET ||
+        (process.env.NODE_ENV === 'production' ? '' : 'test-jwt-secret');
+
+      if (!secret) {
+        res.status(500).json({
+          error: 'server-configuration-error',
+          message: 'Server authentication secret is not configured',
+        });
+        return;
+      }
+
+      const expectedSig = crypto
+        .createHmac('sha256', secret)
+        .update(`${headerB64}.${payloadB64}`)
+        .digest('base64url');
+
+      const expectedBuf = Buffer.from(expectedSig);
+      const actualBuf = Buffer.from(signatureB64);
+
+      if (
+        expectedBuf.length === actualBuf.length &&
+        crypto.timingSafeEqual(expectedBuf, actualBuf)
+      ) {
+        isValid = true;
+      }
+    }
+
+    if (!isValid) {
       res.status(401).json({
         error: 'invalid-token',
         message: 'Invalid token signature',

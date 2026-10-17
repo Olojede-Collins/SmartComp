@@ -427,7 +427,7 @@ describe('S-07 Milestone M1 Challenger Adversarial Suite', () => {
       const main = container.querySelector('#main');
       expect(main?.getAttribute('data-state')).toBe('default');
       expect(screen.getByText('Student Camera')).toBeTruthy();
-      expect(screen.getByText('RECORD')).toBeTruthy();
+      expect(screen.getByText('QUANTITY')).toBeTruthy();
     });
 
     it('Attack 3.4: G-2 cache fallback: PostgREST fetch failure recovers item from cached list when item map is cold', async () => {

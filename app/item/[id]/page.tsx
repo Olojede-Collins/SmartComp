@@ -48,9 +48,7 @@ export default async function ItemPage({
             The collection
           </Link>
           <span className="text-fg-muted mx-2">/</span>
-          <span className="text-fg-muted font-mono">
-            {item.id ? item.id.slice(0, 8) : ''}
-          </span>
+          <span className="text-fg-muted">Detail</span>
         </nav>
         <div className="spread grid grid-cols-1 md:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] gap-7 my-5">
           <div className="spread__media min-w-0">
@@ -72,26 +70,10 @@ export default async function ItemPage({
                 <div className="flex flex-wrap items-center gap-4 mt-3">
                   <div>
                     <span className="text-micro font-medium text-fg-muted uppercase tracking-caps block">
-                      RECORD
-                    </span>
-                    <span className="text-data font-mono">
-                      {item.id ? item.id.slice(0, 8) : ''}
-                    </span>
-                  </div>
-                  <div>
-                    <span className="text-micro font-medium text-fg-muted uppercase tracking-caps block">
                       QUANTITY
                     </span>
                     <span className="text-data font-mono font-semibold">
                       {item.quantity}
-                    </span>
-                  </div>
-                  <div>
-                    <span className="text-micro font-medium text-fg-muted uppercase tracking-caps block">
-                      UPDATED
-                    </span>
-                    <span className="text-data font-mono">
-                      {item.updated_at ? item.updated_at.slice(0, 10) : ''}
                     </span>
                   </div>
                   <ConditionChip condition={item.condition} />
@@ -99,7 +81,7 @@ export default async function ItemPage({
               </div>
               <div className="p-5 md:p-6 border-b border-border-rule">
                 <span className="text-micro font-medium text-fg-muted uppercase tracking-caps block mb-2">
-                  CORE FUNCTIONALITY (AS SUBMITTED)
+                  PRIMARY FUNCTIONALITY
                 </span>
                 <p className="verbatim whitespace-pre-wrap break-words text-body text-fg-default">
                   {item.core_functionality || '—'}
@@ -107,7 +89,7 @@ export default async function ItemPage({
               </div>
               <div className="p-5 md:p-6 border-b border-border-rule">
                 <span className="text-micro font-medium text-fg-muted uppercase tracking-caps block mb-2">
-                  OTHER FUNCTIONALITY (AS SUBMITTED)
+                  ADDITIONAL SPECIFICATIONS & CAPABILITIES
                 </span>
                 <p className="verbatim whitespace-pre-wrap break-words text-body text-fg-default">
                   {item.other_functionality ||

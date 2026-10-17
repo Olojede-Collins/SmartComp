@@ -1418,7 +1418,7 @@ describe('S-06 M2 Adversarial Challenger Suite', () => {
       expect(
         within(breadcrumbNav).getByRole('link', { name: 'The collection' }),
       ).toBeDefined();
-      expect(within(breadcrumbNav).getByText('e0000001')).toBeDefined();
+      expect(within(breadcrumbNav).getByText('Detail')).toBeDefined();
     });
   });
 });

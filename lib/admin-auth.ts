@@ -45,16 +45,30 @@ export function getAdminAuthConfig(): {
 
 export function setSessionForTesting(session: AdminSession | null): void {
   testingSession = session;
-  if (typeof window !== 'undefined' && window.sessionStorage) {
-    if (session) {
-      window.sessionStorage.setItem(
-        'sb-admin-session',
-        JSON.stringify(session),
-      );
-      window.sessionStorage.setItem('sb-admin-token', session.access_token);
-    } else {
-      window.sessionStorage.removeItem('sb-admin-session');
-      window.sessionStorage.removeItem('sb-admin-token');
+  if (typeof window !== 'undefined') {
+    if (window.sessionStorage) {
+      if (session) {
+        window.sessionStorage.setItem(
+          'sb-admin-session',
+          JSON.stringify(session),
+        );
+        window.sessionStorage.setItem('sb-admin-token', session.access_token);
+      } else {
+        window.sessionStorage.removeItem('sb-admin-session');
+        window.sessionStorage.removeItem('sb-admin-token');
+      }
+    }
+    if (window.localStorage) {
+      if (session) {
+        window.localStorage.setItem(
+          'sb-admin-session',
+          JSON.stringify(session),
+        );
+        window.localStorage.setItem('sb-admin-token', session.access_token);
+      } else {
+        window.localStorage.removeItem('sb-admin-session');
+        window.localStorage.removeItem('sb-admin-token');
+      }
     }
   }
   if (typeof document !== 'undefined') {
@@ -71,13 +85,21 @@ export function getSession(): AdminSession | null {
   if (testingSession) {
     return testingSession;
   }
-  if (typeof window !== 'undefined' && window.sessionStorage) {
-    const raw = window.sessionStorage.getItem('sb-admin-session');
-    if (raw) {
-      try {
-        return JSON.parse(raw) as AdminSession;
-      } catch {
-        return null;
+  if (typeof window !== 'undefined') {
+    if (window.sessionStorage) {
+      const raw = window.sessionStorage.getItem('sb-admin-session');
+      if (raw) {
+        try {
+          return JSON.parse(raw) as AdminSession;
+        } catch {}
+      }
+    }
+    if (window.localStorage) {
+      const raw = window.localStorage.getItem('sb-admin-session');
+      if (raw) {
+        try {
+          return JSON.parse(raw) as AdminSession;
+        } catch {}
       }
     }
   }
@@ -89,9 +111,15 @@ export function getToken(): string | null {
   if (session?.access_token) {
     return session.access_token;
   }
-  if (typeof window !== 'undefined' && window.sessionStorage) {
-    const token = window.sessionStorage.getItem('sb-admin-token');
-    if (token) return token;
+  if (typeof window !== 'undefined') {
+    if (window.sessionStorage) {
+      const token = window.sessionStorage.getItem('sb-admin-token');
+      if (token) return token;
+    }
+    if (window.localStorage) {
+      const token = window.localStorage.getItem('sb-admin-token');
+      if (token) return token;
+    }
   }
   if (typeof document !== 'undefined') {
     const match = document.cookie.match(/(?:^|;\s*)sb-admin-token=([^;]+)/);

@@ -168,6 +168,9 @@ export function Carousel({
   const [isDragging, setIsDragging] = React.useState(false);
   const pointerTracker = React.useRef(new PointerVelocityTracker());
   const dragStartX = React.useRef(0);
+  const isPointerDown = React.useRef(false);
+  const activePointerId = React.useRef<number | null>(null);
+  const dragOccurredRef = React.useRef(false);
   const viewportRef = React.useRef<HTMLDivElement>(null);
 
   React.useEffect(() => {
@@ -297,22 +300,32 @@ export function Carousel({
     (e: React.PointerEvent<HTMLDivElement>) => {
       if (totalSlides <= 1 || loading) return;
       dragStartX.current = e.clientX;
+      isPointerDown.current = true;
+      activePointerId.current = e.pointerId;
+      dragOccurredRef.current = false;
       pointerTracker.current.reset();
       pointerTracker.current.addPoint(e.clientX, e.clientY);
-      setIsDragging(true);
       setUserInteracted(true);
-      try {
-        e.currentTarget.setPointerCapture(e.pointerId);
-      } catch {}
     },
     [totalSlides, loading],
   );
 
   const handlePointerMove = React.useCallback(
     (e: React.PointerEvent<HTMLDivElement>) => {
-      if (!isDragging) return;
+      if (!isPointerDown.current) return;
       pointerTracker.current.addPoint(e.clientX, e.clientY);
       const deltaX = e.clientX - dragStartX.current;
+
+      if (!dragOccurredRef.current && Math.abs(deltaX) > 8) {
+        dragOccurredRef.current = true;
+        setIsDragging(true);
+        try {
+          e.currentTarget.setPointerCapture(e.pointerId);
+        } catch {}
+      }
+
+      if (!dragOccurredRef.current) return;
+
       const viewportWidth = viewportRef.current?.clientWidth || 400;
 
       if (
@@ -324,16 +337,26 @@ export function Carousel({
         setDragOffset(deltaX);
       }
     },
-    [isDragging, index, totalSlides],
+    [index, totalSlides],
   );
 
   const handlePointerUp = React.useCallback(
     (e: React.PointerEvent<HTMLDivElement>) => {
-      if (!isDragging) return;
+      if (!isPointerDown.current) return;
+      isPointerDown.current = false;
+      const wasDragging = dragOccurredRef.current;
       setIsDragging(false);
       try {
-        e.currentTarget.releasePointerCapture(e.pointerId);
+        if (activePointerId.current !== null) {
+          e.currentTarget.releasePointerCapture(activePointerId.current);
+        }
       } catch {}
+      activePointerId.current = null;
+
+      if (!wasDragging) {
+        setDragOffset(0);
+        return;
+      }
 
       const { vx } = pointerTracker.current.getVelocity();
       const projected = project(vx, DECELERATION_RATE);
@@ -347,7 +370,7 @@ export function Carousel({
       }
       setDragOffset(0);
     },
-    [isDragging, dragOffset, index, totalSlides],
+    [dragOffset, index, totalSlides],
   );
 
   const prevDisabled = loading || index === 0 || totalSlides <= 1;
@@ -386,6 +409,13 @@ export function Carousel({
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerUp}
         onPointerCancel={handlePointerUp}
+        onClickCapture={(e) => {
+          if (dragOccurredRef.current) {
+            e.preventDefault();
+            e.stopPropagation();
+            dragOccurredRef.current = false;
+          }
+        }}
         className="carousel__viewport overflow-hidden cursor-grab active:cursor-grabbing select-none"
       >
         <ul

@@ -62,19 +62,35 @@ export function HeroCarousel() {
     };
   }, [isPaused, handleNext]);
 
+  const isDraggingRef = React.useRef(false);
+  const capturedPointerIdRef = React.useRef<number | null>(null);
+
   const handlePointerDown = (e: React.PointerEvent) => {
-    (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+    if ((e.target as HTMLElement).closest('a, button, [role="button"]')) {
+      return;
+    }
     setDragStartX(e.clientX);
+    isDraggingRef.current = false;
+    capturedPointerIdRef.current = e.pointerId;
     setIsPaused(true);
   };
 
   const handlePointerMove = (e: React.PointerEvent) => {
     if (dragStartX === null) return;
-    setDragOffset(e.clientX - dragStartX);
+    const delta = e.clientX - dragStartX;
+    if (!isDraggingRef.current && Math.abs(delta) > 8) {
+      isDraggingRef.current = true;
+      try {
+        (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+      } catch {}
+    }
+    if (isDraggingRef.current) {
+      setDragOffset(delta);
+    }
   };
 
   const handlePointerUp = (e: React.PointerEvent) => {
-    if (dragStartX !== null) {
+    if (isDraggingRef.current && dragStartX !== null) {
       const delta = e.clientX - dragStartX;
       if (delta < -50) {
         handleNext();
@@ -82,6 +98,15 @@ export function HeroCarousel() {
         handlePrev();
       }
     }
+    try {
+      if (capturedPointerIdRef.current !== null) {
+        (e.currentTarget as HTMLElement).releasePointerCapture(
+          capturedPointerIdRef.current,
+        );
+      }
+    } catch {}
+    capturedPointerIdRef.current = null;
+    isDraggingRef.current = false;
     setDragStartX(null);
     setDragOffset(0);
     setIsPaused(false);

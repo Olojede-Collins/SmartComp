@@ -135,7 +135,7 @@
   --color-bg-danger: var(--color-accent-faulty-500);
   --color-bg-row-hover: var(--color-brand-green-50);
   --color-bg-disabled: var(--color-neutral-100);
-  --color-bg-status-working: var(--color-brand-green-50);
+  --color-bg-status-working: #f2fbf5;
   --color-bg-status-faulty: var(--color-accent-faulty-50);
   --color-bg-status-maintenance: var(--color-brand-brown-50);
   --color-bg-status-decommissioned: var(--color-neutral-100);
@@ -150,7 +150,7 @@
   --color-fg-link: var(--color-brand-green-500);
   --color-fg-link-hover: var(--color-brand-green-600);
   --color-fg-stamp: var(--color-brand-brown-500);
-  --color-fg-status-working: var(--color-brand-green-500);
+  --color-fg-status-working: #166534;
   --color-fg-status-faulty: var(--color-accent-faulty-500);
   --color-fg-status-maintenance: var(--color-brand-brown-500);
   --color-fg-status-decommissioned: var(--color-neutral-600);
@@ -162,7 +162,7 @@
   --color-border-error: var(--color-accent-faulty-500);
   --color-border-warn: var(--color-brand-brown-500);
   --color-border-disabled: var(--color-neutral-300);
-  --color-border-status-working: var(--color-brand-green-500);
+  --color-border-status-working: rgba(22, 101, 52, 0.24);
   --color-border-status-faulty: var(--color-accent-faulty-500);
   --color-border-status-maintenance: var(--color-brand-brown-500);
   --color-border-status-decommissioned: var(--color-neutral-500);

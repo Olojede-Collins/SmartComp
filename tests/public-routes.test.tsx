@@ -173,22 +173,20 @@ describe('S-003 Item detail route (app/item/[id]/page.tsx)', () => {
     const breadcrumb = screen.getByRole('navigation', { name: 'Breadcrumb' });
     const backLink = breadcrumb.querySelector('a[href="/room"]');
     expect(backLink?.textContent).toBe('The collection');
-    expect(breadcrumb.textContent).toContain('11111111');
+    expect(breadcrumb.textContent).toContain('Detail');
 
     const h1 = screen.getByRole('heading', { level: 1 });
     expect(h1.textContent).toBe('Smart Create view Screen');
 
-    expect(screen.getByText('RECORD')).toBeTruthy();
-    expect(screen.getAllByText('11111111')).toHaveLength(2);
     expect(screen.getByText('QUANTITY')).toBeTruthy();
     expect(screen.getByText('1')).toBeTruthy();
-    expect(screen.getByText('UPDATED')).toBeTruthy();
-    expect(screen.getByText('2026-10-09')).toBeTruthy();
     expect(screen.getByText('Working')).toBeTruthy();
 
-    expect(screen.getByText('CORE FUNCTIONALITY (AS SUBMITTED)')).toBeTruthy();
+    expect(screen.getByText('PRIMARY FUNCTIONALITY')).toBeTruthy();
     expect(screen.getByText('Central screen for the class')).toBeTruthy();
-    expect(screen.getByText('OTHER FUNCTIONALITY (AS SUBMITTED)')).toBeTruthy();
+    expect(
+      screen.getByText('ADDITIONAL SPECIFICATIONS & CAPABILITIES'),
+    ).toBeTruthy();
     expect(screen.getByText('Whiteboard for lectures')).toBeTruthy();
 
     expect(screen.getByText('2 photograph(s) on file.')).toBeTruthy();

@@ -27,8 +27,8 @@ const CHIP_VARIANTS: Record<Condition, { className: string; icon: IconName }> =
   };
 
 const BASE =
-  'chip inline-flex items-center gap-2 min-h-6 px-3 py-2 rounded-sm border ' +
-  'text-micro font-semibold tracking-micro whitespace-nowrap';
+  'chip inline-flex items-center gap-2 min-h-6 px-3 py-0.5 rounded-sm border ' +
+  'text-micro font-medium tracking-micro whitespace-nowrap';
 
 const NEUTRAL = 'bg-bg-surface border-border-rule text-fg-default';
 

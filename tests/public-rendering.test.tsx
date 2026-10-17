@@ -142,7 +142,7 @@ describe('Public Rendering Integration Test Suite with Legacy Data (S-06 M2)', (
       expect(
         screen.getByRole('heading', { level: 1, name: 'Student Camera' }),
       ).toBeDefined();
-      expect(screen.getAllByText('e0000001').length).toBe(2);
+      expect(screen.queryByText('e0000001')).toBeNull();
       expect(screen.getByText('Working')).toBeDefined();
       expect(screen.getByText('1')).toBeDefined();
 
