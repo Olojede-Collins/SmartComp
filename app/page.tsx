@@ -94,7 +94,6 @@ export default async function Page({ searchParams }: PageProps = {}) {
                   ? { src: item.image_keys[0], alt: item.name }
                   : undefined,
                 facts: [
-                  { key: 'RECORD', value: item.id.slice(0, 8) },
                   { key: 'QUANTITY', value: item.quantity, strong: true },
                   { key: 'UPDATED', value: item.updated_at.slice(0, 10) },
                 ],

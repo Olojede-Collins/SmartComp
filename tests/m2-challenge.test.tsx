@@ -83,16 +83,13 @@ describe('M2-CHALLENGE Seam 1: Missing §4 declared states across all 12 composi
 
     const provenance = pubFooter.querySelector('p');
     expect(provenance?.textContent?.trim()).toBe(
-      'Recorded by the ABU Smart Class lab team. Wording is kept as submitted.',
+      'Recorded by the ABU Smart Class lab team.',
     );
     expect(classes(provenance)).toContain('text-caption');
     expect(classes(provenance)).toContain('text-fg-muted');
 
     const stamp = pubFooter.querySelector('.bg-bg-stamp');
-    expect(stamp).not.toBeNull();
-    expect(stamp?.textContent).toContain(
-      'ENGINEERING FACULTY HOOD COLOUR — ACADEMIC BRIEF TABLE 2.1',
-    );
+    expect(stamp).toBeNull();
   });
 
   it('C-017: Banner tone grounds, icons, and entering states', () => {

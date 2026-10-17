@@ -23,7 +23,8 @@ export interface RegisterRowProps {
 
 const ROW_BASE =
   'block bg-bg-surface border border-border-rule rounded-md p-4 ' +
-  'no-underline text-fg-default hover:border-border-strong active:scale-[0.99] ' +
+  'no-underline text-fg-default hover:border-border-strong hover:-translate-y-1 ' +
+  'active:scale-[0.99] active:translate-y-0 ' +
   'focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-border-focus';
 
 function Thumb({ image }: { image?: RegisterRowImage }) {

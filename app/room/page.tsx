@@ -100,7 +100,6 @@ export default async function RoomPage({ searchParams }: RoomPageProps = {}) {
                     : undefined
                 }
                 facts={[
-                  { key: 'RECORD', value: item.id.slice(0, 8) },
                   { key: 'QUANTITY', value: item.quantity, strong: true },
                   { key: 'UPDATED', value: item.updated_at.slice(0, 10) },
                 ]}

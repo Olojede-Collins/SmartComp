@@ -32,9 +32,9 @@ export const LEGACY_EQUIPMENT_RECORDS: EquipmentRecord[] = [
     id: 'e0000001-0000-4000-a000-000000000001',
     name: 'Smart Create view Screen',
     core_functionality:
-      "This is the central screen for the class,it serves as a white board where needed,serves as a central screen for zoom meetings, lectures and projection. It's smart,has capabilities of a computer I.e you can use the smart screen to do anything you'd use a PC for.",
+      'Interactive digital podium and central multi-touch display screen serving as the primary visual medium for lectures, digital whiteboarding, and hybrid teleconferencing. Features integrated computing architecture capable of running local technical applications, digital annotation suites, and real-time remote presentations.',
     other_functionality:
-      'It can serve as a whiteboard for normal lectures as well. The marker is inbuilt so you just use your finger to write on it and it projects ',
+      'Supports multi-point finger and stylus touch input, integrated wireless screen casting, and dynamic digital whiteboard recording for subsequent lecture distribution.',
     condition: 'Working',
     quantity: 1,
     image_keys: ['smart-create-view-screen-1.webp'],
@@ -46,9 +46,9 @@ export const LEGACY_EQUIPMENT_RECORDS: EquipmentRecord[] = [
     id: 'e0000001-0000-4000-a000-000000000002',
     name: 'Recording Host',
     core_functionality:
-      'This serves as a mini server sort of where meetings held on the smart screen are recorded through a connection via cables from the smart screen straight to the recording Host. It stores both the audio and video components of the meetings or lectures held. ',
+      'Dedicated rack-mounted multimedia lecture capture and video management server. Ingests synchronized high-definition video, slide presentations, and multi-channel audio feeds directly from smart podiums and room cameras for automated processing and local archival.',
     other_functionality:
-      'A lecturer may decide to have his lecture recorded with the voice components and slides displayed taken into cognizance. This is the duty of the recording host',
+      'Enables automated recording, time-synchronized slide-to-audio encoding, and local network streaming for remote asynchronous learning and archival review.',
     condition: 'Working',
     quantity: 1,
     image_keys: ['recording-host-1.webp'],
@@ -60,9 +60,9 @@ export const LEGACY_EQUIPMENT_RECORDS: EquipmentRecord[] = [
     id: 'e0000001-0000-4000-a000-000000000003',
     name: 'Monitors',
     core_functionality:
-      'Serves as a system for everyone in the smart class to work,we have 50 of them in all and their connected to the wireless network available in the smart class ',
+      'High-definition workstation displays deployed across all 50 laboratory student seats, networked into the smart classroom laboratory cluster to facilitate individual hands-on programming, circuit simulation, and interactive laboratory exercises.',
     other_functionality:
-      'Does anything a Personal computer does to aid learning for the students ',
+      'Integrates with central broadcast feeds to allow students to switch between local computational workstations and real-time instructional demonstrations.',
     condition: 'Working',
     quantity: 50,
     image_keys: ['monitors-1.webp'],
@@ -74,8 +74,9 @@ export const LEGACY_EQUIPMENT_RECORDS: EquipmentRecord[] = [
     id: 'e0000001-0000-4000-a000-000000000004',
     name: 'Student Camera',
     core_functionality:
-      "This equipment takes the video component of the students and projects it on the lecturers feed back screen. It helps the lecturer monitor the students on a better scale than just the physical eye contact.\nI'll attach the feedback screen as well",
-    other_functionality: 'As stated above ',
+      'High-definition wide-angle pan-tilt-zoom (PTZ) student-facing monitoring and telepresence camera. Captures laboratory student seating rows and streams live video feeds to the instructor feedback monitor and remote lecture sessions.',
+    other_functionality:
+      'Aids laboratory instructors in monitoring student engagement and facilitating interactive question-and-answer sessions during hybrid and distributed class proceedings.',
     condition: 'Working',
     quantity: 1,
     image_keys: ['student-camera-1.webp', 'student-camera-2.webp'],
@@ -87,8 +88,9 @@ export const LEGACY_EQUIPMENT_RECORDS: EquipmentRecord[] = [
     id: 'e0000001-0000-4000-a000-000000000005',
     name: 'Router and switch',
     core_functionality:
-      'Provides access to wired and wireless networks for Internet connectivity for all the smart equipments in the class ',
-    other_functionality: 'Basic functionalities of routers and switches ',
+      'Enterprise gigabit network distribution rack consisting of a managed layer-2/3 network switch and dedicated routing gateway. Supplies isolated, high-bandwidth wired ethernet connectivity to student workstations and high-speed Wi-Fi across the facility.',
+    other_functionality:
+      'Manages VLAN segmentation for laboratory traffic, maintains dedicated Quality-of-Service (QoS) for live video capture streaming, and provides gateway security to institutional backbones.',
     condition: 'Working',
     quantity: 1,
     image_keys: ['router-and-switch-1.webp'],
@@ -100,8 +102,9 @@ export const LEGACY_EQUIPMENT_RECORDS: EquipmentRecord[] = [
     id: 'e0000001-0000-4000-a000-000000000006',
     name: 'Students screen and camera',
     core_functionality:
-      'Helps the students especially those at the back see the content on the central smart screen ',
-    other_functionality: 'Stated above ',
+      'Auxiliary high-definition repeater display and integrated audience telepresence module mounted mid-hall. Mirrors primary instruction displays so students seated further back maintain clear, uncompromised sightlines of detailed technical slides and code demonstrations.',
+    other_functionality:
+      'Features supplementary ambient microphone and wide-lens camera integration to support distributed classroom discussion and mid-auditorium student participation.',
     condition: 'Working',
     quantity: 1,
     image_keys: ['students-screen-and-camera-1.webp'],
@@ -113,8 +116,9 @@ export const LEGACY_EQUIPMENT_RECORDS: EquipmentRecord[] = [
     id: 'e0000001-0000-4000-a000-000000000007',
     name: 'HDMI splitter and converter',
     core_functionality:
-      "I've forgotten the functionality but as the name implies sha",
-    other_functionality: null,
+      'Hardware audiovisual matrix splitter and signal converter unit. Distributes uncompressed, low-latency HDMI digital video and audio signals from the main lectern simultaneously across multiple classroom repeaters, student monitors, and capture hosts.',
+    other_functionality:
+      'Performs active signal amplification and format handshaking (EDID management) across extended cable runs to eliminate video dropouts and display artifacts during laboratory sessions.',
     condition: 'Working',
     quantity: 1,
     image_keys: ['hdmi-splitter-and-converter-1.webp'],

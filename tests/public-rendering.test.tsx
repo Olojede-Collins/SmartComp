@@ -147,11 +147,11 @@ describe('Public Rendering Integration Test Suite with Legacy Data (S-06 M2)', (
       expect(screen.getByText('1')).toBeDefined();
 
       expect(
-        screen.getByText(
-          /This equipment takes the video component of the students/,
-        ),
+        screen.getByText(/High-definition wide-angle pan-tilt-zoom/),
       ).toBeDefined();
-      expect(screen.getByText(/As stated above/)).toBeDefined();
+      expect(
+        screen.getByText(/laboratory instructors in monitoring/),
+      ).toBeDefined();
 
       expect(screen.queryByText('Photograph unavailable')).toBeNull();
       expect(

@@ -95,7 +95,7 @@ describe('S-001 Landing route (app/page.tsx)', () => {
 
     expect(
       screen.getByText(
-        'A register of every item in the smart classroom in the Computer Engineering Department, Faculty of Engineering, Ahmadu Bello University — what it does, how many there are, and what state it is in. Kept by the lab team, in their own words.',
+        'A digital register and interactive laboratory archive for the smart classroom in the Computer Engineering Department, Faculty of Engineering, Ahmadu Bello University. Maintained directly by the lab team for accreditation, research, and technical operations.',
       ),
     ).toBeTruthy();
 
@@ -114,9 +114,7 @@ describe('S-001 Landing route (app/page.tsx)', () => {
     expect(screen.getByText('Monitors')).toBeTruthy();
 
     expect(
-      screen.getByText(
-        'Recorded by the ABU Smart Class lab team. Wording is kept as submitted.',
-      ),
+      screen.getByText('Recorded by the ABU Smart Class lab team.'),
     ).toBeTruthy();
   });
 });
@@ -152,9 +150,7 @@ describe('S-002 Room collection route (app/room/page.tsx)', () => {
     expect(headings[1].textContent).toBe('Smart Create view Screen');
 
     expect(
-      screen.getByText(
-        'Recorded by the ABU Smart Class lab team. Wording is kept as submitted.',
-      ),
+      screen.getByText('Recorded by the ABU Smart Class lab team.'),
     ).toBeTruthy();
   });
 });
@@ -198,9 +194,7 @@ describe('S-003 Item detail route (app/item/[id]/page.tsx)', () => {
     expect(screen.getByText('2 photograph(s) on file.')).toBeTruthy();
 
     expect(
-      screen.getByText(
-        'Recorded by the ABU Smart Class lab team. Wording is kept as submitted.',
-      ),
+      screen.getByText('Recorded by the ABU Smart Class lab team.'),
     ).toBeTruthy();
   });
 });
@@ -243,9 +237,7 @@ describe('NDPA Privacy route (app/privacy/page.tsx)', () => {
     ).toBeTruthy();
 
     expect(
-      screen.getByText(
-        'Recorded by the ABU Smart Class lab team. Wording is kept as submitted.',
-      ),
+      screen.getByText('Recorded by the ABU Smart Class lab team.'),
     ).toBeTruthy();
   });
 });

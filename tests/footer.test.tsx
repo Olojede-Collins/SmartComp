@@ -5,8 +5,7 @@ import { Footer } from '../app/_components/footer';
 
 const SOURCE_NOTE =
   'ENGINEERING FACULTY HOOD COLOUR — ACADEMIC BRIEF TABLE 2.1';
-const PROVENANCE =
-  'Recorded by the ABU Smart Class lab team. Wording is kept as submitted.';
+const PROVENANCE = 'Recorded by the ABU Smart Class lab team.';
 
 const classes = (el: Element) => (el.getAttribute('class') ?? '').split(/\s+/);
 
@@ -69,8 +68,8 @@ describe('C-004 Footer', () => {
     });
   });
 
-  it('carries the C-023 source note inline', () => {
+  it('omits the academic hood note from public footer', () => {
     render(<Footer variant="public" />);
-    expect(screen.getByText(SOURCE_NOTE)).toBeTruthy();
+    expect(screen.queryByText(SOURCE_NOTE)).toBeNull();
   });
 });

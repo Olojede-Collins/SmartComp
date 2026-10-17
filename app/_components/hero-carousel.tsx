@@ -31,6 +31,8 @@ const HERO_SLIDES: HeroSlide[] = [
 export function HeroCarousel() {
   const [currentIndex, setCurrentIndex] = React.useState(0);
   const [isPaused, setIsPaused] = React.useState(false);
+  const [dragStartX, setDragStartX] = React.useState<number | null>(null);
+  const [dragOffset, setDragOffset] = React.useState(0);
   const timerRef = React.useRef<NodeJS.Timeout | null>(null);
 
   const total = HERO_SLIDES.length;
@@ -60,69 +62,106 @@ export function HeroCarousel() {
     };
   }, [isPaused, handleNext]);
 
+  const handlePointerDown = (e: React.PointerEvent) => {
+    (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+    setDragStartX(e.clientX);
+    setIsPaused(true);
+  };
+
+  const handlePointerMove = (e: React.PointerEvent) => {
+    if (dragStartX === null) return;
+    setDragOffset(e.clientX - dragStartX);
+  };
+
+  const handlePointerUp = (e: React.PointerEvent) => {
+    if (dragStartX !== null) {
+      const delta = e.clientX - dragStartX;
+      if (delta < -50) {
+        handleNext();
+      } else if (delta > 50) {
+        handlePrev();
+      }
+    }
+    setDragStartX(null);
+    setDragOffset(0);
+    setIsPaused(false);
+  };
+
   return (
     <section
-      className="hero relative overflow-hidden rounded-2xl border border-border-rule shadow-card mb-8 bg-neutral-900 text-white"
+      className="hero relative overflow-hidden rounded-2xl border border-white/10 mb-8 bg-neutral-900 text-white select-none touch-pan-y"
       aria-roledescription="carousel"
       aria-label="Smart Classroom Hero"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
       onFocus={() => setIsPaused(true)}
       onBlur={() => setIsPaused(false)}
+      onPointerDown={handlePointerDown}
+      onPointerMove={handlePointerMove}
+      onPointerUp={handlePointerUp}
+      onPointerCancel={handlePointerUp}
     >
-      <div className="absolute inset-0 z-0">
-        {HERO_SLIDES.map((slide, idx) => (
-          <div
-            key={slide.image}
-            className={[
-              'absolute inset-0 transition-opacity duration-1000 ease-in-out',
-              idx === currentIndex ? 'opacity-100 z-10' : 'opacity-0 z-0',
-            ].join(' ')}
-            aria-hidden={idx !== currentIndex}
-          >
-            <img
-              src={slide.image}
-              alt={slide.alt}
-              className="h-full w-full object-cover object-center"
-            />
-          </div>
-        ))}
+      <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
         <div
-          className="absolute inset-0 z-20 bg-gradient-to-t from-black/90 via-black/60 to-black/40 backdrop-blur-[0.5px]"
+          className={[
+            'flex h-full w-full',
+            dragStartX !== null
+              ? 'transition-none'
+              : 'transition-transform ease-standard',
+          ].join(' ')}
+          style={{
+            transform:
+              dragOffset !== 0
+                ? `translateX(calc(-${currentIndex} * 100% + ${dragOffset}px))`
+                : `translateX(-${currentIndex * 100}%)`,
+          }}
+        >
+          {HERO_SLIDES.map((slide) => (
+            <div
+              key={slide.image}
+              className="relative h-full w-full flex-[0_0_100%] min-w-full"
+            >
+              <img
+                src={slide.image}
+                alt={slide.alt}
+                className="h-full w-full object-cover object-center"
+              />
+            </div>
+          ))}
+        </div>
+        <div
+          className="absolute inset-0 z-20 bg-gradient-to-t from-black/95 via-black/60 to-black/30"
           aria-hidden="true"
         />
       </div>
 
-      <div className="relative z-30 px-6 py-10 md:px-10 md:py-14 flex flex-col justify-between min-h-[420px] md:min-h-[460px]">
+      <div className="relative z-30 px-6 py-10 md:px-10 md:py-14 flex flex-col justify-between min-h-[420px] md:min-h-[460px] pointer-events-auto">
         <div className="max-w-[var(--layout-measure)]">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-green-800/80 border border-brand-green-500/40 text-xs md:text-sm font-medium text-emerald-100 mb-4 shadow-sm backdrop-blur-md">
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-            <span>
-              Department of Computer Engineering · Faculty of Engineering
-            </span>
-          </div>
+          <p className="text-caption font-semibold tracking-caps text-emerald-300 font-mono mb-3">
+            DEPARTMENT OF COMPUTER ENGINEERING · FACULTY OF ENGINEERING
+          </p>
 
           <h1 className="text-h1 tracking-h1 mb-4 font-serif text-white font-bold leading-tight drop-shadow-sm">
             The smart class, on the record.
           </h1>
 
           <p className="text-body-lg text-slate-200 mb-6 text-base md:text-lg leading-relaxed">
-            A register of every item in the smart classroom in the Computer
-            Engineering Department, Faculty of Engineering, Ahmadu Bello
-            University — what it does, how many there are, and what state it is
-            in. Kept by the lab team, in their own words.
+            A digital register and interactive laboratory archive for the smart
+            classroom in the Computer Engineering Department, Faculty of
+            Engineering, Ahmadu Bello University. Maintained directly by the lab
+            team for accreditation, research, and technical operations.
           </p>
 
           <div className="hero__actions flex flex-wrap items-center gap-3">
             <Link
               href="/room"
-              className="btn btn--primary inline-flex items-center justify-center min-h-12 px-6 rounded-lg bg-bg-action text-fg-on-action font-semibold text-base no-underline hover:bg-bg-action-hover active:scale-[0.98] shadow-raised transition-all focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-border-focus"
+              className="btn btn--primary inline-flex items-center justify-center min-h-12 px-6 rounded-lg bg-bg-action text-fg-on-action font-semibold text-base no-underline hover:bg-bg-action-hover active:scale-[0.98] transition-transform focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-border-focus"
             >
               Browse the collection
             </Link>
             <a
               href="#register-title"
-              className="inline-flex items-center justify-center min-h-12 px-5 rounded-lg bg-white/10 hover:bg-white/20 active:scale-[0.98] text-white font-medium text-sm border border-white/20 backdrop-blur-md transition-all focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-white"
+              className="inline-flex items-center justify-center min-h-12 px-5 rounded-lg bg-white/10 hover:bg-white/20 active:scale-[0.98] text-white font-medium text-sm border border-white/20 transition-transform focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-white"
             >
               View register entries ↓
             </a>
@@ -143,7 +182,7 @@ export function HeroCarousel() {
                   tabIndex={-1}
                   onClick={() => setCurrentIndex(dotIdx)}
                   className={[
-                    'h-2 rounded-full transition-all duration-300',
+                    'h-2 rounded-full transition-all active:scale-95',
                     dotIdx === currentIndex
                       ? 'w-6 bg-emerald-400'
                       : 'w-2 bg-white/40 hover:bg-white/60',

@@ -1,11 +1,7 @@
 import * as React from 'react';
 import Image from 'next/image';
-import { Stamp } from './stamp';
 
 export type FooterVariant = 'public' | 'admin';
-
-const SOURCE_NOTE =
-  'ENGINEERING FACULTY HOOD COLOUR — ACADEMIC BRIEF TABLE 2.1';
 
 interface FooterLink {
   label: string;
@@ -56,8 +52,7 @@ export function Footer({ variant = 'public', className }: FooterProps) {
           />
         </div>
         <p className="text-caption text-fg-muted">
-          Recorded by the ABU Smart Class lab team. Wording is kept as
-          submitted.
+          Recorded by the ABU Smart Class lab team.
         </p>
         <div className="flex flex-wrap items-center gap-5">
           {links.map((link) => (
@@ -66,7 +61,6 @@ export function Footer({ variant = 'public', className }: FooterProps) {
             </a>
           ))}
         </div>
-        <Stamp>{SOURCE_NOTE}</Stamp>
       </div>
     </footer>
   );

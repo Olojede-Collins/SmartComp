@@ -277,8 +277,7 @@ describe('S-07 Milestone M2 Challenger Adversarial Stress Suite', () => {
       );
       expect(logo).toBeTruthy();
       const stamp = container.querySelector('[class*="bg-bg-stamp"]');
-      expect(stamp).toBeTruthy();
-      expect(stamp?.textContent).toContain('ENGINEERING FACULTY HOOD COLOUR');
+      expect(stamp).toBeNull();
     });
   });
 

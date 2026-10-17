@@ -263,6 +263,11 @@ body {
   max-width: var(--layout-measure);
 }
 
+ul.rows a {
+  transition: transform var(--motion-duration-fast)
+    var(--motion-easing-standard);
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
