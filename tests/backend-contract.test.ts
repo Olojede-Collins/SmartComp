@@ -1024,4 +1024,40 @@ describe('Backend API Contract & Probe Suite', () => {
       });
     }
   });
+
+  describe('15. CORS Preflight & Headers', () => {
+    it('handles OPTIONS preflight with 204 and CORS headers', async () => {
+      const res = await globalThis.fetch(`${baseUrl}/api/admin/items`, {
+        method: 'OPTIONS',
+        headers: {
+          Origin: 'https://abu-smartcomp.vercel.app',
+          'Access-Control-Request-Method': 'POST',
+          'Access-Control-Request-Headers': 'Content-Type, Authorization',
+        },
+      });
+
+      expect(res.status).toBe(204);
+      expect(res.headers.get('access-control-allow-origin')).toBe(
+        'https://abu-smartcomp.vercel.app',
+      );
+      expect(res.headers.get('access-control-allow-methods')).toContain('POST');
+      expect(res.headers.get('access-control-allow-headers')).toContain(
+        'Authorization',
+      );
+    });
+
+    it('attaches Access-Control-Allow-Origin header to GET requests', async () => {
+      const res = await globalThis.fetch(`${baseUrl}/api/admin/items`, {
+        method: 'GET',
+        headers: {
+          Origin: 'https://abu-smartcomp.vercel.app',
+          Authorization: `Bearer ${validAdminToken}`,
+        },
+      });
+
+      expect(res.headers.get('access-control-allow-origin')).toBe(
+        'https://abu-smartcomp.vercel.app',
+      );
+    });
+  });
 });
