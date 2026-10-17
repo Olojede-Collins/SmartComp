@@ -31,6 +31,8 @@
 !.env.template
 !vercel.json
 !public/
+!README.md
+!src/
 
 
 # Secrets must stay ignored even after broad un-ignore
