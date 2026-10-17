@@ -113,10 +113,10 @@ function AcceptInviteForm() {
             </div>
           ) : null}
 
-          <div className="bg-bg-surface border border-border-strong rounded-md">
+          <div className="apple-card bg-bg-surface border border-border-rule rounded-md overflow-hidden">
             <div className="border-b border-border-rule px-6 py-5 flex flex-col gap-2">
               <FieldKey>INVITATION</FieldKey>
-              <h1 className="text-h1 tracking-h1 font-serif text-fg-default m-0">
+              <h1 className="text-h1 tracking-h1 font-sans font-bold text-neutral-900 m-0">
                 Accept your invitation
               </h1>
               <p className="text-body text-fg-muted m-0">

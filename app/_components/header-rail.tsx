@@ -21,7 +21,7 @@ const ADMIN_LINKS: RailLink[] = [
 
 const RAIL_LINK_CLASS = [
   'inline-flex items-center min-h-11 px-1 text-body-small no-underline bg-transparent',
-  'text-fg-on-rail-muted hover:text-fg-on-rail',
+  'text-fg-on-rail-muted hover:text-fg-on-rail active:scale-[0.98]',
   'border-b-3 border-transparent',
   'focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-border-focus-on-rail',
 ].join(' ');
@@ -47,7 +47,7 @@ export function HeaderRail({
       <header
         className={[
           'sticky top-0 z-rail h-[var(--layout-railHeight)] aasm-chrome',
-          'bg-bg-rail bg-brand-green-600/85 backdrop-blur-md backdrop-saturate-180 border-b border-white/10 text-fg-on-rail',
+          'bg-bg-rail backdrop-blur-md backdrop-saturate-180 border-b border-black/[0.08] text-fg-on-rail',
           className,
         ]
           .filter(Boolean)
@@ -56,16 +56,16 @@ export function HeaderRail({
         <div className="mx-auto flex h-full max-w-[var(--layout-containerMax)] items-center gap-5 px-5">
           <a
             href={isAdmin ? '/admin' : '/'}
-            className="inline-flex items-center gap-3 min-h-11 whitespace-nowrap px-1 text-fg-on-rail no-underline focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-border-focus-on-rail"
+            className="inline-flex items-center gap-3 min-h-11 whitespace-nowrap px-1 text-fg-on-rail no-underline active:scale-[0.98] focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-border-focus-on-rail"
           >
             <Image
-              src="/assets/abu/footer-logo.png"
+              src="/assets/abu/logo-522x70.png"
               alt="Ahmadu Bello University"
               width={261}
-              height={39}
+              height={35}
               className="flex-none h-[18px] w-auto md:h-[22px]"
             />
-            <span className="hidden text-body-small font-medium md:inline">
+            <span className="hidden text-body-small font-semibold tracking-tight md:inline text-neutral-900">
               ABU Smart Class
             </span>
           </a>

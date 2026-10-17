@@ -141,7 +141,7 @@ export function HeroCarousel() {
             DEPARTMENT OF COMPUTER ENGINEERING · FACULTY OF ENGINEERING
           </p>
 
-          <h1 className="text-h1 tracking-h1 mb-4 font-serif text-white font-bold leading-tight drop-shadow-sm">
+          <h1 className="text-h1 tracking-h1 mb-4 font-sans text-white font-bold leading-tight drop-shadow-sm">
             The smart class, on the record.
           </h1>
 

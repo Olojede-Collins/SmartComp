@@ -46,8 +46,8 @@ export default async function RoomPage({ searchParams }: RoomPageProps = {}) {
         data-state={state}
         className="wrap flex-1 max-w-[var(--layout-containerMax)] mx-auto w-full px-[var(--layout-gutter)] py-8 md:py-10"
       >
-        <div className="page-head mb-6">
-          <h1 className="text-h1 tracking-h1 mb-3 font-serif">
+        <div className="page-head mb-8">
+          <h1 className="text-h1 tracking-h1 mb-2 font-sans font-bold text-neutral-900">
             The collection
           </h1>
           <p className="text-body-lg text-fg-muted max-w-[var(--layout-measure)]">
@@ -87,13 +87,14 @@ export default async function RoomPage({ searchParams }: RoomPageProps = {}) {
             }
           />
         ) : (
-          <ul className="rows flex flex-col gap-4 list-none p-0 m-0">
+          <ul className="rows grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 list-none p-0 m-0">
             {sortedItems.map((item) => (
               <RegisterRow
                 key={item.id}
                 href={`/item/${item.id}`}
                 name={item.name}
                 condition={item.condition}
+                variant="card"
                 image={
                   item.image_keys?.length
                     ? { src: item.image_keys[0], alt: item.name }

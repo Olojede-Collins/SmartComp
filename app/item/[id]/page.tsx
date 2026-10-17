@@ -61,12 +61,12 @@ export default async function ItemPage({
             />
           </div>
           <div className="spread__label min-w-0">
-            <div className="label-card bg-bg-surface border border-border-strong rounded-md">
+            <div className="label-card apple-card bg-bg-surface border border-border-rule rounded-md overflow-hidden">
               <div className="p-5 md:p-6 border-b border-border-rule">
                 <span className="text-micro font-medium text-fg-muted uppercase tracking-caps block mb-2">
                   ITEM
                 </span>
-                <h1 className="text-h2 tracking-h2 font-serif mb-3 break-words">
+                <h1 className="text-h1 tracking-h1 font-sans font-bold text-neutral-900 mb-3 break-words">
                   {item.name}
                 </h1>
                 <div className="flex flex-wrap items-center gap-4 mt-3">

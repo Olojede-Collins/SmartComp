@@ -161,7 +161,7 @@ export default function AdminAdminsPage() {
 
         <div className="flex flex-col gap-6 mb-8">
           <div className="flex flex-col gap-2 max-w-[var(--layout-measure)]">
-            <h1 className="text-h1 tracking-h1 font-serif text-fg-default m-0">
+            <h1 className="text-h1 tracking-h1 font-sans font-bold text-neutral-900 m-0">
               The lab team
             </h1>
             <p className="text-body text-fg-muted m-0">

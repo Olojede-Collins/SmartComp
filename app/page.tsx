@@ -40,10 +40,12 @@ export default async function Page({ searchParams }: PageProps = {}) {
         className="wrap flex-1 max-w-[var(--layout-containerMax)] mx-auto w-full px-[var(--layout-gutter)] py-8 md:py-10"
       >
         <HeroCarousel />
-        <hr className="border-t border-border-rule my-6" aria-hidden="true" />
-        <section aria-labelledby="register-title">
-          <div className="section-head flex flex-wrap gap-3 items-baseline justify-between mb-5">
-            <h2 id="register-title" className="text-h2 font-serif">
+        <section aria-labelledby="register-title" className="mt-10 md:mt-14">
+          <div className="section-head flex flex-wrap gap-3 items-baseline justify-between mb-6">
+            <h2
+              id="register-title"
+              className="text-h2 font-sans font-bold tracking-tight text-neutral-900"
+            >
               The register
             </h2>
             <p className="text-data text-fg-muted font-mono">

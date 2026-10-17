@@ -15,7 +15,9 @@ export default function PrivacyPage() {
         className="wrap flex-1 max-w-[var(--layout-containerMax)] mx-auto w-full px-[var(--layout-gutter)] py-8 md:py-10"
       >
         <div className="max-w-[var(--layout-measure)]">
-          <h1 className="text-h1 tracking-h1 font-serif mb-2">Privacy</h1>
+          <h1 className="text-h1 tracking-h1 font-sans font-bold text-neutral-900 mb-2">
+            Privacy
+          </h1>
           <p className="text-body-lg text-fg-muted mb-4">
             Plain words about what this site keeps, and what it does not.
           </p>
@@ -31,7 +33,9 @@ export default function PrivacyPage() {
           </p>
 
           <section className="mb-6">
-            <h2 className="text-h2 font-serif mb-2">What the site holds</h2>
+            <h2 className="text-h2 font-sans font-bold text-neutral-900 mb-2">
+              What the site holds
+            </h2>
             <p className="text-body mb-3">
               Item records: the name of each piece of equipment, what it does,
               its current condition, how many there are, and the date it was
@@ -46,7 +50,9 @@ export default function PrivacyPage() {
           </section>
 
           <section className="mb-6">
-            <h2 className="text-h2 font-serif mb-2">The photographs</h2>
+            <h2 className="text-h2 font-sans font-bold text-neutral-900 mb-2">
+              The photographs
+            </h2>
             <p className="text-body mb-3">
               The first photographs came from the lab team&apos;s own shared
               folder on Google Drive. Before any of them appear here they are
@@ -66,7 +72,9 @@ export default function PrivacyPage() {
           </section>
 
           <section className="mb-6">
-            <h2 className="text-h2 font-serif mb-2">What we do not do</h2>
+            <h2 className="text-h2 font-sans font-bold text-neutral-900 mb-2">
+              What we do not do
+            </h2>
             <ul className="list-disc pl-5 space-y-1 text-body mb-3">
               <li>No visitor accounts, so no visitor names or passwords.</li>
               <li>No tracking, no analytics, no advertising.</li>
@@ -80,7 +88,9 @@ export default function PrivacyPage() {
           </section>
 
           <section className="mb-6">
-            <h2 className="text-h2 font-serif mb-2">How long we keep it</h2>
+            <h2 className="text-h2 font-sans font-bold text-neutral-900 mb-2">
+              How long we keep it
+            </h2>
             <p className="text-body mb-3">
               Item records and their photographs stay here for as long as the
               equipment is in the Smart Class. If the lab team removes an item,
@@ -95,7 +105,9 @@ export default function PrivacyPage() {
           </section>
 
           <section className="mb-6">
-            <h2 className="text-h2 font-serif mb-2">Who to ask</h2>
+            <h2 className="text-h2 font-sans font-bold text-neutral-900 mb-2">
+              Who to ask
+            </h2>
             <p className="text-body mb-3">
               Ahmadu Bello University, through the Department of Electrical
               Engineering, is responsible for this information. If you have a
@@ -117,7 +129,9 @@ export default function PrivacyPage() {
           </section>
 
           <section className="mb-6">
-            <h2 className="text-h2 font-serif mb-2">Your rights</h2>
+            <h2 className="text-h2 font-sans font-bold text-neutral-900 mb-2">
+              Your rights
+            </h2>
             <p className="text-body mb-3">
               Under Nigeria&apos;s data protection law you can ask what we hold
               about you, ask for it to be corrected, or ask for it to be

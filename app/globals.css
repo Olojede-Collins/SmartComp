@@ -10,9 +10,18 @@
 @source inline('p-5');
 
 :root {
-  --font-family-sans: var(--font-plex-sans), system-ui, sans-serif;
-  --font-family-mono: var(--font-plex-mono), ui-monospace, monospace;
+  --font-family-sans:
+    var(--font-plex-sans), system-ui, -apple-system, BlinkMacSystemFont,
+    'Segoe UI', Roboto, sans-serif;
+  --font-family-mono:
+    var(--font-plex-mono), ui-monospace, SFMono-Regular, monospace;
   --font-family-serif: var(--font-eb-garamond), Georgia, serif;
+
+  --color-bg-rail: rgba(255, 255, 255, 0.85);
+  --color-fg-on-rail: var(--color-neutral-900);
+  --color-fg-on-rail-muted: var(--color-neutral-600);
+  --color-bg-rail-active: var(--color-brand-green-600);
+  --color-border-focus-on-rail: var(--color-brand-green-600);
 }
 
 @theme {
@@ -129,13 +138,13 @@
 
   --text-display: var(--font-size-40);
   --text-display--line-height: var(--font-lineHeight-display);
-  --text-display--font-weight: var(--font-weight-semibold);
-  --text-display--font-family: var(--font-family-serif);
-  --text-display--letter-spacing: var(--font-letterSpacing-display);
+  --text-display--font-weight: var(--font-weight-bold);
+  --text-display--font-family: var(--font-family-sans);
+  --text-display--letter-spacing: -0.025em;
   --text-h1: var(--font-size-30);
   --text-h1--line-height: var(--font-lineHeight-h1);
-  --text-h1--font-weight: var(--font-weight-semibold);
-  --text-h1--font-family: var(--font-family-serif);
+  --text-h1--font-weight: var(--font-weight-bold);
+  --text-h1--font-family: var(--font-family-sans);
   --text-h1--letter-spacing: var(--font-letterSpacing-h1);
   --text-h2: var(--font-size-21);
   --text-h2--line-height: var(--font-lineHeight-h2);
@@ -152,8 +161,8 @@
   --text-h4--font-family: var(--font-family-sans);
   --text-item-name: var(--font-size-17);
   --text-item-name--line-height: var(--font-lineHeight-h3);
-  --text-item-name--font-weight: var(--font-weight-medium);
-  --text-item-name--font-family: var(--font-family-serif);
+  --text-item-name--font-weight: var(--font-weight-semibold);
+  --text-item-name--font-family: var(--font-family-sans);
   --text-body-lg: var(--font-size-18);
   --text-body-lg--line-height: var(--font-lineHeight-bodyLg);
   --text-body-lg--font-weight: var(--font-weight-regular);
@@ -289,6 +298,18 @@ ul.rows a {
   scroll-behavior: auto !important;
 }
 
+.apple-card {
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.04),
+    0 6px 16px rgba(0, 0, 0, 0.04);
+}
+
+.apple-card:hover {
+  box-shadow:
+    0 4px 12px rgba(0, 0, 0, 0.06),
+    0 12px 28px rgba(0, 0, 0, 0.07);
+}
+
 @media (prefers-reduced-transparency: reduce) {
   *,
   *::before,
@@ -298,7 +319,7 @@ ul.rows a {
   }
   .aasm-chrome,
   header.sticky {
-    background-color: var(--color-bg-rail) !important;
+    background-color: #ffffff !important;
   }
   [data-dialog-overlay] {
     background-color: rgba(20, 38, 28, 0.75) !important;

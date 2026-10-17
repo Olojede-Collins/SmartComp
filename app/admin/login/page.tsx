@@ -76,7 +76,7 @@ function LoginForm() {
             <div>
               <FieldKey>ADMIN</FieldKey>
             </div>
-            <h1 className="text-h1 tracking-h1 font-serif text-fg-default m-0">
+            <h1 className="text-h1 tracking-h1 font-sans font-bold text-neutral-900 m-0">
               Sign in
             </h1>
             <p className="text-body text-fg-muted m-0">

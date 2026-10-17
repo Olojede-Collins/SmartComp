@@ -98,7 +98,7 @@ export default function NewItemPage() {
         </nav>
 
         <div className="flex flex-col gap-2 max-w-[var(--layout-measure)] mb-6">
-          <h1 className="text-h1 tracking-h1 font-serif text-fg-default m-0">
+          <h1 className="text-h1 tracking-h1 font-sans font-bold text-neutral-900 m-0">
             Add an item
           </h1>
           <p className="text-body text-fg-muted m-0">
@@ -119,7 +119,7 @@ export default function NewItemPage() {
           onSubmit={handleSubmit}
           aria-busy={saving ? 'true' : undefined}
           data-state={saving ? 'saving' : undefined}
-          className="form__block max-w-[var(--layout-measure)] bg-bg-surface border border-border-rule rounded-md p-5 flex flex-col gap-6"
+          className="form__block apple-card max-w-[var(--layout-measure)] bg-bg-surface border border-border-rule rounded-md p-5 flex flex-col gap-6"
         >
           <Field
             label="ITEM NAME"

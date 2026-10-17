@@ -173,7 +173,7 @@ export function DeleteDialog({
             ) : null}
 
             <div className="dlg__record bg-bg-surface-sunken border border-border-rule rounded-md p-4 mb-5 flex flex-col gap-3">
-              <p className="dlg__record-name text-item-name text-fg-default font-serif m-0 break-words">
+              <p className="dlg__record-name text-item-name text-fg-default font-sans font-semibold m-0 break-words">
                 {item.name}
               </p>
               <div className="dlg__facts flex flex-wrap gap-5">

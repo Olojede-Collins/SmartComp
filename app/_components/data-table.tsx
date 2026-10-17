@@ -39,7 +39,7 @@ const HEAD =
   'px-4 py-3 border-b border-border-rule bg-bg-surface-sunken';
 
 const FRAME =
-  'border border-border-rule rounded-md overflow-hidden bg-bg-surface';
+  'apple-card border border-border-rule rounded-md overflow-hidden bg-bg-surface';
 
 export function DataTable({
   rows,
