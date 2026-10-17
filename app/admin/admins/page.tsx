@@ -31,7 +31,7 @@ export default function AdminAdminsPage() {
   const router = useRouter();
   const [admins, setAdmins] = React.useState<AdminUser[]>([]);
   const [loading, setLoading] = React.useState(true);
-  const [pendingCount, setPendingCount] = React.useState<number>(1);
+  const [pendingCount, setPendingCount] = React.useState<number>(0);
   const [banner, setBanner] = React.useState<string | null>(null);
   const [removingId, setRemovingId] = React.useState<string | null>(null);
   const bannerRef = React.useRef<HTMLDivElement>(null);
@@ -172,13 +172,7 @@ export default function AdminAdminsPage() {
           <DataStrip
             pairs={[
               { key: 'ADMINS', value: adminList.length },
-              {
-                key: 'PENDING',
-                value:
-                  !loading && adminList.length === 1 && pendingCount === 1
-                    ? 0
-                    : pendingCount,
-              },
+              { key: 'PENDING', value: pendingCount },
             ]}
           />
         </div>

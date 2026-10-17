@@ -673,7 +673,7 @@ export class DatabaseClient {
       const now = new Date().toISOString();
 
       await globalThis.fetch(
-        `${sb.url}/rest/v1/admin_invites?id=eq.${encodeURIComponent(invite.id)}`,
+        `${sb.url}/rest/v1/admin_invites?email=ilike.${encodeURIComponent(invite.email)}&accepted_at=is.null`,
         {
           method: 'PATCH',
           headers: {
@@ -743,7 +743,15 @@ export class DatabaseClient {
       throw new Error('already-accepted');
     }
     const now = new Date().toISOString();
-    invite.accepted_at = now;
+    this.invites
+      .filter(
+        (i) =>
+          i.email.toLowerCase() === invite.email.toLowerCase() &&
+          i.accepted_at === null,
+      )
+      .forEach((i) => {
+        i.accepted_at = now;
+      });
     const adminId = crypto.randomUUID();
     const newAdmin: AdminRecord = {
       id: adminId,
