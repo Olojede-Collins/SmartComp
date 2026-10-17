@@ -125,10 +125,7 @@ export async function authMiddleware(
 
       if (matchingKey) {
         try {
-          const pubKey = crypto.createPublicKey({
-            key: matchingKey as unknown as crypto.JsonWebKey,
-            format: 'jwk',
-          });
+          const pubKey = crypto.createPublicKey({ key: matchingKey as any, format: 'jwk' }); // eslint-disable-line @typescript-eslint/no-explicit-any
           isValid = crypto.verify(
             'sha256',
             Buffer.from(`${headerB64}.${payloadB64}`),
