@@ -1,6 +1,10 @@
 name: CI
 
 on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
   workflow_dispatch:
 
 jobs:
@@ -18,6 +22,7 @@ jobs:
 
   test:
     name: test
+    needs: lint
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
@@ -30,6 +35,7 @@ jobs:
 
   build:
     name: build
+    needs: test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
@@ -40,3 +46,14 @@ jobs:
       - run: npm ci
       - run: npm run build
       - run: docker build -f backend/Dockerfile .
+
+  deploy:
+    name: deploy
+    needs: build
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Smoke probe 1
+        run: curl -fsS "${{ vars.RENDER_SERVICE_URL }}/healthz"
+      - name: Smoke probe 2
+        run: curl -fsS "${{ vars.VERCEL_PUBLIC_URL }}/"

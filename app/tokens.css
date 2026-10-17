@@ -79,12 +79,24 @@
   --font-lineHeight-body: 1.5;
   --font-lineHeight-caption: 1.4;
   --font-lineHeight-data: 1.45;
-  --font-letterSpacing-display: -0.01em;
+  --font-letterSpacing-display: -0.02em;
+  --font-letterSpacing-h1: -0.015em;
+  --font-letterSpacing-h2: -0.01em;
   --font-letterSpacing-none: 0;
   --font-letterSpacing-stamp: 0.06em;
   --font-letterSpacing-micro: 0.08em;
   --font-letterSpacing-label: 0.1em;
   --font-letterSpacing-caps: 0.14em;
+  --blur-material: 16px;
+  --saturate-material: 180%;
+  --spring-damping-default: 1;
+  --spring-response-default: 0.35s;
+  --spring-damping-momentum: 0.8;
+  --spring-response-momentum: 0.3s;
+  --spring-damping-sheet: 0.8;
+  --spring-response-sheet: 0.32s;
+  --spring-damping-press: 1;
+  --spring-response-press: 0.15s;
   --shadow-card:
     0 1px 2px rgba(20, 38, 28, 0.05), 0 8px 20px rgba(20, 38, 28, 0.06);
   --shadow-raised:
@@ -104,7 +116,7 @@
   --breakpoint-lg: 1100px;
   --layout-railHeight: 56px;
   --layout-containerMax: 1200px;
-  --layout-measure: 62ch;
+  --layout-measure: 66ch;
   --layout-gutter: 24px;
 
   /* semantic: light */

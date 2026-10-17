@@ -120,6 +120,8 @@
   --font-weight-semibold: var(--font-weight-semibold);
 
   --tracking-display: var(--font-letterSpacing-display);
+  --tracking-h1: var(--font-letterSpacing-h1);
+  --tracking-h2: var(--font-letterSpacing-h2);
   --tracking-stamp: var(--font-letterSpacing-stamp);
   --tracking-micro: var(--font-letterSpacing-micro);
   --tracking-label: var(--font-letterSpacing-label);
@@ -129,14 +131,17 @@
   --text-display--line-height: var(--font-lineHeight-display);
   --text-display--font-weight: var(--font-weight-semibold);
   --text-display--font-family: var(--font-family-serif);
+  --text-display--letter-spacing: var(--font-letterSpacing-display);
   --text-h1: var(--font-size-30);
   --text-h1--line-height: var(--font-lineHeight-h1);
   --text-h1--font-weight: var(--font-weight-semibold);
   --text-h1--font-family: var(--font-family-serif);
+  --text-h1--letter-spacing: var(--font-letterSpacing-h1);
   --text-h2: var(--font-size-21);
   --text-h2--line-height: var(--font-lineHeight-h2);
   --text-h2--font-weight: var(--font-weight-semibold);
   --text-h2--font-family: var(--font-family-sans);
+  --text-h2--letter-spacing: var(--font-letterSpacing-h2);
   --text-h3: var(--font-size-17);
   --text-h3--line-height: var(--font-lineHeight-h3);
   --text-h3--font-weight: var(--font-weight-semibold);
@@ -277,4 +282,20 @@ body {
   animation-iteration-count: 1 !important;
   transition-duration: 1ms !important;
   scroll-behavior: auto !important;
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  *,
+  *::before,
+  *::after {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+  .aasm-chrome,
+  header.sticky {
+    background-color: var(--color-bg-rail) !important;
+  }
+  [data-dialog-overlay] {
+    background-color: rgba(20, 38, 28, 0.75) !important;
+  }
 }

@@ -1,0 +1,14 @@
+name: Heartbeat
+
+on:
+  schedule:
+    - cron: '0 6 * * *'
+  workflow_dispatch:
+
+jobs:
+  ping:
+    name: ping
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping backend healthz
+        run: curl -fsS --max-time 15 "${{ vars.RENDER_SERVICE_URL }}/healthz"

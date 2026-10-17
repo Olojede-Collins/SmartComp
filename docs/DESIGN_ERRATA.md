@@ -48,7 +48,37 @@ governed the implementation; the stale doc value is recorded below.
   classes.
 - **Action for Israel:** correct the §7 prose at next unfreeze.
 
+## E-4 — C-004 Footer spec-vs-preview ground and padding divergence (SP-4)
+
+- **Location:** `design/04-components/specs/C-004.md:21-25` vs `design/05-screens/*/preview.html`.
+- **Doc says:** spec §2.2 mandates `bg.page` (`bg-bg-page`), §2.3 specifies `space.5` padding (`p-5`)
+  and `space.3` gap (`gap-3`) with always-column layout. The reference preview used `bg-surface`,
+  `space-6` padding, and `gap-5`.
+- **Resolution applied (code):** the implementation follows the component spec over the preview
+  per HANDOFF §1 strict precedence (specs decide; previews illustrate).
+- **Action for Israel:** reconcile the preview with the spec at next design unfreeze.
+
+## E-5 — C-022 DataTable LOCATION column divergence (SP-5)
+
+- **Location:** `design/04-components/specs/C-022.md:25-35` vs `design/07-copy/ux-copy.md:234-240`.
+- **Doc says:** C-022 spec §2.5/§3 names a 7th LOCATION column. The frozen `ux-copy.md` headers
+  and S-004 preview define a 6-column set (record, name, qty, condition, updated, actions).
+- **Resolution applied (code):** the implementation follows the copy authority (`ux-copy.md`)
+  with the 6-column layout.
+- **Action for Israel:** align C-022 §2.5 with ux-copy.md at next design unfreeze.
+
+## E-6 — C-023 Stamp punctuation divergence (SP-7)
+
+- **Location:** `design/04-components/specs/C-023.md:28,45` vs `design/07-copy/ux-copy.md:37`.
+- **Doc says:** C-023 spec §3/§6 asserts an ASCII hyphen ("-") in the provenance string.
+  The frozen copy authority `ux-copy.md` and S-001 preview use an em-dash ("—").
+- **Resolution applied (code):** the implementation uses the em-dash from frozen `ux-copy.md`
+  per HANDOFF §3 rule 3 (copy is verbatim).
+- **Action for Israel:** update C-023 spec to use em-dash at next design unfreeze.
+
 ---
 
 Source: `.agent/teamwork/m2-comp-lib/agents/critic_m2/report.md` (B-4, B-5),
-`agents/auditor_m4/report.md` (E-1 confirmation), `agents/w5/verification.md` (E-1 root cause).
+`agents/auditor_m4/report.md` (E-1 confirmation), `agents/w5/verification.md` (E-1 root cause),
+`.agent/teamwork/S-02/agents/critic_m2/objections.json` (SP-4, SP-5, SP-7; approved by Israel 2026-10-16).
+

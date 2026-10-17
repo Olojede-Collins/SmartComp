@@ -1,4 +1,4 @@
-﻿# =============================================================================
+# =============================================================================
 # ABU SmartComp — gitignore
 # Prep phase (Israel, 2026-10-13): ignore everything at root; track only
 # production skeleton paths un-ignored below. Frozen docs stay on disk but
@@ -29,12 +29,8 @@
 !.prettierignore
 !vitest.config.*
 !.env.template
+!vercel.json
 
-# docs: TRD.md plus the frozen-doc errata are tracked from docs/
-!docs/
-docs/*
-!docs/TRD.md
-!docs/DESIGN_ERRATA.md
 
 # Secrets must stay ignored even after broad un-ignore
 .env
@@ -71,3 +67,6 @@ STAGE_PROTOCOLS.md
 *.xlsx
 *.zip
 docs/design-process/
+
+# Agent Session Runtime
+.agents/teamwork/

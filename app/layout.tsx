@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import localFont from 'next/font/local';
+import { SkipLink } from './_components/skip-link';
 import './globals.css';
 
 const fontSerif = localFont({
@@ -68,7 +69,10 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       lang="en"
       className={`${fontSerif.variable} ${fontSans.variable} ${fontMono.variable}`}
     >
-      <body>{children}</body>
+      <body className="bg-bg-page text-fg-default font-sans antialiased min-h-screen flex flex-col">
+        <SkipLink href="#main" />
+        {children}
+      </body>
     </html>
   );
 }
