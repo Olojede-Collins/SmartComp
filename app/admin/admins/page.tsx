@@ -162,7 +162,7 @@ export default function AdminAdminsPage() {
         <div className="flex flex-col gap-6 mb-8">
           <div className="flex flex-col gap-2 max-w-[var(--layout-measure)]">
             <h1 className="text-h1 tracking-h1 font-sans font-bold text-neutral-900 m-0">
-              The lab team
+              The Lab Team
             </h1>
             <p className="text-body text-fg-muted m-0">
               Everyone who can change the record. Any admin can invite another.
@@ -190,7 +190,7 @@ export default function AdminAdminsPage() {
               body="No one else can change the record. Invite someone you trust so the register is never left without a keeper."
               action={
                 <Button variant="default" onClick={handleFocusInvite}>
-                  Invite an admin
+                  Invite an Admin
                 </Button>
               }
             />
@@ -201,10 +201,10 @@ export default function AdminAdminsPage() {
           <table
             className="w-full text-left border-collapse"
             role="table"
-            aria-label="The lab team"
+            aria-label="The Lab Team"
           >
             <caption className="sr-only">
-              The lab team. Admins, in the order they joined.
+              The Lab Team. Admins, in the order they joined.
             </caption>
             <thead>
               <tr className="border-b border-border-rule bg-bg-surface-sunken">
@@ -282,7 +282,7 @@ export default function AdminAdminsPage() {
           aria-labelledby="invite-heading"
         >
           <InviteForm
-            heading="Invite another admin"
+            heading="Invite Another Admin"
             explanation="They will get an email with a link to set their own password."
             onSubmit={handleInviteSubmit}
           />

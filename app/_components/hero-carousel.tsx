@@ -167,7 +167,7 @@ export function HeroCarousel() {
           </p>
 
           <h1 className="text-h1 tracking-h1 mb-4 font-sans text-white font-bold leading-tight drop-shadow-sm">
-            The smart class, on the record.
+            The Smart Class, on the Record.
           </h1>
 
           <p className="text-body-lg text-slate-200 mb-6 text-base md:text-lg leading-relaxed">
@@ -182,7 +182,7 @@ export function HeroCarousel() {
               href="/room"
               className="btn btn--primary inline-flex items-center justify-center min-h-12 px-6 rounded-lg bg-bg-action text-fg-on-action font-semibold text-base no-underline hover:bg-bg-action-hover active:scale-[0.98] transition-transform focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-border-focus"
             >
-              Browse the collection
+              Browse the Collection
             </Link>
             <a
               href="#register-title"

@@ -118,6 +118,7 @@ adminsRouter.post('/admins/invites', async (req, res) => {
     try {
       await sendInviteEmail({ to: email, token });
     } catch {
+      await db.deleteInvite(invite.id);
       res.status(502).json({
         error: 'gmail-send-failed',
         message: 'Failed to send invite email',
@@ -125,10 +126,18 @@ adminsRouter.post('/admins/invites', async (req, res) => {
       return;
     }
 
+    const baseUrl =
+      process.env.FRONTEND_URL ||
+      process.env.NEXT_PUBLIC_SITE_URL ||
+      'https://smartcomp.vercel.app';
+    const cleanBaseUrl = baseUrl.replace(/\/+$/, '');
+    const acceptUrl = `${cleanBaseUrl}/admin/invite/accept?token=${encodeURIComponent(token)}`;
+
     res.status(201).json({
       id: invite.id,
       email: invite.email,
       token,
+      acceptUrl,
     });
   } catch {
     res.status(503).json({

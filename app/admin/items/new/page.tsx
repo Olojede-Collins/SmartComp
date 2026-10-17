@@ -89,17 +89,17 @@ export default function NewItemPage() {
             href="/admin"
             className="text-fg-link hover:underline min-h-11 inline-flex items-center px-1"
           >
-            The inventory
+            The Inventory
           </Link>
           <span className="text-fg-muted mx-2" aria-hidden="true">
             /
           </span>
-          <span className="text-fg-muted">New item</span>
+          <span className="text-fg-muted">New Item</span>
         </nav>
 
         <div className="flex flex-col gap-2 max-w-[var(--layout-measure)] mb-6">
           <h1 className="text-h1 tracking-h1 font-sans font-bold text-neutral-900 m-0">
-            Add an item
+            Add an Item
           </h1>
           <p className="text-body text-fg-muted m-0">
             Record the item as the lab team described it. Nothing is rewritten.

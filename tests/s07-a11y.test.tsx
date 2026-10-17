@@ -267,7 +267,7 @@ describe('S-07 Accessibility & Acceptance Closure Suite', () => {
       render(<ExportDialog open={true} itemCount={7} />);
 
       const createBtn = screen.getByRole('button', {
-        name: 'Create the file',
+        name: 'Create the File',
       }) as HTMLButtonElement;
       const cancelBtn = screen.getByRole('button', {
         name: 'Cancel',
@@ -477,7 +477,7 @@ describe('S-07 Accessibility & Acceptance Closure Suite', () => {
       vi.mocked(adminApi.exportInventory).mockResolvedValue(new Blob(['data']));
       render(<ExportDialog open={true} itemCount={7} />);
 
-      fireEvent.click(screen.getByRole('button', { name: 'Create the file' }));
+      fireEvent.click(screen.getByRole('button', { name: 'Create the File' }));
 
       await waitFor(() => {
         const heading = document.getElementById('dlg-title-success');
@@ -493,7 +493,7 @@ describe('S-07 Accessibility & Acceptance Closure Suite', () => {
       );
       render(<ExportDialog open={true} itemCount={7} />);
 
-      fireEvent.click(screen.getByRole('button', { name: 'Create the file' }));
+      fireEvent.click(screen.getByRole('button', { name: 'Create the File' }));
 
       await waitFor(() => {
         const heading = document.getElementById('dlg-title-failure');

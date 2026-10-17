@@ -226,7 +226,7 @@ describe('S-07 Comprehensive 57 Declared States Suite', () => {
 
       const main = container.querySelector('#main');
       expect(main?.getAttribute('data-state')).toBe('default');
-      expect(screen.getByText('The smart class, on the record.')).toBeTruthy();
+      expect(screen.getByText('The Smart Class, on the Record.')).toBeTruthy();
       expect(screen.getByText('2 entries')).toBeTruthy();
       expect(screen.getByText('Student Camera')).toBeTruthy();
     });
@@ -335,7 +335,7 @@ describe('S-07 Comprehensive 57 Declared States Suite', () => {
       const main = container.querySelector('#main');
       expect(main?.getAttribute('data-state')).toBe('default');
       expect(
-        screen.getByRole('heading', { level: 1, name: 'The collection' }),
+        screen.getByRole('heading', { level: 1, name: 'The Collection' }),
       ).toBeTruthy();
       expect(screen.getByText('Smart Board')).toBeTruthy();
       expect(screen.getByText('Student Camera')).toBeTruthy();
@@ -589,12 +589,12 @@ describe('S-07 Comprehensive 57 Declared States Suite', () => {
           <input id="email" type="email" />
           <label htmlFor="pass">PASSWORD</label>
           <input id="pass" type="password" />
-          <Button type="submit">Sign in</Button>
+          <Button type="submit">Sign In</Button>
         </form>,
       );
       expect(screen.getByLabelText('EMAIL')).toBeTruthy();
       expect(screen.getByLabelText('PASSWORD')).toBeTruthy();
-      expect(screen.getByRole('button', { name: 'Sign in' })).toBeTruthy();
+      expect(screen.getByRole('button', { name: 'Sign In' })).toBeTruthy();
     });
 
     it('renders invalid state with invalid-credentials error banner', () => {
@@ -608,7 +608,7 @@ describe('S-07 Comprehensive 57 Declared States Suite', () => {
     it('renders submitting state with pending indicator', () => {
       render(
         <Button variant="default" disabled={true} pendingLabel="Signing in…">
-          Sign in
+          Sign In
         </Button>,
       );
       const btn = screen.getByRole('button') as HTMLButtonElement;
@@ -789,14 +789,14 @@ describe('S-07 Comprehensive 57 Declared States Suite', () => {
               <DialogTitle>Deleted.</DialogTitle>
             </DialogHeader>
             <DialogFooter>
-              <Button>Back to the inventory</Button>
+              <Button>Back to the Inventory</Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>,
       );
       expect(screen.getByRole('heading', { name: 'Deleted.' })).toBeTruthy();
       expect(
-        screen.getByRole('button', { name: 'Back to the inventory' }),
+        screen.getByRole('button', { name: 'Back to the Inventory' }),
       ).toBeTruthy();
     });
 
@@ -809,7 +809,7 @@ describe('S-07 Comprehensive 57 Declared States Suite', () => {
               <div className="font-mono text-data">item-not-found</div>
             </DialogHeader>
             <DialogFooter>
-              <Button>Back to the inventory</Button>
+              <Button>Back to the Inventory</Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>,
@@ -838,12 +838,12 @@ describe('S-07 Comprehensive 57 Declared States Suite', () => {
     it('renders default state with PDF and CSV formats and Download action', () => {
       render(<BaseExportDialog open={true} />);
       expect(
-        screen.getByRole('heading', { name: 'Export the register' }),
+        screen.getByRole('heading', { name: 'Export the Register' }),
       ).toBeTruthy();
       expect(screen.getByRole('radio', { name: /PDF/i })).toBeTruthy();
       expect(screen.getByRole('radio', { name: /CSV/i })).toBeTruthy();
       expect(
-        screen.getByRole('button', { name: 'Download the file' }),
+        screen.getByRole('button', { name: 'Download the File' }),
       ).toBeTruthy();
     });
 

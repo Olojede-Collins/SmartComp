@@ -298,7 +298,7 @@ describe('S-05 Challenger Suite — M1 Pre-Agreed Seams', () => {
       fireEvent.change(screen.getByLabelText(/PASSWORD/i), {
         target: { value: 'badpass' },
       });
-      fireEvent.click(screen.getByRole('button', { name: 'Sign in' }));
+      fireEvent.click(screen.getByRole('button', { name: 'Sign In' }));
 
       await waitFor(() => {
         expect(
@@ -325,7 +325,7 @@ describe('S-05 Challenger Suite — M1 Pre-Agreed Seams', () => {
       const emailInput = screen.getByLabelText(/EMAIL/i) as HTMLInputElement;
       const passInput = screen.getByLabelText(/PASSWORD/i) as HTMLInputElement;
       const submitBtn = screen.getByRole('button', {
-        name: 'Sign in',
+        name: 'Sign In',
       }) as HTMLButtonElement;
 
       fireEvent.change(emailInput, { target: { value: 'admin@abu.edu.ng' } });
@@ -350,7 +350,7 @@ describe('S-05 Challenger Suite — M1 Pre-Agreed Seams', () => {
       );
 
       await waitFor(() => {
-        expect(screen.getByRole('button', { name: 'Sign in' })).toBeTruthy();
+        expect(screen.getByRole('button', { name: 'Sign In' })).toBeTruthy();
       });
       expect(emailInput.disabled).toBe(false);
       expect(passInput.disabled).toBe(false);
@@ -1103,7 +1103,7 @@ describe('S-05 Challenger Suite — M1 Pre-Agreed Seams', () => {
       });
 
       const backLink = screen.getByRole('link', {
-        name: 'Back to the inventory',
+        name: 'Back to the Inventory',
       });
       expect(backLink.getAttribute('href')).toBe('/admin');
     });
@@ -1422,7 +1422,7 @@ describe('S-05 Challenger Suite — M1 Pre-Agreed Seams', () => {
 
       act(() => {
         fireEvent.click(
-          screen.getByRole('button', { name: 'Back to the inventory' }),
+          screen.getByRole('button', { name: 'Back to the Inventory' }),
         );
       });
       expect(onDeleted).toHaveBeenCalledWith('SC-002');

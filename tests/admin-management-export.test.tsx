@@ -236,7 +236,7 @@ describe('app/admin/admins/page (S-008)', () => {
 
     expect(await screen.findByText('admin.two@example.invalid')).toBeDefined();
     expect(
-      screen.getByRole('heading', { level: 1, name: 'The lab team' }),
+      screen.getByRole('heading', { level: 1, name: 'The Lab Team' }),
     ).toBeDefined();
     expect(screen.getByText('ADMINS')).toBeDefined();
     expect(screen.getByText('2')).toBeDefined();
@@ -393,7 +393,7 @@ describe('app/admin/admins/page (S-008)', () => {
       }),
     ).toBeDefined();
 
-    const inviteCta = screen.getByRole('button', { name: 'Invite an admin' });
+    const inviteCta = screen.getByRole('button', { name: 'Invite an Admin' });
     const emailInput = screen.getByPlaceholderText('colleague@example.edu.ng');
     fireEvent.click(inviteCta);
 
@@ -548,10 +548,10 @@ describe('app/admin/invite/accept/page (S-007)', () => {
     expect(screen.getByLabelText(/^PASSWORD/i)).toBeDefined();
     expect(screen.getByLabelText(/^CONFIRM PASSWORD/i)).toBeDefined();
     expect(
-      screen.getByRole('button', { name: 'Accept invitation' }),
+      screen.getByRole('button', { name: 'Accept Invitation' }),
     ).toBeDefined();
     expect(
-      screen.getByRole('link', { name: 'Back to the collection' }),
+      screen.getByRole('link', { name: 'Back to the Collection' }),
     ).toBeDefined();
   });
 
@@ -582,7 +582,7 @@ describe('app/admin/invite/accept/page (S-007)', () => {
     fireEvent.change(passwordInput, { target: { value: 'short' } });
     fireEvent.change(confirmInput, { target: { value: 'short' } });
 
-    const submitBtn = screen.getByRole('button', { name: 'Accept invitation' });
+    const submitBtn = screen.getByRole('button', { name: 'Accept Invitation' });
     fireEvent.click(submitBtn);
 
     expect(
@@ -607,7 +607,7 @@ describe('app/admin/invite/accept/page (S-007)', () => {
     fireEvent.change(passwordInput, { target: { value: 'password123' } });
     fireEvent.change(confirmInput, { target: { value: 'mismatch456' } });
 
-    const submitBtn = screen.getByRole('button', { name: 'Accept invitation' });
+    const submitBtn = screen.getByRole('button', { name: 'Accept Invitation' });
     fireEvent.click(submitBtn);
 
     expect(screen.getByText('Type the same password again.')).toBeDefined();
@@ -637,7 +637,7 @@ describe('app/admin/invite/accept/page (S-007)', () => {
     fireEvent.change(passwordInput, { target: { value: 'ValidPass123' } });
     fireEvent.change(confirmInput, { target: { value: 'ValidPass123' } });
 
-    const submitBtn = screen.getByRole('button', { name: 'Accept invitation' });
+    const submitBtn = screen.getByRole('button', { name: 'Accept Invitation' });
     fireEvent.click(submitBtn);
 
     expect(
@@ -672,7 +672,7 @@ describe('app/admin/invite/accept/page (S-007)', () => {
     fireEvent.change(passwordInput, { target: { value: 'ValidPass123' } });
     fireEvent.change(confirmInput, { target: { value: 'ValidPass123' } });
 
-    const submitBtn = screen.getByRole('button', { name: 'Accept invitation' });
+    const submitBtn = screen.getByRole('button', { name: 'Accept Invitation' });
     fireEvent.click(submitBtn);
 
     expect(
@@ -704,7 +704,7 @@ describe('app/admin/invite/accept/page (S-007)', () => {
     fireEvent.change(passwordInput, { target: { value: 'ValidPass123' } });
     fireEvent.change(confirmInput, { target: { value: 'ValidPass123' } });
 
-    const submitBtn = screen.getByRole('button', { name: 'Accept invitation' });
+    const submitBtn = screen.getByRole('button', { name: 'Accept Invitation' });
     fireEvent.click(submitBtn);
 
     await waitFor(() => {
@@ -738,7 +738,7 @@ describe('app/admin/_components/export-dialog (S-010)', () => {
     render(<ExportDialog open={true} itemCount={7} />);
 
     expect(
-      screen.getByRole('heading', { level: 3, name: 'Export the register' }),
+      screen.getByRole('heading', { level: 3, name: 'Export the Register' }),
     ).toBeDefined();
     expect(
       screen.getByText(/Two formats, for COREN accreditation evidence/i),
@@ -781,7 +781,7 @@ describe('app/admin/_components/export-dialog (S-010)', () => {
 
     expect(screen.getByRole('button', { name: 'Cancel' })).toBeDefined();
     expect(
-      screen.getByRole('button', { name: 'Create the file' }),
+      screen.getByRole('button', { name: 'Create the File' }),
     ).toBeDefined();
   });
 
@@ -832,7 +832,7 @@ describe('app/admin/_components/export-dialog (S-010)', () => {
       await import('@/app/admin/_components/export-dialog');
     render(<ExportDialog open={true} itemCount={7} />);
 
-    const createBtn = screen.getByRole('button', { name: 'Create the file' });
+    const createBtn = screen.getByRole('button', { name: 'Create the File' });
     fireEvent.click(createBtn);
 
     expect(
@@ -849,7 +849,7 @@ describe('app/admin/_components/export-dialog (S-010)', () => {
     expect(anchorClickSpy).toHaveBeenCalled();
     expect(screen.getByRole('button', { name: 'Close' })).toBeDefined();
     expect(
-      screen.getByRole('button', { name: 'Download the file' }),
+      screen.getByRole('button', { name: 'Download the File' }),
     ).toBeDefined();
   });
 
@@ -874,7 +874,7 @@ describe('app/admin/_components/export-dialog (S-010)', () => {
       await import('@/app/admin/_components/export-dialog');
     render(<ExportDialog open={true} itemCount={7} />);
 
-    const createBtn = screen.getByRole('button', { name: 'Create the file' });
+    const createBtn = screen.getByRole('button', { name: 'Create the File' });
     fireEvent.click(createBtn);
 
     expect(
@@ -896,11 +896,11 @@ describe('app/admin/_components/export-dialog (S-010)', () => {
     expect(
       await screen.findByRole('heading', {
         level: 3,
-        name: 'Export the register',
+        name: 'Export the Register',
       }),
     ).toBeDefined();
     expect(
-      screen.getByRole('button', { name: 'Create the file' }),
+      screen.getByRole('button', { name: 'Create the File' }),
     ).toBeDefined();
   });
 
@@ -947,7 +947,7 @@ describe('app/admin/_components/export-dialog (S-010)', () => {
     expect(
       await screen.findByRole('heading', {
         level: 3,
-        name: 'Export the register',
+        name: 'Export the Register',
       }),
     ).toBeDefined();
   });

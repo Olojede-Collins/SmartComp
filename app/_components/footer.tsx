@@ -9,13 +9,13 @@ interface FooterLink {
 }
 
 const PUBLIC_LINKS: FooterLink[] = [
-  { label: 'The collection', href: '/room' },
+  { label: 'The Collection', href: '/room' },
   { label: 'Privacy', href: '/privacy' },
 ];
 
 const ADMIN_LINKS: FooterLink[] = [
-  { label: 'The collection', href: '/room' },
-  { label: 'The inventory', href: '/admin' },
+  { label: 'The Collection', href: '/room' },
+  { label: 'The Inventory', href: '/admin' },
 ];
 
 const LINK_CLASS = [

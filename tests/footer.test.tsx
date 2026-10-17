@@ -36,7 +36,7 @@ describe('C-004 Footer', () => {
     expect(classes(img)).toContain('h-[23px]');
     const links = screen.getAllByRole('link');
     expect(links.map((l) => l.textContent)).toEqual([
-      'The collection',
+      'The Collection',
       'Privacy',
     ]);
     expect(links[0].getAttribute('href')).toBe('/room');
@@ -47,8 +47,8 @@ describe('C-004 Footer', () => {
     render(<Footer variant="admin" />);
     const links = screen.getAllByRole('link');
     expect(links.map((l) => l.textContent)).toEqual([
-      'The collection',
-      'The inventory',
+      'The Collection',
+      'The Inventory',
     ]);
     expect(links[1].getAttribute('href')).toBe('/admin');
     expect(screen.queryByRole('link', { name: 'Privacy' })).toBeNull();

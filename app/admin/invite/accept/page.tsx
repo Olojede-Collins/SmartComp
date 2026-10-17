@@ -117,7 +117,7 @@ function AcceptInviteForm() {
             <div className="border-b border-border-rule px-6 py-5 flex flex-col gap-2">
               <FieldKey>INVITATION</FieldKey>
               <h1 className="text-h1 tracking-h1 font-sans font-bold text-neutral-900 m-0">
-                Accept your invitation
+                Accept Your Invitation
               </h1>
               <p className="text-body text-fg-muted m-0">
                 You were invited to help keep the lab team&rsquo;s record.
@@ -211,13 +211,13 @@ function AcceptInviteForm() {
                   disabled={submitting || isLocked}
                   pendingLabel={submitting ? 'Accepting…' : undefined}
                 >
-                  Accept invitation
+                  Accept Invitation
                 </Button>
                 <Link
                   href="/room"
                   className="inline-flex items-center justify-center min-h-11 px-4 py-2 rounded-md border border-border-strong text-body text-fg-default hover:bg-bg-action-subtle hover:text-fg-link-hover active:scale-[0.98]"
                 >
-                  Back to the collection
+                  Back to the Collection
                 </Link>
               </div>
             </form>

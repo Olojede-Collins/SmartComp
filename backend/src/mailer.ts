@@ -1,3 +1,4 @@
+import crypto from 'node:crypto';
 import nodemailer from 'nodemailer';
 
 export interface SendInviteEmailOptions {
@@ -27,20 +28,8 @@ export async function sendInviteEmail({
     return;
   }
 
-  const user = process.env.GMAIL_USER;
-  const pass = process.env.GMAIL_APP_PASSWORD;
-
-  if (!user || !pass) {
-    return;
-  }
-
   const baseUrl = getFrontendBaseUrl();
   const acceptUrl = `${baseUrl}/admin/invite/accept?token=${encodeURIComponent(token)}`;
-
-  const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: { user, pass },
-  });
 
   const subject = 'Invitation to join the ABU Smart Class Lab Team';
   const text = `Ahmadu Bello University, Zaria
@@ -125,6 +114,119 @@ Faculty of Engineering, Ahmadu Bello University, Zaria, Nigeria`;
   </p>
 </body>
 </html>`;
+
+  const resendApiKey = process.env.RESEND_API_KEY;
+  if (resendApiKey) {
+    const res = await globalThis.fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${resendApiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        from:
+          process.env.EMAIL_FROM || 'ABU Smart Class <onboarding@resend.dev>',
+        to: [to],
+        subject,
+        text,
+        html,
+      }),
+    });
+    if (!res.ok) {
+      const errBody = await res.text().catch(() => '');
+      throw new Error(`Resend send failed: ${res.status} ${errBody}`);
+    }
+    return;
+  }
+
+  const clientId = process.env.GMAIL_CLIENT_ID;
+  const clientSecret = process.env.GMAIL_CLIENT_SECRET;
+  const refreshToken = process.env.GMAIL_REFRESH_TOKEN;
+  const fromUser = process.env.GMAIL_USER || 'admin@abu.edu.ng';
+
+  if (clientId && refreshToken) {
+    const tokenRes = await globalThis.fetch(
+      'https://oauth2.googleapis.com/token',
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({
+          client_id: clientId,
+          client_secret: clientSecret || '',
+          refresh_token: refreshToken,
+          grant_type: 'refresh_token',
+        }).toString(),
+      },
+    );
+    if (!tokenRes.ok) {
+      throw new Error(`Google OAuth2 refresh failed: ${tokenRes.status}`);
+    }
+    const tokenData = (await tokenRes.json()) as { access_token?: string };
+    if (!tokenData.access_token) {
+      throw new Error('Google OAuth2 returned no access_token');
+    }
+
+    const boundary = 'b_' + crypto.randomUUID();
+    const rawMessage = [
+      `From: "ABU Smart Class" <${fromUser}>`,
+      `To: <${to}>`,
+      `Subject: =?utf-8?B?${Buffer.from(subject).toString('base64')}?=`,
+      'MIME-Version: 1.0',
+      `Content-Type: multipart/alternative; boundary="${boundary}"`,
+      '',
+      `--${boundary}`,
+      'Content-Type: text/plain; charset=utf-8',
+      'Content-Transfer-Encoding: base64',
+      '',
+      Buffer.from(text).toString('base64'),
+      '',
+      `--${boundary}`,
+      'Content-Type: text/html; charset=utf-8',
+      'Content-Transfer-Encoding: base64',
+      '',
+      Buffer.from(html).toString('base64'),
+      '',
+      `--${boundary}--`,
+    ].join('\r\n');
+
+    const base64Safe = Buffer.from(rawMessage)
+      .toString('base64')
+      .replace(/\+/g, '-')
+      .replace(/\//g, '_')
+      .replace(/=+$/, '');
+
+    const sendRes = await globalThis.fetch(
+      'https://gmail.googleapis.com/gmail/v1/users/me/messages/send',
+      {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${tokenData.access_token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ raw: base64Safe }),
+      },
+    );
+    if (!sendRes.ok) {
+      const errBody = await sendRes.text().catch(() => '');
+      throw new Error(`Gmail REST send failed: ${sendRes.status} ${errBody}`);
+    }
+    return;
+  }
+
+  const user = process.env.GMAIL_USER;
+  const pass = process.env.GMAIL_APP_PASSWORD;
+
+  if (!user || !pass) {
+    return;
+  }
+
+  const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: { user, pass },
+    connectionTimeout: 4000,
+    greetingTimeout: 4000,
+    socketTimeout: 4000,
+  });
 
   await transporter.sendMail({
     from: `"ABU Smart Class" <${user}>`,

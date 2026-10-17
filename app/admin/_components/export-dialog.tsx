@@ -66,7 +66,7 @@ function downloadBlob(blob: Blob, filename: string) {
 export function ExportDialog({
   open = false,
   onOpenChange,
-  title = 'Export the register',
+  title = 'Export the Register',
   description = 'Two formats, for COREN accreditation evidence. Every item in the inventory is included.',
   format: initialFormat = 'csv',
   itemCount,
@@ -370,7 +370,7 @@ export function ExportDialog({
                 pendingLabel={isPending ? 'Preparing…' : undefined}
                 onClick={handleGenerate}
               >
-                Create the file
+                Create the File
               </Button>
             </DialogFooter>
           </div>
@@ -436,7 +436,7 @@ export function ExportDialog({
               </Button>
               <Button variant="default" onClick={handleRedownload}>
                 <Icon name="download" size={16} />
-                <span>Download the file</span>
+                <span>Download the File</span>
               </Button>
             </DialogFooter>
           </div>

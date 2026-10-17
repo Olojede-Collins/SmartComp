@@ -210,7 +210,7 @@ export default function EditItemPage({ params }: EditItemPageProps) {
             href="/admin"
             className="text-body-small text-fg-link hover:underline"
           >
-            Back to the inventory
+            Back to the Inventory
           </Link>
         </main>
         <Footer variant="admin" />
@@ -231,7 +231,7 @@ export default function EditItemPage({ params }: EditItemPageProps) {
             href="/admin"
             className="text-fg-link hover:underline min-h-11 inline-flex items-center px-1"
           >
-            The inventory
+            The Inventory
           </Link>
           <span className="text-fg-muted mx-2" aria-hidden="true">
             /

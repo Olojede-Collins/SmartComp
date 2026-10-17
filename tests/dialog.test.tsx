@@ -178,7 +178,7 @@ describe('S-010 ExportDialog', () => {
     render(<ExportDialog open onExport={onExport} onClose={onClose} />);
 
     expect(screen.getByRole('dialog')).toBeTruthy();
-    expect(screen.getByText('Export the register')).toBeTruthy();
+    expect(screen.getByText('Export the Register')).toBeTruthy();
     expect(
       screen.getByText(
         'Two formats, for COREN accreditation evidence. Every item in the inventory is included.',

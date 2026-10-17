@@ -29,7 +29,7 @@ describe('M2-CHALLENGE Seam 1: Missing §4 declared states across all 12 composi
     const pubLinks = Array.from(pubNav!.querySelectorAll('a'));
     expect(pubLinks.map((a) => a.textContent?.trim())).toEqual([
       'Home',
-      'The collection',
+      'The Collection',
     ]);
     expect(pubContainer.querySelector('button')).toBeNull();
     expect(pubContainer.querySelector('.banner-slot')).toBeNull();

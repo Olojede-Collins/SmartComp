@@ -11,7 +11,7 @@ interface RailLink {
 
 const PUBLIC_LINKS: RailLink[] = [
   { label: 'Home', href: '/' },
-  { label: 'The collection', href: '/room' },
+  { label: 'The Collection', href: '/room' },
 ];
 
 const ADMIN_LINKS: RailLink[] = [

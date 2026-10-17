@@ -1416,7 +1416,7 @@ describe('S-06 M2 Adversarial Challenger Suite', () => {
         name: 'Breadcrumb',
       });
       expect(
-        within(breadcrumbNav).getByRole('link', { name: 'The collection' }),
+        within(breadcrumbNav).getByRole('link', { name: 'The Collection' }),
       ).toBeDefined();
       expect(within(breadcrumbNav).getByText('Detail')).toBeDefined();
     });

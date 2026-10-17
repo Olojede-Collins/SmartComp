@@ -284,7 +284,7 @@ describe('S-006 /admin/login', () => {
     expect(screen.getByText('ABU Smart Class')).toBeTruthy();
     expect(screen.getByText('ADMIN')).toBeTruthy();
     expect(
-      screen.getByRole('heading', { level: 1, name: 'Sign in' }),
+      screen.getByRole('heading', { level: 1, name: 'Sign In' }),
     ).toBeTruthy();
     expect(
       screen.getByText(
@@ -293,9 +293,9 @@ describe('S-006 /admin/login', () => {
     ).toBeTruthy();
     expect(screen.getByText('EMAIL')).toBeTruthy();
     expect(screen.getByText('PASSWORD')).toBeTruthy();
-    expect(screen.getByRole('button', { name: 'Sign in' })).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'Sign In' })).toBeTruthy();
     const backLink = screen.getByRole('link', {
-      name: 'Back to the collection',
+      name: 'Back to the Collection',
     });
     expect(backLink.getAttribute('href')).toBe('/room');
   });
@@ -313,7 +313,7 @@ describe('S-006 /admin/login', () => {
 
     const emailInput = screen.getByLabelText(/EMAIL/i);
     const passInput = screen.getByLabelText(/PASSWORD/i);
-    const submitBtn = screen.getByRole('button', { name: 'Sign in' });
+    const submitBtn = screen.getByRole('button', { name: 'Sign In' });
 
     fireEvent.change(emailInput, { target: { value: 'admin@abu.edu.ng' } });
     fireEvent.change(passInput, { target: { value: 'wrongpass' } });
@@ -354,7 +354,7 @@ describe('S-006 /admin/login', () => {
     fireEvent.change(screen.getByLabelText(/PASSWORD/i), {
       target: { value: 'secret123' },
     });
-    fireEvent.click(screen.getByRole('button', { name: 'Sign in' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Sign In' }));
 
     await waitFor(() => {
       expect(mockPush).toHaveBeenCalledWith('/admin');
@@ -435,7 +435,7 @@ describe('S-004 /admin and admin-nav', () => {
     render(<AdminInventoryPage />);
 
     expect(
-      screen.getByRole('heading', { level: 1, name: 'The inventory' }),
+      screen.getByRole('heading', { level: 1, name: 'The Inventory' }),
     ).toBeTruthy();
     expect(
       screen.getByText(
@@ -567,7 +567,7 @@ describe('S-009 DeleteDialog', () => {
     );
 
     expect(
-      screen.getByRole('heading', { level: 2, name: 'Delete this item?' }),
+      screen.getByRole('heading', { level: 2, name: 'Delete This Item?' }),
     ).toBeTruthy();
     expect(
       screen.getByText(
@@ -613,7 +613,7 @@ describe('S-009 DeleteDialog', () => {
     });
 
     fireEvent.click(
-      screen.getByRole('button', { name: 'Back to the inventory' }),
+      screen.getByRole('button', { name: 'Back to the Inventory' }),
     );
     expect(onDeleted).toHaveBeenCalledWith('SC-002');
     expect(onOpenChange).toHaveBeenCalledWith(false);
@@ -656,7 +656,7 @@ describe('S-009 DeleteDialog', () => {
     });
 
     fireEvent.click(
-      screen.getByRole('button', { name: 'Back to the inventory' }),
+      screen.getByRole('button', { name: 'Back to the Inventory' }),
     );
     expect(onDeleted).toHaveBeenCalledWith('SC-002');
   });
@@ -687,14 +687,14 @@ describe('S-005 Item Editor (/admin/items/new and /admin/items/[id])', () => {
     render(<NewItemPage />);
 
     expect(
-      screen.getByRole('heading', { level: 1, name: 'Add an item' }),
+      screen.getByRole('heading', { level: 1, name: 'Add an Item' }),
     ).toBeTruthy();
     expect(
-      screen.getByText('The inventory', {
+      screen.getByText('The Inventory', {
         selector: 'nav[aria-label="Breadcrumb"] a',
       }),
     ).toBeTruthy();
-    expect(screen.getByText('New item')).toBeTruthy();
+    expect(screen.getByText('New Item')).toBeTruthy();
 
     expect(screen.getByText('ITEM NAME')).toBeTruthy();
     expect(screen.getByText('CORE FUNCTIONALITY (AS SUBMITTED)')).toBeTruthy();

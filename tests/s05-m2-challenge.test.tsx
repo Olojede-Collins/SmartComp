@@ -118,7 +118,7 @@ describe('S-05 Challenger Suite — M2 Pre-Agreed Seams', () => {
       render(<AdminAdminsPage />);
 
       expect(
-        await screen.findByRole('heading', { level: 1, name: 'The lab team' }),
+        await screen.findByRole('heading', { level: 1, name: 'The Lab Team' }),
       ).toBeDefined();
       expect(screen.getByText('ADMINS')).toBeDefined();
     });
@@ -134,7 +134,7 @@ describe('S-05 Challenger Suite — M2 Pre-Agreed Seams', () => {
       render(<AdminAdminsPage />);
 
       expect(
-        await screen.findByRole('heading', { level: 1, name: 'The lab team' }),
+        await screen.findByRole('heading', { level: 1, name: 'The Lab Team' }),
       ).toBeDefined();
       expect(screen.getByText('ADMINS')).toBeDefined();
       const adminValues = screen.getAllByText('0');
@@ -819,7 +819,7 @@ describe('S-05 Challenger Suite — M2 Pre-Agreed Seams', () => {
       render(<AdminAdminsPage />);
 
       const inviteCta = await screen.findByRole('button', {
-        name: 'Invite an admin',
+        name: 'Invite an Admin',
       });
       fireEvent.click(inviteCta);
 
@@ -910,7 +910,7 @@ describe('S-05 Challenger Suite — M2 Pre-Agreed Seams', () => {
       expect(screen.getByText('unknown-token')).toBeDefined();
 
       const acceptBtn = screen.getByRole('button', {
-        name: 'Accept invitation',
+        name: 'Accept Invitation',
       });
       expect(acceptBtn.hasAttribute('disabled')).toBe(true);
     });
@@ -927,7 +927,7 @@ describe('S-05 Challenger Suite — M2 Pre-Agreed Seams', () => {
         }),
       ).toBeDefined();
       const acceptBtn = screen.getByRole('button', {
-        name: 'Accept invitation',
+        name: 'Accept Invitation',
       });
       expect(acceptBtn.hasAttribute('disabled')).toBe(true);
     });
@@ -952,7 +952,7 @@ describe('S-05 Challenger Suite — M2 Pre-Agreed Seams', () => {
       fireEvent.change(pwdInputs[1], { target: { value: 'password123' } });
 
       const acceptBtn = screen.getByRole('button', {
-        name: 'Accept invitation',
+        name: 'Accept Invitation',
       });
       fireEvent.click(acceptBtn);
 
@@ -986,7 +986,7 @@ describe('S-05 Challenger Suite — M2 Pre-Agreed Seams', () => {
       fireEvent.change(pwdInputs[1], { target: { value: 'securePass123' } });
 
       const acceptBtn = screen.getByRole('button', {
-        name: 'Accept invitation',
+        name: 'Accept Invitation',
       });
       fireEvent.click(acceptBtn);
 
@@ -1020,13 +1020,13 @@ describe('S-05 Challenger Suite — M2 Pre-Agreed Seams', () => {
       fireEvent.change(pwdInputs[1], { target: { value: 'validPassword1' } });
 
       const acceptBtn = screen.getByRole('button', {
-        name: 'Accept invitation',
+        name: 'Accept Invitation',
       });
       fireEvent.click(acceptBtn);
 
       await waitFor(() => {
         expect(
-          screen.getByRole('button', { name: 'Accept invitation' }),
+          screen.getByRole('button', { name: 'Accept Invitation' }),
         ).toBeDefined();
       });
     });
@@ -1063,7 +1063,7 @@ describe('S-05 Challenger Suite — M2 Pre-Agreed Seams', () => {
       fireEvent.change(pwdInputs[1], { target: { value: 'short1' } });
 
       const acceptBtn = screen.getByRole('button', {
-        name: 'Accept invitation',
+        name: 'Accept Invitation',
       });
       fireEvent.click(acceptBtn);
 
@@ -1086,7 +1086,7 @@ describe('S-05 Challenger Suite — M2 Pre-Agreed Seams', () => {
       render(<AcceptInvitePage />);
 
       const acceptBtn = screen.getByRole('button', {
-        name: 'Accept invitation',
+        name: 'Accept Invitation',
       });
       fireEvent.click(acceptBtn);
 
@@ -1111,7 +1111,7 @@ describe('S-05 Challenger Suite — M2 Pre-Agreed Seams', () => {
       fireEvent.change(pwdInputs[1], { target: { value: 'different123' } });
 
       const acceptBtn = screen.getByRole('button', {
-        name: 'Accept invitation',
+        name: 'Accept Invitation',
       });
       fireEvent.click(acceptBtn);
 
@@ -1138,7 +1138,7 @@ describe('S-05 Challenger Suite — M2 Pre-Agreed Seams', () => {
       fireEvent.change(pwdInputs[1], { target: { value: '12345678' } });
 
       const acceptBtn = screen.getByRole('button', {
-        name: 'Accept invitation',
+        name: 'Accept Invitation',
       });
       fireEvent.click(acceptBtn);
 
@@ -1175,7 +1175,7 @@ describe('S-05 Challenger Suite — M2 Pre-Agreed Seams', () => {
       });
 
       const acceptBtn = screen.getByRole('button', {
-        name: 'Accept invitation',
+        name: 'Accept Invitation',
       });
       fireEvent.click(acceptBtn);
 
@@ -1221,7 +1221,7 @@ describe('S-05 Challenger Suite — M2 Pre-Agreed Seams', () => {
       });
 
       const acceptBtn = screen.getByRole('button', {
-        name: 'Accept invitation',
+        name: 'Accept Invitation',
       });
       fireEvent.click(acceptBtn);
       fireEvent.click(acceptBtn);
@@ -1249,7 +1249,7 @@ describe('S-05 Challenger Suite — M2 Pre-Agreed Seams', () => {
       fireEvent.change(pwdInputs[1], { target: { value: 'securePass123' } });
 
       const acceptBtn = screen.getByRole('button', {
-        name: 'Accept invitation',
+        name: 'Accept Invitation',
       });
       fireEvent.click(acceptBtn);
 
@@ -1264,7 +1264,7 @@ describe('S-05 Challenger Suite — M2 Pre-Agreed Seams', () => {
       render(<AcceptInvitePage />);
 
       const backLink = screen.getByRole('link', {
-        name: 'Back to the collection',
+        name: 'Back to the Collection',
       });
       expect(backLink.getAttribute('href')).toBe('/room');
     });
@@ -1302,7 +1302,7 @@ describe('S-05 Challenger Suite — M2 Pre-Agreed Seams', () => {
       expect((csvRadio as HTMLInputElement).checked).toBe(true);
 
       const createBtn = screen.getByRole('button', {
-        name: 'Create the file',
+        name: 'Create the File',
       });
       fireEvent.click(createBtn);
 
@@ -1339,7 +1339,7 @@ describe('S-05 Challenger Suite — M2 Pre-Agreed Seams', () => {
       expect((pdfRadio as HTMLInputElement).checked).toBe(true);
 
       const createBtn = screen.getByRole('button', {
-        name: 'Create the file',
+        name: 'Create the File',
       });
       fireEvent.click(createBtn);
 
@@ -1445,7 +1445,7 @@ describe('S-05 Challenger Suite — M2 Pre-Agreed Seams', () => {
       render(<ExportDialog open={true} itemCount={7} />);
 
       const createBtn = screen.getByRole('button', {
-        name: 'Create the file',
+        name: 'Create the File',
       });
       fireEvent.click(createBtn);
 
@@ -1471,7 +1471,7 @@ describe('S-05 Challenger Suite — M2 Pre-Agreed Seams', () => {
 
       render(<ExportDialog open={true} itemCount={7} />);
 
-      fireEvent.click(screen.getByRole('button', { name: 'Create the file' }));
+      fireEvent.click(screen.getByRole('button', { name: 'Create the File' }));
 
       const successHeading = await screen.findByRole('heading', {
         level: 3,
@@ -1489,7 +1489,7 @@ describe('S-05 Challenger Suite — M2 Pre-Agreed Seams', () => {
         screen.getByText(`abu-smart-class-inventory-${today}.csv`),
       ).toBeDefined();
       expect(
-        screen.getByRole('button', { name: 'Download the file' }),
+        screen.getByRole('button', { name: 'Download the File' }),
       ).toBeDefined();
     });
 
@@ -1508,10 +1508,10 @@ describe('S-05 Challenger Suite — M2 Pre-Agreed Seams', () => {
 
       render(<ExportDialog open={true} itemCount={7} />);
 
-      fireEvent.click(screen.getByRole('button', { name: 'Create the file' }));
+      fireEvent.click(screen.getByRole('button', { name: 'Create the File' }));
 
       const redownloadBtn = await screen.findByRole('button', {
-        name: 'Download the file',
+        name: 'Download the File',
       });
 
       anchorClickSpy.mockClear();
@@ -1555,7 +1555,7 @@ describe('S-05 Challenger Suite — M2 Pre-Agreed Seams', () => {
           <ExportDialog open={true} itemCount={tc.count} />,
         );
         fireEvent.click(
-          screen.getByRole('button', { name: 'Create the file' }),
+          screen.getByRole('button', { name: 'Create the File' }),
         );
 
         expect(await screen.findByText(tc.expected)).toBeDefined();
@@ -1576,7 +1576,7 @@ describe('S-05 Challenger Suite — M2 Pre-Agreed Seams', () => {
 
       render(<ExportDialog open={true} itemCount={7} />);
 
-      fireEvent.click(screen.getByRole('button', { name: 'Create the file' }));
+      fireEvent.click(screen.getByRole('button', { name: 'Create the File' }));
 
       const failureHeading = await screen.findByRole('heading', {
         level: 3,
@@ -1603,7 +1603,7 @@ describe('S-05 Challenger Suite — M2 Pre-Agreed Seams', () => {
 
       render(<ExportDialog open={true} itemCount={7} />);
 
-      fireEvent.click(screen.getByRole('button', { name: 'Create the file' }));
+      fireEvent.click(screen.getByRole('button', { name: 'Create the File' }));
 
       const tryAgainBtn = await screen.findByRole('button', {
         name: 'Try again',
@@ -1613,11 +1613,11 @@ describe('S-05 Challenger Suite — M2 Pre-Agreed Seams', () => {
       expect(
         screen.getByRole('heading', {
           level: 3,
-          name: 'Export the register',
+          name: 'Export the Register',
         }),
       ).toBeDefined();
       expect(
-        screen.getByRole('button', { name: 'Create the file' }),
+        screen.getByRole('button', { name: 'Create the File' }),
       ).toBeDefined();
     });
 
@@ -1642,7 +1642,7 @@ describe('S-05 Challenger Suite — M2 Pre-Agreed Seams', () => {
       render(<ExportDialog open={true} itemCount={7} />);
 
       const createBtn = screen.getByRole('button', {
-        name: 'Create the file',
+        name: 'Create the File',
       });
       fireEvent.click(createBtn);
       fireEvent.click(createBtn);
@@ -1675,7 +1675,7 @@ describe('S-05 Challenger Suite — M2 Pre-Agreed Seams', () => {
         />,
       );
 
-      fireEvent.click(screen.getByRole('button', { name: 'Create the file' }));
+      fireEvent.click(screen.getByRole('button', { name: 'Create the File' }));
 
       const cancelBtn = screen.getByRole('button', { name: 'Cancel' });
       expect(cancelBtn.hasAttribute('disabled')).toBe(true);
@@ -1702,7 +1702,7 @@ describe('S-05 Challenger Suite — M2 Pre-Agreed Seams', () => {
         />,
       );
 
-      fireEvent.click(screen.getByRole('button', { name: 'Create the file' }));
+      fireEvent.click(screen.getByRole('button', { name: 'Create the File' }));
 
       const closeBtn = await screen.findByRole('button', { name: 'Close' });
       fireEvent.click(closeBtn);
@@ -1722,11 +1722,11 @@ describe('S-05 Challenger Suite — M2 Pre-Agreed Seams', () => {
       expect(
         screen.getByRole('heading', {
           level: 3,
-          name: 'Export the register',
+          name: 'Export the Register',
         }),
       ).toBeDefined();
       expect(
-        screen.getByRole('button', { name: 'Create the file' }),
+        screen.getByRole('button', { name: 'Create the File' }),
       ).toBeDefined();
     });
 

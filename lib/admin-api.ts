@@ -174,13 +174,13 @@ export async function getAdmins(
 export async function createInvite(
   email: string,
   options?: RequestOptions,
-): Promise<{ id: string; email: string; token: string }> {
-  return request<{ id: string; email: string; token: string }>(
-    '/api/admin/admins/invites',
-    'POST',
-    { email },
-    options,
-  );
+): Promise<{ id: string; email: string; token: string; acceptUrl?: string }> {
+  return request<{
+    id: string;
+    email: string;
+    token: string;
+    acceptUrl?: string;
+  }>('/api/admin/admins/invites', 'POST', { email }, options);
 }
 
 export async function deleteAdmin(

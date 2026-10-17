@@ -210,7 +210,7 @@ describe('S-07 Milestone M2 Challenger Adversarial Stress Suite', () => {
       expect(privacyLink.className).toContain('min-h-11');
       expect(privacyLink.className).toContain('px-2');
       const collectionLink = screen.getByRole('link', {
-        name: 'The collection',
+        name: 'The Collection',
       });
       expect(collectionLink.getAttribute('href')).toBe('/room');
       expect(collectionLink.className).toContain('min-h-11');
@@ -228,7 +228,7 @@ describe('S-07 Milestone M2 Challenger Adversarial Stress Suite', () => {
         expect(cls).toContain('inline-flex');
         expect(cls).toContain('items-center');
       });
-      const inventoryLink = screen.getByRole('link', { name: 'The inventory' });
+      const inventoryLink = screen.getByRole('link', { name: 'The Inventory' });
       expect(inventoryLink.getAttribute('href')).toBe('/admin');
       expect(inventoryLink.className).toContain('min-h-11');
       expect(inventoryLink.className).toContain('px-2');
@@ -469,7 +469,7 @@ describe('S-07 Milestone M2 Challenger Adversarial Stress Suite', () => {
       render(<ExportDialog open={true} itemCount={7} />);
 
       const createBtn = screen.getByRole('button', {
-        name: 'Create the file',
+        name: 'Create the File',
       }) as HTMLButtonElement;
       const cancelBtn = screen.getByRole('button', {
         name: 'Cancel',
@@ -515,7 +515,7 @@ describe('S-07 Milestone M2 Challenger Adversarial Stress Suite', () => {
         name: /CSV/i,
       }) as HTMLInputElement;
       const createBtn = screen.getByRole('button', {
-        name: 'Create the file',
+        name: 'Create the File',
       }) as HTMLButtonElement;
 
       expect(pdfRadio.disabled).toBe(false);
@@ -550,7 +550,7 @@ describe('S-07 Milestone M2 Challenger Adversarial Stress Suite', () => {
 
       render(<ExportDialog open={true} itemCount={7} format="csv" />);
 
-      const createBtn = screen.getByRole('button', { name: 'Create the file' });
+      const createBtn = screen.getByRole('button', { name: 'Create the File' });
       fireEvent.click(createBtn);
 
       const pdfRadio = screen.getByRole('radio', {
@@ -885,7 +885,7 @@ describe('S-07 Milestone M2 Challenger Adversarial Stress Suite', () => {
       fireEvent.change(screen.getByLabelText(/PASSWORD/i), {
         target: { value: 'wrongpass' },
       });
-      fireEvent.click(screen.getByRole('button', { name: 'Sign in' }));
+      fireEvent.click(screen.getByRole('button', { name: 'Sign In' }));
 
       await waitFor(() => {
         expect(liveRegion?.textContent?.trim()).toBe('Signing in…');
@@ -916,40 +916,44 @@ describe('S-07 Milestone M2 Challenger Adversarial Stress Suite', () => {
           }),
       );
 
-      const originalSearchParams = window.location.search;
       delete (window as { location?: unknown }).location;
       (window as unknown as { location: unknown }).location = new URL(
         'http://localhost/admin/invite/accept?token=valid-token&email=new@abu.edu.ng',
       );
 
-      const { container } = render(<AcceptInvitePage />);
-      const liveRegion = container.querySelector('div[aria-live="polite"]');
-      expect(liveRegion).toBeTruthy();
-      expect(liveRegion?.textContent?.trim()).toBe('');
-
-      fireEvent.change(screen.getByLabelText(/^PASSWORD/i), {
-        target: { value: 'SecurePass123' },
-      });
-      fireEvent.change(screen.getByLabelText(/CONFIRM PASSWORD/i), {
-        target: { value: 'SecurePass123' },
-      });
-      fireEvent.click(
-        screen.getByRole('button', { name: 'Accept invitation' }),
-      );
-
-      await waitFor(() => {
-        expect(liveRegion?.textContent?.trim()).toBe('Accepting invitation…');
-      });
-
-      act(() => {
-        resolveAccept();
-      });
-
-      await waitFor(() => {
+      try {
+        const { container } = render(<AcceptInvitePage />);
+        const liveRegion = container.querySelector('div[aria-live="polite"]');
+        expect(liveRegion).toBeTruthy();
         expect(liveRegion?.textContent?.trim()).toBe('');
-      });
 
-      window.location.search = originalSearchParams;
+        fireEvent.change(screen.getByLabelText(/^PASSWORD/i), {
+          target: { value: 'SecurePass123' },
+        });
+        fireEvent.change(screen.getByLabelText(/CONFIRM PASSWORD/i), {
+          target: { value: 'SecurePass123' },
+        });
+        fireEvent.click(
+          screen.getByRole('button', { name: 'Accept Invitation' }),
+        );
+
+        await waitFor(() => {
+          expect(liveRegion?.textContent?.trim()).toBe('Accepting invitation…');
+        });
+
+        act(() => {
+          resolveAccept();
+        });
+
+        await waitFor(() => {
+          expect(liveRegion?.textContent?.trim()).toBe('');
+        });
+      } finally {
+        delete (window as { location?: unknown }).location;
+        (window as unknown as { location: unknown }).location = new URL(
+          'http://localhost/',
+        );
+      }
     });
 
     it('Attack 3.5: Multiple consecutive submit-error cycles maintain clean live region state without text accumulation', async () => {
@@ -1173,7 +1177,7 @@ describe('S-07 Milestone M2 Challenger Adversarial Stress Suite', () => {
         />,
       );
 
-      fireEvent.click(screen.getByRole('button', { name: 'Create the file' }));
+      fireEvent.click(screen.getByRole('button', { name: 'Create the File' }));
 
       await waitFor(() => {
         expect(screen.getByText('Preparing…')).toBeTruthy();
@@ -1192,7 +1196,7 @@ describe('S-07 Milestone M2 Challenger Adversarial Stress Suite', () => {
 
       render(<ExportDialog open={true} itemCount={7} />);
 
-      fireEvent.click(screen.getByRole('button', { name: 'Create the file' }));
+      fireEvent.click(screen.getByRole('button', { name: 'Create the File' }));
 
       await waitFor(() => {
         const heading = document.getElementById('dlg-title-success');
@@ -1209,7 +1213,7 @@ describe('S-07 Milestone M2 Challenger Adversarial Stress Suite', () => {
 
       render(<ExportDialog open={true} itemCount={7} />);
 
-      fireEvent.click(screen.getByRole('button', { name: 'Create the file' }));
+      fireEvent.click(screen.getByRole('button', { name: 'Create the File' }));
 
       await waitFor(() => {
         const heading = document.getElementById('dlg-title-failure');
@@ -1262,7 +1266,7 @@ describe('S-07 Milestone M2 Challenger Adversarial Stress Suite', () => {
       fireEvent.change(screen.getByLabelText(/PASSWORD/i), {
         target: { value: 'wrongpassword' },
       });
-      fireEvent.click(screen.getByRole('button', { name: 'Sign in' }));
+      fireEvent.click(screen.getByRole('button', { name: 'Sign In' }));
 
       await waitFor(() => {
         const alertHeading = document.querySelector('[role="alert"] h3');

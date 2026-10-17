@@ -266,7 +266,7 @@ export interface ExportDialogProps {
 export function ExportDialog({
   open,
   onOpenChange,
-  title = 'Export the register',
+  title = 'Export the Register',
   description = 'Two formats, for COREN accreditation evidence. Every item in the inventory is included.',
   format: propFormat = 'csv',
   onExport,
@@ -397,7 +397,7 @@ export function ExportDialog({
             onClick={() => onExport?.(selectedFormat)}
           >
             <Icon name="download" size={16} />
-            <span>Download the file</span>
+            <span>Download the File</span>
           </Button>
         </DialogFooter>
       </DialogContent>

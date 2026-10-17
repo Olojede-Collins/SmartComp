@@ -548,6 +548,32 @@ export class DatabaseClient {
     return { invite: { ...invite }, token };
   }
 
+  async deleteInvite(id: string): Promise<boolean> {
+    if (!this.healthy) {
+      throw new Error('Database unreachable');
+    }
+    const sb = this.getSupabase();
+    if (sb) {
+      const res = await globalThis.fetch(
+        `${sb.url}/rest/v1/admin_invites?id=eq.${encodeURIComponent(id)}`,
+        {
+          method: 'DELETE',
+          headers: {
+            apikey: sb.key,
+            Authorization: `Bearer ${sb.key}`,
+          },
+        },
+      );
+      return res.ok;
+    }
+    const idx = this.invites.findIndex((i) => i.id === id);
+    if (idx !== -1) {
+      this.invites.splice(idx, 1);
+      return true;
+    }
+    return false;
+  }
+
   async acceptInvite(
     tokenHash: string,
     name?: string,

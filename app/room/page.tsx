@@ -48,7 +48,7 @@ export default async function RoomPage({ searchParams }: RoomPageProps = {}) {
       >
         <div className="page-head mb-8">
           <h1 className="text-h1 tracking-h1 mb-2 font-sans font-bold text-neutral-900">
-            The collection
+            The Collection
           </h1>
           <p className="text-body-lg text-fg-muted max-w-[var(--layout-measure)]">
             Every item in the smart class, in name order.

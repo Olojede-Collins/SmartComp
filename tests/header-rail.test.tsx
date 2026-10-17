@@ -19,14 +19,14 @@ describe('C-001 / C-002 HeaderRail', () => {
     expect(cls).toContain('text-fg-on-rail');
   });
 
-  it('public nav carries exactly Home and The collection with the Primary label', () => {
+  it('public nav carries exactly Home and The Collection with the Primary label', () => {
     render(<HeaderRail variant="public" />);
     const nav = screen.getByRole('navigation', { name: 'Primary' });
     const links = nav.querySelectorAll('a');
     expect(links).toHaveLength(2);
     expect(links[0].textContent).toBe('Home');
     expect(links[0].getAttribute('href')).toBe('/');
-    expect(links[1].textContent).toBe('The collection');
+    expect(links[1].textContent).toBe('The Collection');
     expect(links[1].getAttribute('href')).toBe('/room');
     expect(nav.querySelector('button')).toBeNull();
   });

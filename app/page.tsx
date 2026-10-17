@@ -46,7 +46,7 @@ export default async function Page({ searchParams }: PageProps = {}) {
               id="register-title"
               className="text-h2 font-sans font-bold tracking-tight text-neutral-900"
             >
-              The register
+              The Register
             </h2>
             <p className="text-data text-fg-muted font-mono">
               {isError

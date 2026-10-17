@@ -443,7 +443,7 @@ describe('M3-CHALLENGE Seam 2: C-021 Dialog (focus containment, Esc pending bloc
 
     render(<ExportDialog open onExport={onExport} onClose={onClose} />);
 
-    expect(screen.getByText('Export the register')).toBeTruthy();
+    expect(screen.getByText('Export the Register')).toBeTruthy();
     expect(screen.getByRole('group', { name: /FORMAT/i })).toBeTruthy();
 
     const pdfRadio = screen.getByRole('radio', { name: /PDF/i });

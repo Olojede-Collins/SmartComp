@@ -147,7 +147,7 @@ export default function AdminInventoryPage() {
           <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
             <div className="flex flex-col gap-2 max-w-[var(--layout-measure)]">
               <h1 className="text-h1 tracking-h1 font-sans font-bold text-neutral-900 m-0">
-                The inventory
+                The Inventory
               </h1>
               <p className="text-body text-fg-muted m-0">
                 Everything the lab team has recorded, kept as submitted. Only

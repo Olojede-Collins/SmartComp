@@ -77,7 +77,7 @@ function LoginForm() {
               <FieldKey>ADMIN</FieldKey>
             </div>
             <h1 className="text-h1 tracking-h1 font-sans font-bold text-neutral-900 m-0">
-              Sign in
+              Sign In
             </h1>
             <p className="text-body text-fg-muted m-0">
               For lab team admins. The public collection needs no account.
@@ -140,13 +140,13 @@ function LoginForm() {
                 disabled={submitting}
                 pendingLabel={submitting ? 'Signing in…' : undefined}
               >
-                Sign in
+                Sign In
               </Button>
               <Link
                 href="/room"
                 className="text-body-small text-fg-link hover:underline min-h-11 inline-flex items-center px-1"
               >
-                Back to the collection
+                Back to the Collection
               </Link>
             </div>
           </form>

@@ -128,7 +128,7 @@ export function DeleteDialog({
             </DialogHeader>
             <DialogFooter>
               <Button variant="default" onClick={handleFinish}>
-                Back to the inventory
+                Back to the Inventory
               </Button>
             </DialogFooter>
           </>
@@ -152,14 +152,14 @@ export function DeleteDialog({
             </DialogHeader>
             <DialogFooter>
               <Button variant="default" onClick={handleFinish}>
-                Back to the inventory
+                Back to the Inventory
               </Button>
             </DialogFooter>
           </>
         ) : (
           <>
             <DialogHeader>
-              <DialogTitle>Delete this item?</DialogTitle>
+              <DialogTitle>Delete This Item?</DialogTitle>
               <DialogDescription>
                 This removes the item and its photographs from the register,
                 straight away. It cannot be undone.

@@ -45,7 +45,7 @@ export default async function ItemPage({
             href="/room"
             className="text-fg-link hover:underline min-h-11 inline-flex items-center px-1"
           >
-            The collection
+            The Collection
           </Link>
           <span className="text-fg-muted mx-2">/</span>
           <span className="text-fg-muted">Detail</span>

@@ -91,7 +91,7 @@ describe('S-001 Landing route (app/page.tsx)', () => {
     expect(homeLink?.getAttribute('aria-current')).toBe('page');
 
     const h1 = screen.getByRole('heading', { level: 1 });
-    expect(h1.textContent).toBe('The smart class, on the record.');
+    expect(h1.textContent).toBe('The Smart Class, on the Record.');
 
     expect(
       screen.getByText(
@@ -100,12 +100,12 @@ describe('S-001 Landing route (app/page.tsx)', () => {
     ).toBeTruthy();
 
     const browseLink = screen.getByRole('link', {
-      name: 'Browse the collection',
+      name: 'Browse the Collection',
     });
     expect(browseLink.getAttribute('href')).toBe('/room');
 
     const registerTitle = screen.getByRole('heading', { level: 2 });
-    expect(registerTitle.textContent).toBe('The register');
+    expect(registerTitle.textContent).toBe('The Register');
     expect(screen.getByText('2 entries')).toBeTruthy();
 
     const carousel = container.querySelector('.carousel');
@@ -137,7 +137,7 @@ describe('S-002 Room collection route (app/room/page.tsx)', () => {
     expect(roomLink?.getAttribute('aria-current')).toBe('page');
 
     const h1 = screen.getByRole('heading', { level: 1 });
-    expect(h1.textContent).toBe('The collection');
+    expect(h1.textContent).toBe('The Collection');
     expect(
       screen.getByText('Every item in the smart class, in name order.'),
     ).toBeTruthy();
@@ -172,7 +172,7 @@ describe('S-003 Item detail route (app/item/[id]/page.tsx)', () => {
 
     const breadcrumb = screen.getByRole('navigation', { name: 'Breadcrumb' });
     const backLink = breadcrumb.querySelector('a[href="/room"]');
-    expect(backLink?.textContent).toBe('The collection');
+    expect(backLink?.textContent).toBe('The Collection');
     expect(breadcrumb.textContent).toContain('Detail');
 
     const h1 = screen.getByRole('heading', { level: 1 });

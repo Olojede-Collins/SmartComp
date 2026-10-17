@@ -78,7 +78,7 @@ describe('Public Rendering Integration Test Suite with Legacy Data (S-06 M2)', (
 
       expect(screen.queryByText('Nothing on the record yet.')).toBeNull();
       expect(
-        screen.getByRole('heading', { level: 1, name: 'The collection' }),
+        screen.getByRole('heading', { level: 1, name: 'The Collection' }),
       ).toBeDefined();
 
       const rows = container.querySelectorAll('ul.rows > li');
