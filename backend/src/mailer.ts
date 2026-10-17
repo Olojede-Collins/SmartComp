@@ -115,30 +115,6 @@ Faculty of Engineering, Ahmadu Bello University, Zaria, Nigeria`;
 </body>
 </html>`;
 
-  const resendApiKey = process.env.RESEND_API_KEY;
-  if (resendApiKey) {
-    const res = await globalThis.fetch('https://api.resend.com/emails', {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${resendApiKey}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        from:
-          process.env.EMAIL_FROM || 'ABU Smart Class <onboarding@resend.dev>',
-        to: [to],
-        subject,
-        text,
-        html,
-      }),
-    });
-    if (!res.ok) {
-      const errBody = await res.text().catch(() => '');
-      throw new Error(`Resend send failed: ${res.status} ${errBody}`);
-    }
-    return;
-  }
-
   const clientId = process.env.GMAIL_CLIENT_ID;
   const clientSecret = process.env.GMAIL_CLIENT_SECRET;
   const refreshToken = process.env.GMAIL_REFRESH_TOKEN;
@@ -159,7 +135,10 @@ Faculty of Engineering, Ahmadu Bello University, Zaria, Nigeria`;
       },
     );
     if (!tokenRes.ok) {
-      throw new Error(`Google OAuth2 refresh failed: ${tokenRes.status}`);
+      const errBody = await tokenRes.text().catch(() => '');
+      throw new Error(
+        `Google OAuth2 refresh failed: ${tokenRes.status} ${errBody}`,
+      );
     }
     const tokenData = (await tokenRes.json()) as { access_token?: string };
     if (!tokenData.access_token) {
@@ -209,6 +188,30 @@ Faculty of Engineering, Ahmadu Bello University, Zaria, Nigeria`;
     if (!sendRes.ok) {
       const errBody = await sendRes.text().catch(() => '');
       throw new Error(`Gmail REST send failed: ${sendRes.status} ${errBody}`);
+    }
+    return;
+  }
+
+  const resendApiKey = process.env.RESEND_API_KEY;
+  if (resendApiKey) {
+    const res = await globalThis.fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${resendApiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        from:
+          process.env.EMAIL_FROM || 'ABU Smart Class <onboarding@resend.dev>',
+        to: [to],
+        subject,
+        text,
+        html,
+      }),
+    });
+    if (!res.ok) {
+      const errBody = await res.text().catch(() => '');
+      throw new Error(`Resend send failed: ${res.status} ${errBody}`);
     }
     return;
   }

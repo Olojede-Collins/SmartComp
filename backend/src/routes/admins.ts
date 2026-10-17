@@ -117,7 +117,8 @@ adminsRouter.post('/admins/invites', async (req, res) => {
 
     try {
       await sendInviteEmail({ to: email, token });
-    } catch {
+    } catch (err) {
+      console.error('Failed to send invite email:', err);
       await db.deleteInvite(invite.id);
       res.status(502).json({
         error: 'gmail-send-failed',

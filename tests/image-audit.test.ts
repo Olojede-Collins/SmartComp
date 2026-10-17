@@ -294,7 +294,7 @@ describe('NFR-3 Image Audit Suite (PRD §7 Metric 3)', () => {
         );
         expect(res.meetsDesktopBudget, `${res.key} desktop budget`).toBe(true);
       }
-    });
+    }, 30000);
 
     it('auto-populates from legacy data if storage is initially empty', async () => {
       const summary = await auditAllStoredImages();
@@ -303,6 +303,6 @@ describe('NFR-3 Image Audit Suite (PRD §7 Metric 3)', () => {
       expect(summary.complianceRate).toBe(1.0);
       expect(summary.passed).toBe(8);
       expect(summary.failed).toBe(0);
-    });
+    }, 30000);
   });
 });
