@@ -17,6 +17,22 @@ export interface ImagePlaceholderProps {
   className?: string;
 }
 
+function resolveKeyToUrl(key?: string): string | undefined {
+  if (!key) return undefined;
+  if (
+    key.startsWith('http://') ||
+    key.startsWith('https://') ||
+    key.startsWith('/')
+  ) {
+    return key;
+  }
+  const r2Url = process.env.NEXT_PUBLIC_R2_PUBLIC_URL;
+  if (r2Url && r2Url.trim()) {
+    return `${r2Url.replace(/\/+$/, '')}/${key}`;
+  }
+  return `/images/${key}`;
+}
+
 export function ImagePlaceholder({
   state = 'empty',
   size = 'full',
@@ -26,7 +42,34 @@ export function ImagePlaceholder({
   onRetry,
   className,
 }: ImagePlaceholderProps) {
+  const [prevSrc, setPrevSrc] = React.useState(src);
+  const [currentSrc, setCurrentSrc] = React.useState(() =>
+    resolveKeyToUrl(src),
+  );
   const [failed, setFailed] = React.useState(false);
+
+  if (prevSrc !== src) {
+    setPrevSrc(src);
+    setCurrentSrc(resolveKeyToUrl(src));
+    setFailed(false);
+  }
+
+  const handleError = () => {
+    if (
+      currentSrc &&
+      currentSrc.startsWith('http') &&
+      !currentSrc.includes('/images/')
+    ) {
+      const parts = currentSrc.split('/');
+      const filename = parts[parts.length - 1];
+      if (filename) {
+        setCurrentSrc(`/images/${filename}`);
+        return;
+      }
+    }
+    setFailed(true);
+  };
+
   const effective = state === 'failed' || failed ? 'failed' : state;
 
   const geometry =
@@ -72,7 +115,7 @@ export function ImagePlaceholder({
     );
   }
 
-  if (src) {
+  if (currentSrc) {
     return (
       <div
         className={[
@@ -84,9 +127,9 @@ export function ImagePlaceholder({
           .join(' ')}
       >
         <img
-          src={src}
+          src={currentSrc}
           alt={alt}
-          onError={() => setFailed(true)}
+          onError={handleError}
           className="h-full w-full object-cover"
         />
       </div>

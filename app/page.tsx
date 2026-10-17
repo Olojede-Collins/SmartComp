@@ -5,6 +5,7 @@ import { Footer } from './_components/footer';
 import { EmptyState } from './_components/empty-state';
 import { Carousel } from './_components/carousel';
 import { Banner } from './_components/banner';
+import { HeroCarousel } from './_components/hero-carousel';
 
 export const revalidate = 60;
 
@@ -38,24 +39,7 @@ export default async function Page({ searchParams }: PageProps = {}) {
         data-state={state}
         className="wrap flex-1 max-w-[var(--layout-containerMax)] mx-auto w-full px-[var(--layout-gutter)] py-8 md:py-10"
       >
-        <section className="hero pb-8">
-          <h1 className="text-h1 tracking-h1 mb-4 font-serif">
-            The smart class, on the record.
-          </h1>
-          <p className="text-body-lg text-fg-muted max-w-[var(--layout-measure)] mb-6">
-            A register of every item in the room — what it does, how many there
-            are, and what state it is in. Kept by the lab team, in their own
-            words.
-          </p>
-          <div className="hero__actions flex flex-wrap gap-3">
-            <Link
-              href="/room"
-              className="btn btn--primary inline-flex items-center justify-center min-h-12 px-5 rounded-md bg-bg-action text-fg-on-action font-semibold no-underline hover:bg-bg-action-hover active:scale-[0.98] focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-border-focus"
-            >
-              Browse the collection
-            </Link>
-          </div>
-        </section>
+        <HeroCarousel />
         <hr className="border-t border-border-rule my-6" aria-hidden="true" />
         <section aria-labelledby="register-title">
           <div className="section-head flex flex-wrap gap-3 items-baseline justify-between mb-5">

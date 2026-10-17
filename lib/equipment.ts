@@ -2,6 +2,22 @@ import { postgrestSelect, type Equipment } from './supabase';
 
 export type { Equipment };
 
+export function resolveImageUrl(key?: string): string | undefined {
+  if (!key) return undefined;
+  if (
+    key.startsWith('http://') ||
+    key.startsWith('https://') ||
+    key.startsWith('/')
+  ) {
+    return key;
+  }
+  const r2Url = process.env.NEXT_PUBLIC_R2_PUBLIC_URL;
+  if (r2Url && r2Url.trim()) {
+    return `${r2Url.replace(/\/+$/, '')}/${key}`;
+  }
+  return `/images/${key}`;
+}
+
 let cachedEquipmentList: Equipment[] | null = null;
 const cachedEquipmentMap = new Map<string, Equipment>();
 

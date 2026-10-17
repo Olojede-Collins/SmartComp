@@ -30,6 +30,7 @@
 !vitest.config.*
 !.env.template
 !vercel.json
+!public/
 
 
 # Secrets must stay ignored even after broad un-ignore

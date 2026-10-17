@@ -107,7 +107,7 @@ describe('Public Rendering Integration Test Suite with Legacy Data (S-06 M2)', (
           within(monitorsRow as HTMLElement).getByText('50'),
         ).toBeDefined();
         const img = within(monitorsRow as HTMLElement).getByRole('img');
-        expect(img.getAttribute('src')).toBe('monitors-1.webp');
+        expect(img.getAttribute('src')).toMatch(/monitors-1\.webp/);
       }
 
       const singleUnitItems = [
@@ -160,8 +160,12 @@ describe('Public Rendering Integration Test Suite with Legacy Data (S-06 M2)', (
 
       const images = Array.from(container.querySelectorAll('img'));
       const sources = images.map((img) => img.getAttribute('src'));
-      expect(sources).toContain('student-camera-1.webp');
-      expect(sources).toContain('student-camera-2.webp');
+      expect(sources.some((s) => s?.includes('student-camera-1.webp'))).toBe(
+        true,
+      );
+      expect(sources.some((s) => s?.includes('student-camera-2.webp'))).toBe(
+        true,
+      );
     });
 
     it('renders Monitors with quantity 50 and active photography', async () => {

@@ -95,7 +95,7 @@ describe('S-001 Landing route (app/page.tsx)', () => {
 
     expect(
       screen.getByText(
-        'A register of every item in the room — what it does, how many there are, and what state it is in. Kept by the lab team, in their own words.',
+        'A register of every item in the smart classroom in the Computer Engineering Department, Faculty of Engineering, Ahmadu Bello University — what it does, how many there are, and what state it is in. Kept by the lab team, in their own words.',
       ),
     ).toBeTruthy();
 
