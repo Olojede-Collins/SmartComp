@@ -37,6 +37,7 @@ export function InviteForm({
   const [email, setEmail] = React.useState<string>(defaultEmail);
   const [recordedInvitedEmail, setRecordedInvitedEmail] =
     React.useState<string>(propInvitedEmail ?? '');
+  const [deliveryError, setDeliveryError] = React.useState<string | null>(null);
 
   const effectiveState = propState ?? internalState;
   const isSending = effectiveState === 'sending';
@@ -52,12 +53,19 @@ export function InviteForm({
 
     if (onSubmit) {
       setInternalState('sending');
+      setDeliveryError(null);
       try {
         await onSubmit(email);
         setRecordedInvitedEmail(email);
         setEmail('');
         setInternalState('invited');
-      } catch {
+      } catch (err: unknown) {
+        console.error('Invite delivery error:', err);
+        const msg =
+          err && typeof err === 'object' && 'message' in err
+            ? String((err as { message: unknown }).message)
+            : null;
+        setDeliveryError(msg);
         setInternalState('invite-failed');
       }
     }
@@ -93,6 +101,13 @@ export function InviteForm({
             code="gmail-send-failed"
           >
             Nothing was recorded as sent. Try again in a moment.
+            {deliveryError &&
+            deliveryError !== 'Mail delivery failed.' &&
+            deliveryError !== 'Failed to send invite email' ? (
+              <span className="block mt-2 font-mono text-xs text-caution-fg break-all">
+                {deliveryError}
+              </span>
+            ) : null}
           </Banner>
         </div>
       ) : null}

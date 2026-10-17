@@ -115,10 +115,27 @@ Faculty of Engineering, Ahmadu Bello University, Zaria, Nigeria`;
 </body>
 </html>`;
 
-  const clientId = process.env.GMAIL_CLIENT_ID;
-  const clientSecret = process.env.GMAIL_CLIENT_SECRET;
-  const refreshToken = process.env.GMAIL_REFRESH_TOKEN;
-  const fromUser = process.env.GMAIL_USER || 'admin@abu.edu.ng';
+  const clientId = process.env.GMAIL_CLIENT_ID?.trim().replace(
+    /^["']|["']$/g,
+    '',
+  );
+  const clientSecret = process.env.GMAIL_CLIENT_SECRET?.trim().replace(
+    /^["']|["']$/g,
+    '',
+  );
+  const refreshToken = process.env.GMAIL_REFRESH_TOKEN?.trim().replace(
+    /^["']|["']$/g,
+    '',
+  );
+  const fromUser =
+    process.env.GMAIL_USER?.trim().replace(/^["']|["']$/g, '') ||
+    'admin@abu.edu.ng';
+
+  if (process.env.GMAIL_USER && (!clientId || !refreshToken)) {
+    throw new Error(
+      `Gmail OAuth2 misconfigured: GMAIL_CLIENT_ID=${Boolean(clientId)}, GMAIL_REFRESH_TOKEN=${Boolean(refreshToken)}, GMAIL_CLIENT_SECRET=${Boolean(clientSecret)}`,
+    );
+  }
 
   if (clientId && refreshToken) {
     const tokenRes = await globalThis.fetch(

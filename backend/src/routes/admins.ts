@@ -120,9 +120,10 @@ adminsRouter.post('/admins/invites', async (req, res) => {
     } catch (err) {
       console.error('Failed to send invite email:', err);
       await db.deleteInvite(invite.id);
+      const detail = err instanceof Error ? err.message : String(err);
       res.status(502).json({
         error: 'gmail-send-failed',
-        message: 'Failed to send invite email',
+        message: detail || 'Failed to send invite email',
       });
       return;
     }
