@@ -10,6 +10,7 @@ const EXCLUDED_DIRS = [
   '.agent',
   '.opencode',
   'tests',
+  'backend',
 ];
 
 const EXCLUDED_FILES = ['tokens.css', 'globals.css'];

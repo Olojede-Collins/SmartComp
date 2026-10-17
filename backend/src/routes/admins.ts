@@ -2,6 +2,7 @@ import { Router } from 'express';
 import crypto from 'node:crypto';
 import { db } from '../db.js';
 import { authMiddleware, type AuthenticatedRequest } from '../auth.js';
+import { sendInviteEmail } from '../mailer.js';
 
 export const adminsRouter = Router();
 
@@ -113,6 +114,16 @@ adminsRouter.post('/admins/invites', async (req, res) => {
     const adminId =
       (req as AuthenticatedRequest).user?.id || crypto.randomUUID();
     const { invite, token } = await db.createInvite(email, adminId);
+
+    try {
+      await sendInviteEmail({ to: email, token });
+    } catch {
+      res.status(502).json({
+        error: 'gmail-send-failed',
+        message: 'Failed to send invite email',
+      });
+      return;
+    }
 
     res.status(201).json({
       id: invite.id,
