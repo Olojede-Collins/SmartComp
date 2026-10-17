@@ -95,7 +95,6 @@ export default async function Page({ searchParams }: PageProps = {}) {
                   : undefined,
                 facts: [
                   { key: 'QUANTITY', value: item.quantity, strong: true },
-                  { key: 'UPDATED', value: item.updated_at.slice(0, 10) },
                 ],
               }))}
             />
