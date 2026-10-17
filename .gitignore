@@ -66,6 +66,8 @@ SKILLS_MANIFEST.md
 STAGE_PROTOCOLS.md
 *.xlsx
 *.zip
+!Smart Class Data Form (Responses).xlsx
+!ABU-SmartComp-Legacy-Images-20261013T193523Z-1-001.zip
 docs/design-process/
 
 # Agent Session Runtime
