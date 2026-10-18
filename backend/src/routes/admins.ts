@@ -3,6 +3,7 @@ import crypto from 'node:crypto';
 import { db } from '../db.js';
 import { authMiddleware, type AuthenticatedRequest } from '../auth.js';
 import { sendInviteEmail } from '../mailer.js';
+import { generateInventoryPdf } from '../pdf-generator.js';
 
 export const adminsRouter = Router();
 
@@ -231,14 +232,15 @@ adminsRouter.get('/export/pdf', async (req, res) => {
 
   try {
     const items = await db.getEquipment();
-    const pdfContent = `%PDF-1.4\n1 0 obj\n<< /Type /Catalog /Pages 2 0 R >>\nendobj\n2 0 obj\n<< /Type /Pages /Kids [3 0 R] /Count 1 >>\nendobj\n3 0 obj\n<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 4 0 R >>\nendobj\n4 0 obj\n<< /Length 64 >>\nstream\nBT /F1 12 Tf 50 700 Td (COREN Inventory - Count: ${items.length}) Tj ET\nendstream\nendobj\nxref\n0 5\n0000000000 65535 f \n0000000009 00000 n \n0000000058 00000 n \n0000000115 00000 n \n0000000214 00000 n \ntrailer\n<< /Size 5 /Root 1 0 R >>\nstartxref\n328\n%%EOF\n`;
+    const pdfBuffer = generateInventoryPdf(items);
+    const dateStr = new Date().toISOString().split('T')[0];
 
     res.setHeader('Content-Type', 'application/pdf');
     res.setHeader(
       'Content-Disposition',
-      'attachment; filename="coren-inventory.pdf"',
+      `attachment; filename="abu-smart-class-inventory-${dateStr}.pdf"`,
     );
-    res.status(200).send(Buffer.from(pdfContent));
+    res.status(200).send(pdfBuffer);
   } catch {
     res.status(500).json({
       error: 'export-generation-failed',
@@ -267,11 +269,12 @@ adminsRouter.get('/export/csv', async (req, res) => {
       return `${escapedName},${item.condition},${item.quantity},${item.updated_at},${item.updated_by || ''}`;
     });
     const csv = [header, ...rows].join('\n');
+    const dateStr = new Date().toISOString().split('T')[0];
 
     res.setHeader('Content-Type', 'text/csv; charset=utf-8');
     res.setHeader(
       'Content-Disposition',
-      'attachment; filename="coren-inventory.csv"',
+      `attachment; filename="abu-smart-class-inventory-${dateStr}.csv"`,
     );
     res.status(200).send(csv);
   } catch {

@@ -295,7 +295,7 @@ describe('PRD §7 Success Metrics Suite (Session S-07 Metric Verification)', () 
       const pdfString = buf.toString('utf8');
 
       expect(pdfString.startsWith('%PDF-1.4')).toBe(true);
-      expect(pdfString).toContain('COREN Inventory');
+      expect(pdfString).toContain('AHMADU BELLO UNIVERSITY, ZARIA');
       expect(pdfString).toContain('%%EOF');
       expect(pdfString).not.toContain('00000000-0000-0000-0000-');
     });

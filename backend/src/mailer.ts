@@ -43,7 +43,7 @@ You have been invited by an administrator to join the ABU Smart Class Lab Team.
 As a lab team administrator, you will have permission to:
 - Record and update equipment inventory, operational condition, and quantity.
 - Upload verified equipment photographs to the departmental archive.
-- Manage lab team roster access and generate COREN accreditation reports.
+- Manage lab team roster access and generate official inventory reports.
 
 Accept your invitation and set your account password by visiting the following link:
 ${acceptUrl}
@@ -85,7 +85,7 @@ Faculty of Engineering, Ahmadu Bello University, Zaria, Nigeria`;
           <ul style="margin: 0; padding-left: 20px; font-size: 13px; line-height: 1.6; color: #4b5563;">
             <li style="margin-bottom: 6px;">Record and update equipment condition, quantity, and functionality</li>
             <li style="margin-bottom: 6px;">Upload verified equipment photographs to the departmental archive</li>
-            <li>Manage lab team access and generate COREN accreditation reports</li>
+            <li>Manage lab team access and generate official inventory reports</li>
           </ul>
         </div>
         <p style="margin: 24px 0; text-align: center;">

@@ -648,7 +648,7 @@ describe('Milestone M3 Challenger Adversarial Stress Suite (Session S-07)', () =
       const pdf = buf.toString('utf8');
 
       expect(pdf.startsWith('%PDF-1.4')).toBe(true);
-      expect(pdf).toContain('COREN Inventory');
+      expect(pdf).toContain('AHMADU BELLO UNIVERSITY, ZARIA');
       expect(pdf).toContain('%%EOF');
     });
 

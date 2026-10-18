@@ -1422,14 +1422,14 @@ describe('S-05 Challenger Suite — M2 Pre-Agreed Seams', () => {
       ).toBeDefined();
     });
 
-    it('sourced faculty hood stamp copy is displayed verbatim', () => {
+    it('sourced faculty hood stamp copy is not displayed in export dialog', () => {
       render(<ExportDialog open={true} itemCount={7} />);
 
       expect(
-        screen.getByText(
+        screen.queryByText(
           'ENGINEERING FACULTY HOOD COLOUR — ACADEMIC BRIEF TABLE 2.1',
         ),
-      ).toBeDefined();
+      ).toBeNull();
     });
 
     it('successful export triggers browser file download with date-stamped filename and cleans up object URL', async () => {

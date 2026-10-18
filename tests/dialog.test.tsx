@@ -181,7 +181,7 @@ describe('S-010 ExportDialog', () => {
     expect(screen.getByText('Export the Register')).toBeTruthy();
     expect(
       screen.getByText(
-        'Two formats, for COREN accreditation evidence. Every item in the inventory is included.',
+        'Two formats for inventory record keeping and reporting. Every item in the inventory is included.',
       ),
     ).toBeTruthy();
 

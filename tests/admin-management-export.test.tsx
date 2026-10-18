@@ -741,7 +741,9 @@ describe('app/admin/_components/export-dialog (S-010)', () => {
       screen.getByRole('heading', { level: 3, name: 'Export the Register' }),
     ).toBeDefined();
     expect(
-      screen.getByText(/Two formats, for COREN accreditation evidence/i),
+      screen.getByText(
+        /Two formats for inventory record keeping and reporting/i,
+      ),
     ).toBeDefined();
 
     const csvRadio = screen.getByRole('radio', {
@@ -771,11 +773,6 @@ describe('app/admin/_components/export-dialog (S-010)', () => {
     expect(
       screen.getByText(
         'These five columns are always included. Record IDs stay inside the admin app and are not written to the file.',
-      ),
-    ).toBeDefined();
-    expect(
-      screen.getByText(
-        'ENGINEERING FACULTY HOOD COLOUR — ACADEMIC BRIEF TABLE 2.1',
       ),
     ).toBeDefined();
 

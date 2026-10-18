@@ -267,7 +267,7 @@ export function ExportDialog({
   open,
   onOpenChange,
   title = 'Export the Register',
-  description = 'Two formats, for COREN accreditation evidence. Every item in the inventory is included.',
+  description = 'Two formats for inventory record keeping and reporting. Every item in the inventory is included.',
   format: propFormat = 'csv',
   onExport,
   onClose,

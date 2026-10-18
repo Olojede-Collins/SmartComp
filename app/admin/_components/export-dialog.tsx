@@ -12,7 +12,6 @@ import {
 import { Button } from '@/app/_components/button';
 import { FieldKey } from '@/app/_components/field-key';
 import { Icon } from '@/app/_components/icon';
-import { Stamp } from '@/app/_components/stamp';
 import { exportInventory } from '@/lib/admin-api';
 
 export interface ExportDialogProps {
@@ -67,7 +66,7 @@ export function ExportDialog({
   open = false,
   onOpenChange,
   title = 'Export the Register',
-  description = 'Two formats, for COREN accreditation evidence. Every item in the inventory is included.',
+  description = 'Two formats for inventory record keeping and reporting. Every item in the inventory is included.',
   format: initialFormat = 'csv',
   itemCount,
   onClose,
@@ -130,6 +129,7 @@ export function ExportDialog({
     if (downloadedBlob && generatedFilename) {
       downloadBlob(downloadedBlob, generatedFilename);
     }
+    handleClose();
   };
 
   const isPending = state === 'generating';
@@ -351,10 +351,6 @@ export function ExportDialog({
                 the admin app and are not written to the file.
               </p>
             </fieldset>
-
-            <Stamp className="mb-6">
-              ENGINEERING FACULTY HOOD COLOUR — ACADEMIC BRIEF TABLE 2.1
-            </Stamp>
 
             <DialogFooter>
               <Button
