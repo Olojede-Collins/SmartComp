@@ -76,6 +76,20 @@ export function ExportDialog({
   const [state, setState] = React.useState<DialogState>('default');
   const [downloadedBlob, setDownloadedBlob] = React.useState<Blob | null>(null);
   const [generatedFilename, setGeneratedFilename] = React.useState('');
+  const [selectedCols, setSelectedCols] = React.useState<string[]>([
+    'name',
+    'condition',
+    'quantity',
+    'updated_at',
+    'updated_by',
+  ]);
+
+  const toggleCol = (key: string) => {
+    if (key === 'name') return;
+    setSelectedCols((prev) =>
+      prev.includes(key) ? prev.filter((c) => c !== key) : [...prev, key],
+    );
+  };
 
   const successHeadingRef = React.useRef<HTMLHeadingElement>(null);
   const failureHeadingRef = React.useRef<HTMLHeadingElement>(null);
@@ -92,6 +106,13 @@ export function ExportDialog({
     if (state === 'generating') return;
     setState('default');
     setFormat(initialFormat);
+    setSelectedCols([
+      'name',
+      'condition',
+      'quantity',
+      'updated_at',
+      'updated_by',
+    ]);
     onClose?.();
     onOpenChange?.(false);
   };
@@ -101,6 +122,13 @@ export function ExportDialog({
     if (!nextOpen) {
       setState('default');
       setFormat(initialFormat);
+      setSelectedCols([
+        'name',
+        'condition',
+        'quantity',
+        'updated_at',
+        'updated_by',
+      ]);
     }
     onOpenChange?.(nextOpen);
   };
@@ -111,7 +139,7 @@ export function ExportDialog({
     setState('generating');
 
     try {
-      const blob = await exportInventory(format);
+      const blob = await exportInventory(format, selectedCols);
       const dateStr = new Date().toISOString().split('T')[0];
       const filename = `abu-smart-class-inventory-${dateStr}.${format}`;
 
@@ -204,117 +232,106 @@ export function ExportDialog({
 
             <fieldset className="dlg__fieldset border-0 p-0 m-0 mb-5 flex flex-col gap-2 min-w-0">
               <legend className="p-0 mb-3">
-                <FieldKey>WHAT IS WRITTEN TO THE FILE</FieldKey>
+                <FieldKey>COLUMNS INCLUDED IN EXPORT</FieldKey>
               </legend>
               <ul className="border border-border-rule rounded-md overflow-hidden list-none p-0 m-0">
-                <li className="flex gap-3 items-start p-3 md:px-4 min-h-11 border-b border-border-rule bg-bg-surface">
+                <li className="flex gap-3 items-center p-3 md:px-4 min-h-11 border-b border-border-rule bg-bg-surface">
                   <input
                     type="checkbox"
                     id="col-name"
                     checked
                     disabled
-                    className="mt-1 size-5 accent-bg-action cursor-default"
+                    className="size-5 accent-bg-action cursor-default rounded"
                   />
                   <label
                     htmlFor="col-name"
-                    className="flex flex-col gap-1 min-w-0 min-h-11 justify-center cursor-default text-body text-fg-default"
+                    className="flex items-center gap-2 min-w-0 min-h-11 cursor-default text-body text-fg-default"
                   >
                     <span className="font-medium">Item name</span>
-                    <span className="text-caption text-fg-muted">
-                      Kept exactly as submitted.
+                    <span className="text-micro text-fg-muted font-normal">
+                      (Required)
                     </span>
                   </label>
                 </li>
-                <li className="flex gap-3 items-start p-3 md:px-4 min-h-11 border-b border-border-rule bg-bg-surface">
+                <li className="flex gap-3 items-center p-3 md:px-4 min-h-11 border-b border-border-rule bg-bg-surface hover:bg-bg-row-hover">
                   <input
                     type="checkbox"
                     id="col-cond"
-                    checked
-                    disabled
-                    className="mt-1 size-5 accent-bg-action cursor-default"
+                    checked={selectedCols.includes('condition')}
+                    disabled={isPending}
+                    onChange={() => toggleCol('condition')}
+                    className="size-5 accent-bg-action cursor-pointer rounded"
                   />
                   <label
                     htmlFor="col-cond"
-                    className="flex flex-col gap-1 min-w-0 min-h-11 justify-center cursor-default text-body text-fg-default"
+                    className="flex items-center min-w-0 min-h-11 cursor-pointer text-body text-fg-default font-medium flex-1"
                   >
-                    <span className="font-medium">Condition</span>
-                    <span className="text-caption text-fg-muted">
-                      Working, Faulty, Under Maintenance or Decommissioned.
-                    </span>
+                    Condition
                   </label>
                 </li>
-                <li className="flex gap-3 items-start p-3 md:px-4 min-h-11 border-b border-border-rule bg-bg-surface">
+                <li className="flex gap-3 items-center p-3 md:px-4 min-h-11 border-b border-border-rule bg-bg-surface hover:bg-bg-row-hover">
                   <input
                     type="checkbox"
                     id="col-qty"
-                    checked
-                    disabled
-                    className="mt-1 size-5 accent-bg-action cursor-default"
+                    checked={selectedCols.includes('quantity')}
+                    disabled={isPending}
+                    onChange={() => toggleCol('quantity')}
+                    className="size-5 accent-bg-action cursor-pointer rounded"
                   />
                   <label
                     htmlFor="col-qty"
-                    className="flex flex-col gap-1 min-w-0 min-h-11 justify-center cursor-default text-body text-fg-default"
+                    className="flex items-center min-w-0 min-h-11 cursor-pointer text-body text-fg-default font-medium flex-1"
                   >
-                    <span className="font-medium">Quantity</span>
+                    Quantity
                   </label>
                 </li>
-                <li className="flex gap-3 items-start p-3 md:px-4 min-h-11 border-b border-border-rule bg-bg-surface">
+                <li className="flex gap-3 items-center p-3 md:px-4 min-h-11 border-b border-border-rule bg-bg-surface hover:bg-bg-row-hover">
                   <input
                     type="checkbox"
                     id="col-upd"
-                    checked
-                    disabled
-                    className="mt-1 size-5 accent-bg-action cursor-default"
+                    checked={selectedCols.includes('updated_at')}
+                    disabled={isPending}
+                    onChange={() => toggleCol('updated_at')}
+                    className="size-5 accent-bg-action cursor-pointer rounded"
                   />
                   <label
                     htmlFor="col-upd"
-                    className="flex flex-col gap-1 min-w-0 min-h-11 justify-center cursor-default text-body text-fg-default"
+                    className="flex items-center min-w-0 min-h-11 cursor-pointer text-body text-fg-default font-medium flex-1"
                   >
-                    <span className="font-medium">Updated</span>
-                    <span className="text-caption text-fg-muted">
-                      The date the record last changed.
-                    </span>
+                    Updated
                   </label>
                 </li>
-                <li className="flex gap-3 items-start p-3 md:px-4 min-h-11 border-b border-border-rule bg-bg-surface">
+                <li className="flex gap-3 items-center p-3 md:px-4 min-h-11 border-b border-border-rule bg-bg-surface hover:bg-bg-row-hover">
                   <input
                     type="checkbox"
                     id="col-by"
-                    checked
-                    disabled
-                    className="mt-1 size-5 accent-bg-action cursor-default"
+                    checked={selectedCols.includes('updated_by')}
+                    disabled={isPending}
+                    onChange={() => toggleCol('updated_by')}
+                    className="size-5 accent-bg-action cursor-pointer rounded"
                   />
                   <label
                     htmlFor="col-by"
-                    className="flex flex-col gap-1 min-w-0 min-h-11 justify-center cursor-default text-body text-fg-default"
+                    className="flex items-center min-w-0 min-h-11 cursor-pointer text-body text-fg-default font-medium flex-1"
                   >
-                    <span className="font-medium">Updated by</span>
-                    <span className="text-caption text-fg-muted">
-                      The admin who last changed it.
-                    </span>
+                    Updated by
                   </label>
                 </li>
-                <li className="flex gap-3 items-start p-3 md:px-4 min-h-11 bg-bg-disabled">
+                <li className="flex gap-3 items-center p-3 md:px-4 min-h-11 bg-bg-disabled">
                   <input
                     type="checkbox"
                     id="col-id"
                     disabled
                     aria-describedby="col-id-note"
-                    className="mt-1 size-5 accent-fg-disabled cursor-not-allowed"
+                    className="size-5 accent-fg-disabled cursor-not-allowed rounded"
                   />
                   <label
                     htmlFor="col-id"
-                    className="flex flex-col gap-1 min-w-0 min-h-11 justify-center cursor-not-allowed text-body text-fg-disabled"
+                    className="flex items-center min-w-0 min-h-11 cursor-not-allowed text-body text-fg-disabled font-medium"
                   >
-                    <span className="font-medium">
-                      Record ID{' '}
-                      <span className="font-mono text-data">SC-001</span>…
-                    </span>
-                    <span className="text-caption text-fg-muted">
-                      Not available.
-                    </span>
+                    Record ID
                   </label>
-                  <span className="ml-auto shrink-0 inline-flex items-center gap-1.5 text-micro font-medium tracking-micro text-fg-muted pt-2">
+                  <span className="ml-auto shrink-0 inline-flex items-center gap-1.5 text-micro font-medium tracking-micro text-fg-muted">
                     <svg
                       className="size-4 shrink-0"
                       viewBox="0 0 20 20"
@@ -347,8 +364,8 @@ export function ExportDialog({
                 id="col-id-note"
                 className="text-caption text-fg-muted m-0 mt-3"
               >
-                These five columns are always included. Record IDs stay inside
-                the admin app and are not written to the file.
+                Selected columns are included in the export. Record IDs stay
+                inside the admin app and are not written to the file.
               </p>
             </fieldset>
 
@@ -414,8 +431,9 @@ export function ExportDialog({
                   id="dlg-body-success"
                   className="text-body-small text-fg-default m-0"
                 >
-                  {getItemCountText(itemCount)}, with the five columns listed
-                  above.
+                  {selectedCols.length === 5
+                    ? `${getItemCountText(itemCount)}, with the five columns listed above.`
+                    : `${getItemCountText(itemCount)}, with the selected columns.`}
                 </p>
                 <p
                   id="file-name"

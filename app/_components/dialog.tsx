@@ -332,21 +332,11 @@ export function ExportDialog({
           <ul className="list-none p-0 m-0 flex flex-col gap-2">
             <li className="flex items-start gap-3 text-body-small text-fg-default">
               <input type="checkbox" checked disabled className="mt-1" />
-              <span>
-                Item name{' '}
-                <span className="text-caption text-fg-muted">
-                  — Kept exactly as submitted.
-                </span>
-              </span>
+              <span>Item name</span>
             </li>
             <li className="flex items-start gap-3 text-body-small text-fg-default">
               <input type="checkbox" checked disabled className="mt-1" />
-              <span>
-                Condition{' '}
-                <span className="text-caption text-fg-muted">
-                  — Working, Faulty, Under Maintenance or Decommissioned.
-                </span>
-              </span>
+              <span>Condition</span>
             </li>
             <li className="flex items-start gap-3 text-body-small text-fg-default">
               <input type="checkbox" checked disabled className="mt-1" />
@@ -354,21 +344,11 @@ export function ExportDialog({
             </li>
             <li className="flex items-start gap-3 text-body-small text-fg-default">
               <input type="checkbox" checked disabled className="mt-1" />
-              <span>
-                Updated{' '}
-                <span className="text-caption text-fg-muted">
-                  — The date the record last changed.
-                </span>
-              </span>
+              <span>Updated</span>
             </li>
             <li className="flex items-start gap-3 text-body-small text-fg-default">
               <input type="checkbox" checked disabled className="mt-1" />
-              <span>
-                Updated by{' '}
-                <span className="text-caption text-fg-muted">
-                  — The admin who last changed it.
-                </span>
-              </span>
+              <span>Updated by</span>
             </li>
             <li className="flex items-start gap-3 text-body-small text-fg-muted">
               <input type="checkbox" disabled className="mt-1" />
@@ -381,8 +361,8 @@ export function ExportDialog({
             </li>
           </ul>
           <p className="dlg__note text-caption text-fg-muted m-0 mt-3">
-            These five columns are always included. Record IDs stay inside the
-            admin app and are not written to the file.
+            Selected columns are included in the export. Record IDs stay inside
+            the admin app and are not written to the file.
           </p>
         </fieldset>
 

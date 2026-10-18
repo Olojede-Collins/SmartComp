@@ -109,6 +109,43 @@ adminsRouter.get('/admins', async (_req, res) => {
   }
 });
 
+adminsRouter.get(['/invites', '/admins/invites'], async (_req, res) => {
+  try {
+    const pending = await db.getPendingInvites();
+    res.status(200).json(pending);
+  } catch {
+    res.status(503).json({
+      error: 'db-unavailable',
+      message: 'Database unavailable',
+    });
+  }
+});
+
+adminsRouter.delete(
+  ['/invites/:id', '/admins/invites/:id'],
+  async (req, res) => {
+    try {
+      const inviteId = Array.isArray(req.params.id)
+        ? req.params.id[0]
+        : req.params.id;
+      const ok = await db.deleteInvite(inviteId);
+      if (!ok) {
+        res.status(404).json({
+          error: 'not-found',
+          message: 'Invite not found',
+        });
+        return;
+      }
+      res.status(204).end();
+    } catch {
+      res.status(503).json({
+        error: 'db-unavailable',
+        message: 'Database unavailable',
+      });
+    }
+  },
+);
+
 adminsRouter.post('/admins/invites', async (req, res) => {
   const { email } = req.body || {};
   if (!email || typeof email !== 'string' || !email.includes('@')) {
@@ -218,6 +255,19 @@ adminsRouter.delete('/admins/:id', async (req, res) => {
   }
 });
 
+function parseExportCols(queryCols: unknown): string[] {
+  const allowed = ['name', 'condition', 'quantity', 'updated_at', 'updated_by'];
+  if (typeof queryCols === 'string' && queryCols.trim()) {
+    const list = queryCols.split(',').map((s) => s.trim().toLowerCase());
+    const valid = list.filter((c) => allowed.includes(c));
+    if (!valid.includes('name')) {
+      valid.unshift('name');
+    }
+    return valid.length > 0 ? valid : allowed;
+  }
+  return allowed;
+}
+
 adminsRouter.get('/export/pdf', async (req, res) => {
   if (
     req.headers['x-simulate-export-failure'] === 'true' ||
@@ -232,7 +282,8 @@ adminsRouter.get('/export/pdf', async (req, res) => {
 
   try {
     const items = await db.getEquipment();
-    const pdfBuffer = generateInventoryPdf(items);
+    const cols = parseExportCols(req.query.cols);
+    const pdfBuffer = generateInventoryPdf(items, cols);
     const dateStr = new Date().toISOString().split('T')[0];
 
     res.setHeader('Content-Type', 'application/pdf');
@@ -263,10 +314,27 @@ adminsRouter.get('/export/csv', async (req, res) => {
 
   try {
     const items = await db.getEquipment();
-    const header = 'name,condition,quantity,updated_at,updated_by';
+    const cols = parseExportCols(req.query.cols);
+    const header = cols.join(',');
     const rows = items.map((item) => {
-      const escapedName = `"${item.name.replace(/"/g, '""')}"`;
-      return `${escapedName},${item.condition},${item.quantity},${item.updated_at},${item.updated_by || ''}`;
+      return cols
+        .map((col) => {
+          switch (col) {
+            case 'name':
+              return `"${item.name.replace(/"/g, '""')}"`;
+            case 'condition':
+              return item.condition;
+            case 'quantity':
+              return item.quantity;
+            case 'updated_at':
+              return item.updated_at;
+            case 'updated_by':
+              return item.updated_by || '';
+            default:
+              return '';
+          }
+        })
+        .join(',');
     });
     const csv = [header, ...rows].join('\n');
     const dateStr = new Date().toISOString().split('T')[0];

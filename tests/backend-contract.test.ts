@@ -705,6 +705,45 @@ describe('Backend API Contract & Probe Suite', () => {
       const body = await res.json();
       expect(body.error).toBe('gmail-send-failed');
     });
+
+    it('returns 200 with array of pending invites on GET /api/admin/invites', async () => {
+      await db.createInvite('list-pending@abu.edu.ng', 'admin-test-id-1');
+
+      const res = await globalThis.fetch(`${baseUrl}/api/admin/invites`, {
+        headers: { Authorization: `Bearer ${validAdminToken}` },
+      });
+
+      expect(res.status).toBe(200);
+      const body = await res.json();
+      expect(Array.isArray(body)).toBe(true);
+      expect(body.length).toBeGreaterThanOrEqual(1);
+      const found = body.find(
+        (i: { email: string }) => i.email === 'list-pending@abu.edu.ng',
+      );
+      expect(found).toBeDefined();
+      expect(found.status).toBe('pending');
+    });
+
+    it('returns 204 on DELETE /api/admin/invites/:id and deletes invite', async () => {
+      const { invite } = await db.createInvite(
+        'del-pending@abu.edu.ng',
+        'admin-test-id-1',
+      );
+
+      const res = await globalThis.fetch(
+        `${baseUrl}/api/admin/invites/${invite.id}`,
+        {
+          method: 'DELETE',
+          headers: { Authorization: `Bearer ${validAdminToken}` },
+        },
+      );
+
+      expect(res.status).toBe(204);
+      const pendingAfter = await db.getPendingInviteByEmail(
+        'del-pending@abu.edu.ng',
+      );
+      expect(pendingAfter).toBeNull();
+    });
   });
 
   describe('12. POST /api/admin/invites/accept (Unauthenticated endpoint)', () => {
@@ -917,6 +956,33 @@ describe('Backend API Contract & Probe Suite', () => {
       const csv = await res.text();
       expect(csv).toContain('name,condition,quantity,updated_at,updated_by');
       expect(csv).toContain('"Logic Analyzer",Working,3');
+    });
+
+    it('supports dynamic ?cols=name,quantity query on CSV export', async () => {
+      const res = await globalThis.fetch(
+        `${baseUrl}/api/admin/export/csv?cols=name,quantity`,
+        {
+          headers: { Authorization: `Bearer ${validAdminToken}` },
+        },
+      );
+
+      expect(res.status).toBe(200);
+      const csv = await res.text();
+      const firstLine = csv.split('\n')[0];
+      expect(firstLine).toBe('name,quantity');
+    });
+
+    it('supports dynamic ?cols=name,quantity query on PDF export', async () => {
+      const res = await globalThis.fetch(
+        `${baseUrl}/api/admin/export/pdf?cols=name,quantity`,
+        {
+          headers: { Authorization: `Bearer ${validAdminToken}` },
+        },
+      );
+
+      expect(res.status).toBe(200);
+      const text = await res.text();
+      expect(text).toContain('%PDF-1.4');
     });
 
     it('returns 500 export-generation-failed when CSV generation fails', async () => {

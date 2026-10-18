@@ -11,9 +11,12 @@ import { ErrorBanner } from '@/app/_components/error-banner';
 import { InviteForm } from '@/app/_components/invite-form';
 import {
   getAdmins,
+  getPendingInvites,
   createInvite,
   deleteAdmin,
+  deleteInvite,
   type AdminUser,
+  type PendingInvite,
 } from '@/lib/admin-api';
 import { getSession, getToken } from '@/lib/admin-auth';
 
@@ -30,10 +33,13 @@ function formatDate(isoString: string): string {
 export default function AdminAdminsPage() {
   const router = useRouter();
   const [admins, setAdmins] = React.useState<AdminUser[]>([]);
+  const [pendingInvites, setPendingInvites] = React.useState<PendingInvite[]>(
+    [],
+  );
   const [loading, setLoading] = React.useState(true);
-  const [pendingCount, setPendingCount] = React.useState<number>(0);
   const [banner, setBanner] = React.useState<string | null>(null);
   const [removingId, setRemovingId] = React.useState<string | null>(null);
+  const [revokingId, setRevokingId] = React.useState<string | null>(null);
   const bannerRef = React.useRef<HTMLDivElement>(null);
   const [currentUserEmail] = React.useState<string | null>(
     () => getSession()?.user?.email || null,
@@ -62,11 +68,28 @@ export default function AdminAdminsPage() {
       return;
     }
 
-    getAdmins()
-      .then((data) => {
+    Promise.all([
+      getAdmins().catch((e) => {
+        if (
+          e &&
+          typeof e === 'object' &&
+          'status' in e &&
+          ((e as { status: number }).status === 401 ||
+            (e as { status: number }).status === 403)
+        ) {
+          throw e;
+        }
+        return [];
+      }),
+      getPendingInvites().catch(() => []),
+    ])
+      .then(([adminsData, invitesData]) => {
         if (!active) return;
-        if (Array.isArray(data)) {
-          setAdmins(data);
+        if (Array.isArray(adminsData)) {
+          setAdmins(adminsData);
+        }
+        if (Array.isArray(invitesData)) {
+          setPendingInvites(invitesData);
         }
         setLoading(false);
       })
@@ -125,11 +148,33 @@ export default function AdminAdminsPage() {
   };
 
   const handleInviteSubmit = async (email: string) => {
+    await createInvite(email);
     try {
-      await createInvite(email);
-      setPendingCount((prev) => prev + 1);
-    } catch (err: unknown) {
-      throw err;
+      const updated = await getPendingInvites();
+      setPendingInvites(updated);
+    } catch {
+      setPendingInvites((prev) => [
+        {
+          id: crypto.randomUUID(),
+          email,
+          invited_by: currentUserEmail || 'Admin',
+          created_at: new Date().toISOString(),
+          status: 'pending',
+        },
+        ...prev,
+      ]);
+    }
+  };
+
+  const handleRevokeInvite = async (id: string) => {
+    setRevokingId(id);
+    try {
+      await deleteInvite(id);
+      setPendingInvites((prev) => prev.filter((i) => i.id !== id));
+    } catch (err) {
+      console.error('Failed to revoke invite:', err);
+    } finally {
+      setRevokingId(null);
     }
   };
 
@@ -172,7 +217,7 @@ export default function AdminAdminsPage() {
           <DataStrip
             pairs={[
               { key: 'ADMINS', value: adminList.length },
-              { key: 'PENDING', value: pendingCount },
+              { key: 'PENDING', value: pendingInvites.length },
             ]}
           />
         </div>
@@ -270,6 +315,104 @@ export default function AdminAdminsPage() {
             </tbody>
           </table>
         </div>
+
+        {pendingInvites.length > 0 ? (
+          <section className="mb-10" aria-labelledby="pending-invites-heading">
+            <div className="flex items-center justify-between mb-3">
+              <h2
+                id="pending-invites-heading"
+                className="text-h2 tracking-h2 font-sans font-semibold text-neutral-900 m-0"
+              >
+                Pending Invitations
+              </h2>
+              <span className="text-micro font-medium tracking-caps px-2.5 py-0.5 rounded-full border border-border-rule bg-bg-surface-sunken text-fg-muted">
+                {pendingInvites.length} Pending
+              </span>
+            </div>
+
+            <div className="overflow-x-auto border border-border-rule rounded-md bg-bg-surface">
+              <table
+                className="w-full text-left border-collapse"
+                role="table"
+                aria-label="Pending Invitations"
+              >
+                <caption className="sr-only">
+                  Pending administrator invitations awaiting acceptance.
+                </caption>
+                <thead>
+                  <tr className="border-b border-border-rule bg-bg-surface-sunken">
+                    <th
+                      scope="col"
+                      className="px-4 py-3 text-micro font-medium tracking-caps text-fg-muted"
+                    >
+                      INVITEE EMAIL
+                    </th>
+                    <th
+                      scope="col"
+                      className="px-4 py-3 text-micro font-medium tracking-caps text-fg-muted"
+                    >
+                      INVITED BY
+                    </th>
+                    <th
+                      scope="col"
+                      className="px-4 py-3 text-micro font-medium tracking-caps text-fg-muted"
+                    >
+                      SENT
+                    </th>
+                    <th
+                      scope="col"
+                      className="px-4 py-3 text-micro font-medium tracking-caps text-fg-muted"
+                    >
+                      STATUS
+                    </th>
+                    <th scope="col" className="px-4 py-3 text-right">
+                      <span className="sr-only">Actions</span>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {pendingInvites.map((inv) => (
+                    <tr
+                      key={inv.id}
+                      className="border-b border-border-rule last:border-b-0 hover:bg-bg-row-hover"
+                    >
+                      <td className="px-4 py-3 align-middle font-mono text-data text-fg-default">
+                        {inv.email}
+                      </td>
+                      <td className="px-4 py-3 align-middle text-body-small text-fg-muted font-mono">
+                        {inv.invited_by || 'Admin'}
+                      </td>
+                      <td className="px-4 py-3 align-middle font-mono text-data text-fg-default">
+                        {formatDate(inv.created_at)}
+                      </td>
+                      <td className="px-4 py-3 align-middle">
+                        <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-micro font-medium border border-border-rule bg-bg-surface-sunken text-fg-muted">
+                          <span className="size-1.5 rounded-full bg-amber-500" />
+                          Pending
+                        </span>
+                      </td>
+                      <td className="px-4 py-3 align-middle text-right">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          aria-label={`Revoke invite for ${inv.email}`}
+                          disabled={revokingId === inv.id}
+                          aria-busy={revokingId === inv.id ? 'true' : undefined}
+                          pendingLabel={
+                            revokingId === inv.id ? 'Revoking…' : undefined
+                          }
+                          onClick={() => handleRevokeInvite(inv.id)}
+                        >
+                          Revoke
+                        </Button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </section>
+        ) : null}
 
         <section
           className="max-w-[var(--layout-measure)]"

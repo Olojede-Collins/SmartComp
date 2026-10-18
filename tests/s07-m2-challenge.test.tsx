@@ -141,6 +141,8 @@ vi.mock('@/lib/admin-api', () => ({
   deleteItem: vi.fn().mockResolvedValue({}),
   deleteAdmin: vi.fn().mockResolvedValue({}),
   createInvite: vi.fn().mockResolvedValue({}),
+  getPendingInvites: vi.fn().mockResolvedValue([]),
+  deleteInvite: vi.fn().mockResolvedValue({}),
   acceptInvite: vi.fn().mockResolvedValue({}),
   exportInventory: vi.fn().mockResolvedValue(new Blob(['mock-data'])),
   ApiError: class ApiError extends Error {
@@ -558,7 +560,10 @@ describe('S-07 Milestone M2 Challenger Adversarial Stress Suite', () => {
       }) as HTMLInputElement;
       fireEvent.click(pdfRadio);
 
-      expect(adminApi.exportInventory).toHaveBeenCalledWith('csv');
+      expect(adminApi.exportInventory).toHaveBeenCalledWith(
+        'csv',
+        expect.any(Array),
+      );
 
       act(() => {
         resolveExport(new Blob(['data']));

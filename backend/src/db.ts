@@ -32,6 +32,14 @@ export interface AdminInviteRecord {
   accepted_at: string | null;
 }
 
+export interface PendingInviteRecord {
+  id: string;
+  email: string;
+  invited_by: string;
+  created_at: string;
+  status: 'pending';
+}
+
 export interface AuditLogRecord {
   id: string;
   actor_admin_id: string;
@@ -546,6 +554,69 @@ export class DatabaseClient {
       created_at: now,
     });
     return { invite: { ...invite }, token };
+  }
+
+  async getPendingInvites(): Promise<PendingInviteRecord[]> {
+    if (!this.healthy) {
+      throw new Error('Database unreachable');
+    }
+    const sb = this.getSupabase();
+    if (sb) {
+      const res = await globalThis.fetch(
+        `${sb.url}/rest/v1/admin_invites?accepted_at=is.null&select=id,email,invited_by,created_at&order=created_at.desc`,
+        {
+          headers: {
+            apikey: sb.key,
+            Authorization: `Bearer ${sb.key}`,
+            Accept: 'application/json',
+          },
+        },
+      );
+      if (!res.ok) {
+        throw new Error(`PostgREST error: ${res.status}`);
+      }
+      const raw = (await res.json()) as Array<{
+        id: string;
+        email: string;
+        invited_by: string | null;
+        created_at: string;
+      }>;
+
+      let adminMap = new Map<string, string>();
+      try {
+        const admins = await this.getAdmins();
+        adminMap = new Map(admins.map((a) => [a.id, a.email]));
+      } catch {}
+
+      return raw.map((inv) => ({
+        id: inv.id,
+        email: inv.email,
+        invited_by:
+          inv.invited_by && adminMap.has(inv.invited_by)
+            ? adminMap.get(inv.invited_by)!
+            : 'Admin',
+        created_at: inv.created_at,
+        status: 'pending' as const,
+      }));
+    }
+
+    const adminMap = new Map(this.admins.map((a) => [a.id, a.email]));
+    return this.invites
+      .filter((i) => i.accepted_at === null)
+      .map((inv) => ({
+        id: inv.id,
+        email: inv.email,
+        invited_by:
+          inv.invited_by && adminMap.has(inv.invited_by)
+            ? adminMap.get(inv.invited_by)!
+            : 'Admin',
+        created_at: inv.created_at,
+        status: 'pending' as const,
+      }))
+      .sort(
+        (a, b) =>
+          new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
+      );
   }
 
   async deleteInvite(id: string): Promise<boolean> {

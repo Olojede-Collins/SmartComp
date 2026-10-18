@@ -171,6 +171,37 @@ export async function getAdmins(
   return request<AdminUser[]>('/api/admin/admins', 'GET', undefined, options);
 }
 
+export interface PendingInvite {
+  id: string;
+  email: string;
+  invited_by: string;
+  created_at: string;
+  status: 'pending';
+}
+
+export async function getPendingInvites(
+  options?: RequestOptions,
+): Promise<PendingInvite[]> {
+  return request<PendingInvite[]>(
+    '/api/admin/invites',
+    'GET',
+    undefined,
+    options,
+  );
+}
+
+export async function deleteInvite(
+  id: string,
+  options?: RequestOptions,
+): Promise<void> {
+  return request<void>(
+    `/api/admin/invites/${id}`,
+    'DELETE',
+    undefined,
+    options,
+  );
+}
+
 export async function createInvite(
   email: string,
   options?: RequestOptions,
@@ -220,11 +251,32 @@ export async function acceptInvite(
 
 export async function exportInventory(
   format: 'pdf' | 'csv',
+  columnsOrOptions?: string[] | RequestOptions,
   options?: RequestOptions,
 ): Promise<Blob> {
+  let columns: string[] | undefined;
+  let opts: RequestOptions | undefined;
+
+  if (Array.isArray(columnsOrOptions)) {
+    columns = columnsOrOptions;
+    opts = options;
+  } else {
+    opts = columnsOrOptions;
+  }
+
   const baseUrl = getBackendBaseUrl();
-  const endpoint = `${baseUrl}/api/admin/export/${format}`;
-  const token = options?.token ?? getToken();
+  const isDefaultAll =
+    !columns ||
+    (columns.length === 5 &&
+      ['name', 'condition', 'quantity', 'updated_at', 'updated_by'].every((c) =>
+        columns.includes(c),
+      ));
+  const query =
+    !isDefaultAll && columns
+      ? `?cols=${encodeURIComponent(columns.join(','))}`
+      : '';
+  const endpoint = `${baseUrl}/api/admin/export/${format}${query}`;
+  const token = opts?.token ?? getToken();
 
   const headers: Record<string, string> = {};
   if (token) {
@@ -232,10 +284,10 @@ export async function exportInventory(
   }
 
   let slowTimer: ReturnType<typeof setTimeout> | undefined;
-  if (options?.onSlow) {
-    const delay = options.slowDelayMs ?? 3000;
+  if (opts?.onSlow) {
+    const delay = opts.slowDelayMs ?? 3000;
     slowTimer = setTimeout(() => {
-      options.onSlow?.();
+      opts?.onSlow?.();
     }, delay);
   }
 

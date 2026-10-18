@@ -457,7 +457,9 @@ describe('app/admin/admins/page (S-008)', () => {
         name: 'Invitation sent.',
       }),
     ).toBeDefined();
-    expect(screen.getByText('admin.five@example.invalid')).toBeDefined();
+    expect(
+      screen.getAllByText('admin.five@example.invalid').length,
+    ).toBeGreaterThanOrEqual(1);
   });
 
   it('renders caution banner when invite delivery fails with 502', async () => {
@@ -757,22 +759,22 @@ describe('app/admin/_components/export-dialog (S-010)', () => {
     expect(pdfRadio.checked).toBe(false);
 
     expect(screen.getByText('Item name')).toBeDefined();
-    expect(screen.getByText('Kept exactly as submitted.')).toBeDefined();
     expect(screen.getByText('Condition')).toBeDefined();
-    expect(
-      screen.getByText('Working, Faulty, Under Maintenance or Decommissioned.'),
-    ).toBeDefined();
     expect(screen.getByText('Quantity')).toBeDefined();
     expect(screen.getByText('Updated')).toBeDefined();
-    expect(screen.getByText('The date the record last changed.')).toBeDefined();
     expect(screen.getByText('Updated by')).toBeDefined();
-    expect(screen.getByText('The admin who last changed it.')).toBeDefined();
+    expect(screen.queryByText('Kept exactly as submitted.')).toBeNull();
+    expect(
+      screen.queryByText(
+        'Working, Faulty, Under Maintenance or Decommissioned.',
+      ),
+    ).toBeNull();
 
     expect(screen.getByText(/^Record ID/i)).toBeDefined();
     expect(screen.getByText('Withheld')).toBeDefined();
     expect(
       screen.getByText(
-        'These five columns are always included. Record IDs stay inside the admin app and are not written to the file.',
+        /Record IDs stay inside the admin app and are not written to the file/i,
       ),
     ).toBeDefined();
 

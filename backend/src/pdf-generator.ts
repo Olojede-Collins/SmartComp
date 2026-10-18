@@ -7,9 +7,68 @@ function escapePdf(str: string): string {
     .replace(/\)/g, '\\)');
 }
 
-export function generateInventoryPdf(items: EquipmentRecord[]): Buffer {
+const ALL_COLS = [
+  'name',
+  'condition',
+  'quantity',
+  'updated_at',
+  'updated_by',
+] as const;
+
+type ExportCol = (typeof ALL_COLS)[number];
+
+const COL_WEIGHTS: Record<ExportCol, number> = {
+  name: 190,
+  condition: 85,
+  quantity: 45,
+  updated_at: 90,
+  updated_by: 92,
+};
+
+const COL_HEADERS: Record<ExportCol, string> = {
+  name: 'ITEM NAME',
+  condition: 'CONDITION',
+  quantity: 'QTY',
+  updated_at: 'LAST UPDATED',
+  updated_by: 'UPDATED BY',
+};
+
+export function generateInventoryPdf(
+  items: EquipmentRecord[],
+  requestedCols?: string[],
+): Buffer {
   const dateStr = new Date().toISOString().split('T')[0];
   const totalQty = items.reduce((sum, i) => sum + (Number(i.quantity) || 1), 0);
+
+  let activeCols: ExportCol[] = [];
+  if (Array.isArray(requestedCols) && requestedCols.length > 0) {
+    const filtered = requestedCols.filter((c): c is ExportCol =>
+      ALL_COLS.includes(c as ExportCol),
+    );
+    if (!filtered.includes('name')) {
+      filtered.unshift('name');
+    }
+    activeCols = filtered;
+  }
+  if (activeCols.length === 0) {
+    activeCols = [...ALL_COLS];
+  }
+
+  const totalWeight = activeCols.reduce(
+    (acc, col) => acc + COL_WEIGHTS[col],
+    0,
+  );
+  const colLayout: { key: ExportCol; x: number; width: number }[] = [];
+  let curX = 70;
+  for (let i = 0; i < activeCols.length; i++) {
+    const key = activeCols[i];
+    const isLast = i === activeCols.length - 1;
+    const width = isLast
+      ? 572 - curX
+      : Math.floor((COL_WEIGHTS[key] / totalWeight) * 502);
+    colLayout.push({ key, x: curX, width });
+    curX += width;
+  }
 
   let stream = '';
 
@@ -49,11 +108,16 @@ export function generateInventoryPdf(items: EquipmentRecord[]): Buffer {
   stream += '40 ' + y + ' 532 22 re f\n';
   stream += '1 1 1 rg\n';
   stream += 'BT /F2 8.5 Tf 45 ' + (y + 6) + ' Td (#) Tj ET\n';
-  stream += 'BT /F2 8.5 Tf 75 ' + (y + 6) + ' Td (ITEM NAME) Tj ET\n';
-  stream += 'BT /F2 8.5 Tf 285 ' + (y + 6) + ' Td (CONDITION) Tj ET\n';
-  stream += 'BT /F2 8.5 Tf 375 ' + (y + 6) + ' Td (QTY) Tj ET\n';
-  stream += 'BT /F2 8.5 Tf 415 ' + (y + 6) + ' Td (LAST UPDATED) Tj ET\n';
-  stream += 'BT /F2 8.5 Tf 495 ' + (y + 6) + ' Td (UPDATED BY) Tj ET\n';
+  for (const col of colLayout) {
+    stream +=
+      'BT /F2 8.5 Tf ' +
+      col.x +
+      ' ' +
+      (y + 6) +
+      ' Td (' +
+      COL_HEADERS[col.key] +
+      ') Tj ET\n';
+  }
   stream += 'Q\n';
 
   y -= 22;
@@ -71,34 +135,75 @@ export function generateInventoryPdf(items: EquipmentRecord[]): Buffer {
 
     stream += '0.15 0.15 0.15 rg\n';
     stream += 'BT /F1 8 Tf 45 ' + (y + 7) + ' Td (' + (idx + 1) + ') Tj ET\n';
-    const nameStr = escapePdf((item.name || '').substring(0, 42));
-    stream += 'BT /F2 8 Tf 75 ' + (y + 7) + ' Td (' + nameStr + ') Tj ET\n';
 
-    const condStr = escapePdf(item.condition || 'Unknown');
-    if (item.condition === 'Working') {
-      stream += '0.08 0.45 0.2 rg\n';
-    } else if (item.condition === 'Faulty') {
-      stream += '0.7 0.15 0.15 rg\n';
-    } else {
-      stream += '0.5 0.4 0.1 rg\n';
+    for (const col of colLayout) {
+      if (col.key === 'name') {
+        const maxChars = Math.max(20, Math.floor(col.width / 5.2));
+        const nameStr = escapePdf((item.name || '').substring(0, maxChars));
+        stream += '0.15 0.15 0.15 rg\n';
+        stream +=
+          'BT /F2 8 Tf ' +
+          col.x +
+          ' ' +
+          (y + 7) +
+          ' Td (' +
+          nameStr +
+          ') Tj ET\n';
+      } else if (col.key === 'condition') {
+        const condStr = escapePdf(item.condition || 'Unknown');
+        if (item.condition === 'Working') {
+          stream += '0.08 0.45 0.2 rg\n';
+        } else if (item.condition === 'Faulty') {
+          stream += '0.7 0.15 0.15 rg\n';
+        } else {
+          stream += '0.5 0.4 0.1 rg\n';
+        }
+        stream +=
+          'BT /F2 8 Tf ' +
+          col.x +
+          ' ' +
+          (y + 7) +
+          ' Td (' +
+          condStr +
+          ') Tj ET\n';
+      } else if (col.key === 'quantity') {
+        stream += '0.15 0.15 0.15 rg\n';
+        stream +=
+          'BT /F1 8 Tf ' +
+          col.x +
+          ' ' +
+          (y + 7) +
+          ' Td (' +
+          (item.quantity ?? 1) +
+          ') Tj ET\n';
+      } else if (col.key === 'updated_at') {
+        const updDate = escapePdf((item.updated_at || dateStr).split('T')[0]);
+        stream += '0.15 0.15 0.15 rg\n';
+        stream +=
+          'BT /F1 8 Tf ' +
+          col.x +
+          ' ' +
+          (y + 7) +
+          ' Td (' +
+          updDate +
+          ') Tj ET\n';
+      } else if (col.key === 'updated_by') {
+        const updBy = escapePdf(
+          (item.updated_by || 'Admin').split('@')[0].substring(0, 16),
+        );
+        stream += '0.15 0.15 0.15 rg\n';
+        stream +=
+          'BT /F1 8 Tf ' +
+          col.x +
+          ' ' +
+          (y + 7) +
+          ' Td (' +
+          updBy +
+          ') Tj ET\n';
+      }
     }
-    stream += 'BT /F2 8 Tf 285 ' + (y + 7) + ' Td (' + condStr + ') Tj ET\n';
 
-    stream += '0.15 0.15 0.15 rg\n';
-    stream +=
-      'BT /F1 8 Tf 375 ' +
-      (y + 7) +
-      ' Td (' +
-      (item.quantity ?? 1) +
-      ') Tj ET\n';
-    const updDate = escapePdf((item.updated_at || dateStr).split('T')[0]);
-    stream += 'BT /F1 8 Tf 415 ' + (y + 7) + ' Td (' + updDate + ') Tj ET\n';
-    const updBy = escapePdf(
-      (item.updated_by || 'Admin').split('@')[0].substring(0, 16),
-    );
-    stream += 'BT /F1 8 Tf 495 ' + (y + 7) + ' Td (' + updBy + ') Tj ET\n';
     stream += 'Q\n';
-
     y -= 22;
   }
 

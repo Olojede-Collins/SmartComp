@@ -535,7 +535,9 @@ describe('S-05 Challenger Suite — M2 Pre-Agreed Seams', () => {
           name: 'Invitation sent.',
         }),
       ).toBeDefined();
-      expect(screen.getByText('invited.peer@abu.edu.ng')).toBeDefined();
+      expect(
+        screen.getAllByText('invited.peer@abu.edu.ng').length,
+      ).toBeGreaterThanOrEqual(1);
       expect(screen.getByText(/A link is on its way to/i)).toBeDefined();
       expect(
         screen.getByText(/It works once, and expires if unused/i),
@@ -1372,33 +1374,33 @@ describe('S-05 Challenger Suite — M2 Pre-Agreed Seams', () => {
       ).toBeDefined();
     });
 
-    it('5 FR-9.2 floor columns are strictly checked and disabled', () => {
+    it('FR-9.2 columns have item name required and rest customizable', () => {
       render(<ExportDialog open={true} itemCount={7} />);
 
       const checkboxes = screen.getAllByRole('checkbox');
       expect(checkboxes.length).toBe(6);
 
-      const floorCheckboxes = checkboxes.slice(0, 5);
-      for (const cb of floorCheckboxes) {
+      const nameCb = checkboxes[0] as HTMLInputElement;
+      expect(nameCb.checked).toBe(true);
+      expect(nameCb.disabled).toBe(true);
+
+      const interactiveCheckboxes = checkboxes.slice(1, 5);
+      for (const cb of interactiveCheckboxes) {
         expect((cb as HTMLInputElement).checked).toBe(true);
-        expect((cb as HTMLInputElement).disabled).toBe(true);
+        expect((cb as HTMLInputElement).disabled).toBe(false);
       }
 
       expect(screen.getByText('Item name')).toBeDefined();
-      expect(screen.getByText('Kept exactly as submitted.')).toBeDefined();
+      expect(screen.queryByText('Kept exactly as submitted.')).toBeNull();
       expect(screen.getByText('Condition')).toBeDefined();
       expect(
-        screen.getByText(
+        screen.queryByText(
           'Working, Faulty, Under Maintenance or Decommissioned.',
         ),
-      ).toBeDefined();
+      ).toBeNull();
       expect(screen.getByText('Quantity')).toBeDefined();
       expect(screen.getByText('Updated')).toBeDefined();
-      expect(
-        screen.getByText('The date the record last changed.'),
-      ).toBeDefined();
       expect(screen.getByText('Updated by')).toBeDefined();
-      expect(screen.getByText('The admin who last changed it.')).toBeDefined();
     });
 
     it('Record ID column is strictly disabled, unchecked, and tagged Withheld with lock icon', () => {
@@ -1413,11 +1415,10 @@ describe('S-05 Challenger Suite — M2 Pre-Agreed Seams', () => {
         'col-id-note',
       );
 
-      expect(screen.getByText('Not available.')).toBeDefined();
       expect(screen.getByText('Withheld')).toBeDefined();
       expect(
         screen.getByText(
-          'These five columns are always included. Record IDs stay inside the admin app and are not written to the file.',
+          /Record IDs stay inside the admin app and are not written to the file/i,
         ),
       ).toBeDefined();
     });
