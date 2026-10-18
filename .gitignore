@@ -1,4 +1,4 @@
-# =============================================================================
+﻿# =============================================================================
 # ABU SmartComp — gitignore
 # Prep phase (Israel, 2026-10-13): ignore everything at root; track only
 # production skeleton paths un-ignored below. Frozen docs stay on disk but
