@@ -143,8 +143,6 @@ export function ExportDialog({
       const dateStr = new Date().toISOString().split('T')[0];
       const filename = `abu-smart-class-inventory-${dateStr}.${format}`;
 
-      downloadBlob(blob, filename);
-
       setDownloadedBlob(blob);
       setGeneratedFilename(filename);
       setState('success');

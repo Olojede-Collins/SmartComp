@@ -845,11 +845,15 @@ describe('app/admin/_components/export-dialog (S-010)', () => {
     ).toBeDefined();
     expect(screen.getByText(/abu-smart-class-inventory-.*\.csv/)).toBeDefined();
 
-    expect(anchorClickSpy).toHaveBeenCalled();
+    expect(anchorClickSpy).not.toHaveBeenCalled();
     expect(screen.getByRole('button', { name: 'Close' })).toBeDefined();
-    expect(
-      screen.getByRole('button', { name: 'Download the File' }),
-    ).toBeDefined();
+    const downloadBtn = screen.getByRole('button', {
+      name: 'Download the File',
+    });
+    expect(downloadBtn).toBeDefined();
+
+    fireEvent.click(downloadBtn);
+    expect(anchorClickSpy).toHaveBeenCalledTimes(1);
   });
 
   it('handles export 500 failure and permits retry', async () => {

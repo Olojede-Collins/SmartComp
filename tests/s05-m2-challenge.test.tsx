@@ -1454,10 +1454,16 @@ describe('S-05 Challenger Suite — M2 Pre-Agreed Seams', () => {
       fireEvent.click(createBtn);
 
       await waitFor(() => {
-        expect(globalThis.URL.createObjectURL).toHaveBeenCalledWith(
-          mockCsvBlob,
-        );
+        expect(screen.getByText('Your file is ready.')).toBeDefined();
       });
+      expect(anchorClickSpy).not.toHaveBeenCalled();
+
+      const downloadBtn = screen.getByRole('button', {
+        name: 'Download the File',
+      });
+      fireEvent.click(downloadBtn);
+
+      expect(globalThis.URL.createObjectURL).toHaveBeenCalledWith(mockCsvBlob);
       expect(anchorClickSpy).toHaveBeenCalled();
       expect(globalThis.URL.revokeObjectURL).toHaveBeenCalledWith(
         'blob:mock-export-url',
