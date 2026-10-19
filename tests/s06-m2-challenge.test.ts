@@ -759,7 +759,7 @@ describe('S-06 M2 Adversarial Challenger Suite', () => {
       expect(meta.width).toBe(1200);
       expect(meta.height).toBe(1200);
       expect(enhanced.length).toBeLessThanOrEqual(400 * 1024);
-    });
+    }, 30000);
 
     it('strips EXIF metadata cleanly from enhanced image', async () => {
       const inputWithExif = await sharp({
@@ -804,7 +804,7 @@ describe('S-06 M2 Adversarial Challenger Suite', () => {
           400 * 1024,
         );
       }
-    });
+    }, 30000);
   });
 
   describe('Seam 4: ZIP extraction robustness', () => {

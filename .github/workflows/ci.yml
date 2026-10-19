@@ -54,6 +54,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Smoke probe 1
-        run: curl -fsS "${{ vars.RENDER_SERVICE_URL }}/healthz"
+        run: curl -fsS --max-time 120 --retry 5 --retry-delay 15 --retry-connrefused --retry-all-errors "${{ vars.RENDER_SERVICE_URL }}/healthz"
       - name: Smoke probe 2
-        run: curl -fsS "${{ vars.VERCEL_PUBLIC_URL }}/"
+        run: curl -fsS --max-time 120 --retry 3 --retry-delay 5 --retry-connrefused --retry-all-errors "${{ vars.VERCEL_PUBLIC_URL }}/"

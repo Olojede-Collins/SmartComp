@@ -11,4 +11,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Ping backend healthz
-        run: curl -fsS --max-time 15 "${{ vars.RENDER_SERVICE_URL }}/healthz"
+        run: curl -fsS --max-time 120 --retry 5 --retry-delay 15 --retry-connrefused --retry-all-errors "${{ vars.RENDER_SERVICE_URL }}/healthz"

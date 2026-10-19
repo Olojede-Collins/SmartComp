@@ -526,7 +526,7 @@ describe('PRD §7 Success Metrics Suite (Session S-07 Metric Verification)', () 
   });
 
   describe('Metric 7: Availability discipline (Heartbeat workflow & Supabase 7-day pause defense)', () => {
-    it('verifies heartbeat workflow schedule runs daily with 15s max timeout against /healthz', () => {
+    it('verifies heartbeat workflow schedule runs daily with a cold-start-tolerant timeout against /healthz', () => {
       const heartbeatFile = path.resolve(
         process.cwd(),
         '.github/workflows/heartbeat.yml',
@@ -535,7 +535,8 @@ describe('PRD §7 Success Metrics Suite (Session S-07 Metric Verification)', () 
       const content = fs.readFileSync(heartbeatFile, 'utf8');
 
       expect(content).toContain("cron: '0 6 * * *'");
-      expect(content).toContain('curl -fsS --max-time 15');
+      expect(content).toContain('curl -fsS --max-time 120');
+      expect(content).toContain('--retry-all-errors');
       expect(content).toContain('/healthz');
       expect(content).toContain('RENDER_SERVICE_URL');
     });

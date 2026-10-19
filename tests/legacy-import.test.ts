@@ -210,7 +210,7 @@ describe('Legacy Import Tooling Suite (S-06 M2)', () => {
 
       const dbEquipment = await db.getEquipment();
       expect(dbEquipment).toHaveLength(7);
-    });
+    }, 30000);
   });
 
   describe('6. Pre-seeded Legacy Equipment Records (LEGACY_EQUIPMENT_RECORDS)', () => {

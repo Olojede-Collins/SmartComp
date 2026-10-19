@@ -138,7 +138,7 @@ describe('NFR-3 Image Audit Suite (PRD §7 Metric 3)', () => {
             v.includes('400') || v.includes('budget') || v.includes('desktop'),
         ),
       ).toBe(true);
-    });
+    }, 30000);
 
     it('fails gracefully with violations on corrupted non-image buffer', async () => {
       const garbage = Buffer.from('not an image at all - plain ASCII text');

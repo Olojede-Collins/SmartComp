@@ -958,7 +958,7 @@ describe('Milestone M3 Challenger Adversarial Stress Suite (Session S-07)', () =
       expect(deleteRes.status).toBe(404);
     });
 
-    it('verifies heartbeat workflow schedule and timeout parameters', () => {
+    it('verifies heartbeat workflow schedule and cold-start timeout parameters', () => {
       const heartbeatFile = path.resolve(
         process.cwd(),
         '.github/workflows/heartbeat.yml',
@@ -966,7 +966,9 @@ describe('Milestone M3 Challenger Adversarial Stress Suite (Session S-07)', () =
       const content = fs.readFileSync(heartbeatFile, 'utf8');
 
       expect(content).toContain("cron: '0 6 * * *'");
-      expect(content).toContain('--max-time 15');
+      expect(content).toContain('--max-time 120');
+      expect(content).toContain('--retry-connrefused');
+      expect(content).toContain('--retry-all-errors');
       expect(content).toContain('/healthz');
       expect(content).toContain('RENDER_SERVICE_URL');
     });
