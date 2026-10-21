@@ -1193,12 +1193,12 @@ describe('Milestone M3 Challenger Adversarial Stress Suite (Session S-07)', () =
       const files = fs.readdirSync(migrationsDir);
       const downFiles = files.filter((f) => f.endsWith('.down.sql')).sort();
 
-      expect(downFiles.length).toBe(7);
+      expect(downFiles.length).toBe(8);
 
       for (const df of downFiles) {
         const content = fs.readFileSync(path.join(migrationsDir, df), 'utf8');
         expect(content.trim().length).toBeGreaterThan(15);
-        expect(content).toMatch(/DROP\s+(POLICY|INDEX|TABLE|TYPE)/i);
+        expect(content).toMatch(/DROP\s+(POLICY|INDEX|TABLE|TYPE|COLUMN)/i);
         expect(content).not.toContain('TBD');
       }
     });

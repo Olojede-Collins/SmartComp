@@ -21,9 +21,9 @@ markers inside applied SQL.
 
 ## Apply order
 
-**Up:** ascending version order — `0001` → `0002` → … → `0007`.
+**Up:** ascending version order — `0001` → `0002` → … → `0008`.
 
-**Down:** descending version order — `0007` → `0006` → … → `0001`.
+**Down:** descending version order — `0008` → `0007` → … → `0001`.
 
 ## How they are applied
 
@@ -52,5 +52,6 @@ applying `0007_rls.up.sql`.
 | 0005    | audit_log      | Append-only audit trail (C2)                              |
 | 0006    | indexes        | `equipment.updated_at DESC`, `audit_log.created_at`       |
 | 0007    | rls            | RLS enable + 7 policies + anon/append-only revokes (§3.3) |
+| 0008    | admin_removal  | `admins.removed_at` soft removal (FR-8.2)                 |
 
 TBD register, open observations, and post-apply probes: **MIGRATION_NOTES.md**.

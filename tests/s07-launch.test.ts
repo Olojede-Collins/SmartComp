@@ -116,7 +116,7 @@ describe('Launch Hardening & Secrets Audit Suite (Session S-07 Launch Verificati
   });
 
   describe('2. Rollback Rehearsal & Migration Verification (CICD §6)', () => {
-    it('verifies all 7 database migrations have complete paired down-statements in backend/migrations', () => {
+    it('verifies all 8 database migrations have complete paired down-statements in backend/migrations', () => {
       const migrationsDir = path.resolve(rootDir, 'backend/migrations');
       const violations = checkMigrations(migrationsDir);
       expect(violations).toHaveLength(0);
@@ -129,6 +129,7 @@ describe('Launch Hardening & Secrets Audit Suite (Session S-07 Launch Verificati
         '0005',
         '0006',
         '0007',
+        '0008',
       ];
       for (const ver of expectedVersions) {
         const files = fs.readdirSync(migrationsDir);

@@ -21,6 +21,7 @@ export interface AdminRecord {
   name: string | null;
   email: string;
   created_at: string;
+  removed_at?: string | null;
 }
 
 export interface AdminInviteRecord {
@@ -42,7 +43,7 @@ export interface PendingInviteRecord {
 
 export interface AuditLogRecord {
   id: string;
-  actor_admin_id: string;
+  actor_admin_id: string | null;
   action: string;
   target: string;
   created_at: string;
@@ -391,7 +392,7 @@ export class DatabaseClient {
     const sb = this.getSupabase();
     if (sb) {
       const res = await globalThis.fetch(
-        `${sb.url}/rest/v1/admins?select=*&order=created_at.asc`,
+        `${sb.url}/rest/v1/admins?select=*&removed_at=is.null&order=created_at.asc`,
         {
           headers: {
             apikey: sb.key,
@@ -405,14 +406,14 @@ export class DatabaseClient {
       }
       return (await res.json()) as AdminRecord[];
     }
-    return [...this.admins];
+    return this.admins.filter((a) => !a.removed_at).map((a) => ({ ...a }));
   }
 
   async getAdminById(id: string): Promise<AdminRecord | null> {
     const sb = this.getSupabase();
     if (sb) {
       const res = await globalThis.fetch(
-        `${sb.url}/rest/v1/admins?id=eq.${encodeURIComponent(id)}&select=*`,
+        `${sb.url}/rest/v1/admins?id=eq.${encodeURIComponent(id)}&removed_at=is.null&select=*`,
         {
           headers: {
             apikey: sb.key,
@@ -425,15 +426,19 @@ export class DatabaseClient {
       const data = (await res.json()) as AdminRecord[];
       return data.length > 0 ? { ...data[0] } : null;
     }
-    const admin = this.admins.find((a) => a.id === id);
+    const admin = this.admins.find((a) => a.id === id && !a.removed_at);
     return admin ? { ...admin } : null;
   }
 
-  async getAdminByEmail(email: string): Promise<AdminRecord | null> {
+  async getAdminByEmail(
+    email: string,
+    includeRemoved = false,
+  ): Promise<AdminRecord | null> {
     const sb = this.getSupabase();
     if (sb) {
+      const removedFilter = includeRemoved ? '' : '&removed_at=is.null';
       const res = await globalThis.fetch(
-        `${sb.url}/rest/v1/admins?email=ilike.${encodeURIComponent(email)}&select=*`,
+        `${sb.url}/rest/v1/admins?email=ilike.${encodeURIComponent(email)}${removedFilter}&select=*`,
         {
           headers: {
             apikey: sb.key,
@@ -447,7 +452,9 @@ export class DatabaseClient {
       return data.length > 0 ? { ...data[0] } : null;
     }
     const admin = this.admins.find(
-      (a) => a.email.toLowerCase() === email.toLowerCase(),
+      (a) =>
+        a.email.toLowerCase() === email.toLowerCase() &&
+        (includeRemoved || !a.removed_at),
     );
     return admin ? { ...admin } : null;
   }
@@ -690,22 +697,24 @@ export class DatabaseClient {
       }
 
       if (authUserId) {
-        if (password) {
-          await globalThis.fetch(
-            `${sb.url}/auth/v1/admin/users/${authUserId}`,
-            {
-              method: 'PUT',
-              headers: {
-                apikey: sb.key,
-                Authorization: `Bearer ${sb.key}`,
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({
-                password,
-                email_confirm: true,
-                app_metadata: { role: 'admin' },
-              }),
+        const updateAuthRes = await globalThis.fetch(
+          `${sb.url}/auth/v1/admin/users/${authUserId}`,
+          {
+            method: 'PUT',
+            headers: {
+              apikey: sb.key,
+              Authorization: `Bearer ${sb.key}`,
+              'Content-Type': 'application/json',
             },
+            body: JSON.stringify({
+              ...(password ? { password, email_confirm: true } : {}),
+              app_metadata: { role: 'admin' },
+            }),
+          },
+        );
+        if (!updateAuthRes.ok) {
+          throw new Error(
+            `Failed to restore admin auth account: ${updateAuthRes.status}`,
           );
         }
       } else {
@@ -769,14 +778,49 @@ export class DatabaseClient {
       if (existingAdminRes.ok) {
         const existingAdmins = (await existingAdminRes.json()) as AdminRecord[];
         if (existingAdmins.length > 0) {
+          const existingAdmin = existingAdmins[0];
+          if (existingAdmin.removed_at) {
+            const restoreRes = await globalThis.fetch(
+              `${sb.url}/rest/v1/admins?id=eq.${encodeURIComponent(existingAdmin.id)}`,
+              {
+                method: 'PATCH',
+                headers: {
+                  apikey: sb.key,
+                  Authorization: `Bearer ${sb.key}`,
+                  'Content-Type': 'application/json',
+                  Prefer: 'return=representation',
+                },
+                body: JSON.stringify({
+                  removed_at: null,
+                  ...(name !== undefined ? { name: name ?? null } : {}),
+                }),
+              },
+            );
+            if (!restoreRes.ok) {
+              throw new Error(
+                `Failed to restore admin record: ${restoreRes.status}`,
+              );
+            }
+            const restored = (await restoreRes.json()) as AdminRecord[];
+            await this.recordAuditLog(
+              sb,
+              existingAdmin.id,
+              'admin.accept',
+              invite.email,
+              now,
+            );
+            return restored.length > 0
+              ? { ...restored[0] }
+              : { ...existingAdmin, removed_at: null };
+          }
           await this.recordAuditLog(
             sb,
-            existingAdmins[0].id,
+            existingAdmin.id,
             'admin.accept',
             invite.email,
             now,
           );
-          return { ...existingAdmins[0] };
+          return { ...existingAdmin };
         }
       }
 
@@ -823,6 +867,23 @@ export class DatabaseClient {
       .forEach((i) => {
         i.accepted_at = now;
       });
+    const existing = this.admins.find(
+      (a) => a.email.toLowerCase() === invite.email.toLowerCase(),
+    );
+    if (existing) {
+      existing.removed_at = null;
+      if (name !== undefined) {
+        existing.name = name ?? null;
+      }
+      this.auditLogs.push({
+        id: crypto.randomUUID(),
+        actor_admin_id: existing.id,
+        action: 'admin.accept',
+        target: invite.email,
+        created_at: now,
+      });
+      return { ...existing };
+    }
     const adminId = crypto.randomUUID();
     const newAdmin: AdminRecord = {
       id: adminId,
@@ -839,6 +900,48 @@ export class DatabaseClient {
       created_at: now,
     });
     return { ...newAdmin };
+  }
+
+  private async revokeAdminAuth(
+    sb: { url: string; key: string },
+    email: string,
+  ): Promise<void> {
+    const listRes = await globalThis.fetch(
+      `${sb.url}/auth/v1/admin/users?per_page=1000`,
+      {
+        headers: {
+          apikey: sb.key,
+          Authorization: `Bearer ${sb.key}`,
+        },
+      },
+    );
+    if (!listRes.ok) {
+      throw new Error(`Failed to load auth users: ${listRes.status}`);
+    }
+    const listData = (await listRes.json()) as {
+      users?: Array<{ id: string; email?: string }>;
+    };
+    const authUser = listData.users?.find(
+      (u) => u.email?.toLowerCase() === email.toLowerCase(),
+    );
+    if (!authUser) {
+      return;
+    }
+    const res = await globalThis.fetch(
+      `${sb.url}/auth/v1/admin/users/${authUser.id}`,
+      {
+        method: 'PUT',
+        headers: {
+          apikey: sb.key,
+          Authorization: `Bearer ${sb.key}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ app_metadata: { role: 'removed' } }),
+      },
+    );
+    if (!res.ok) {
+      throw new Error(`Failed to revoke admin auth: ${res.status}`);
+    }
   }
 
   async deleteAdmin(
@@ -858,21 +961,29 @@ export class DatabaseClient {
       if (admins.length <= 1) {
         return { success: false, lastAdmin: true };
       }
+      await this.revokeAdminAuth(sb, admin.email);
+      const now = new Date().toISOString();
       const res = await globalThis.fetch(
-        `${sb.url}/rest/v1/admins?id=eq.${encodeURIComponent(id)}`,
+        `${sb.url}/rest/v1/admins?id=eq.${encodeURIComponent(id)}&removed_at=is.null`,
         {
-          method: 'DELETE',
+          method: 'PATCH',
           headers: {
             apikey: sb.key,
             Authorization: `Bearer ${sb.key}`,
+            'Content-Type': 'application/json',
+            Prefer: 'return=representation',
           },
+          body: JSON.stringify({ removed_at: now }),
         },
       );
       if (!res.ok) {
         throw new Error(`PostgREST error: ${res.status}`);
       }
+      const updated = (await res.json()) as AdminRecord[];
+      if (updated.length === 0) {
+        return { success: false, notFound: true };
+      }
       const validActor = await this.getValidAdminId(sb, actorAdminId);
-      const now = new Date().toISOString();
       await this.recordAuditLog(
         sb,
         validActor,
@@ -882,20 +993,20 @@ export class DatabaseClient {
       );
       return { success: true };
     }
-    const adminIndex = this.admins.findIndex((a) => a.id === id);
-    if (adminIndex === -1) {
+    const admin = this.admins.find((a) => a.id === id && !a.removed_at);
+    if (!admin) {
       return { success: false, notFound: true };
     }
-    if (this.admins.length <= 1) {
+    if (this.admins.filter((a) => !a.removed_at).length <= 1) {
       return { success: false, lastAdmin: true };
     }
-    const removed = this.admins.splice(adminIndex, 1)[0];
     const now = new Date().toISOString();
+    admin.removed_at = now;
     this.auditLogs.push({
       id: crypto.randomUUID(),
       actor_admin_id: actorAdminId,
       action: 'admin.remove',
-      target: removed.email,
+      target: admin.email,
       created_at: now,
     });
     return { success: true };
